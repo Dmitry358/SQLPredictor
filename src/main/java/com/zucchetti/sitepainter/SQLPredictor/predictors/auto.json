@@ -1,0 +1,7 @@
+{
+  "predictor_name": "auto",
+  "model_type": "linear_regression",
+  "version": 5,
+  "last_train": "2023-10-1",
+  "parameters" : [1.46, 2.23, 3.0]
+}
