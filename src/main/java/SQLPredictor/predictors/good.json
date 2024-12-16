@@ -1,0 +1,7 @@
+{
+  "predictor_name": "good",
+  "model_type": "abc",
+  "version": 1,
+  "last_train": "2024-12-11",
+  "table_name" : "good_client"
+}
