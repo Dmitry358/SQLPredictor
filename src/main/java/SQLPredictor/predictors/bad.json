@@ -1,7 +1,0 @@
-{
-  "predictor_name": "bad",
-  "model_type": "linear_regression",
-  "version": 3,
-  "last_train": "2024-10-11",
-  "parameters" : [3.47, 2.16]
-}
