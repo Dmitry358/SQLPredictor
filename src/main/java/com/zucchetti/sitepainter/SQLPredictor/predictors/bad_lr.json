@@ -1,5 +1,5 @@
 {
-  "predictor_name": "bad",
+  "predictor_name": "bad_lr",
   "model_type": "linear_regression",
   "version": 3,
   "last_train": "2024-10-11",

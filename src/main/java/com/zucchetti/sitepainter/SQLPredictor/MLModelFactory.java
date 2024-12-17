@@ -6,7 +6,7 @@ import java.util.List;
 import java.io.FileReader;
 import java.io.IOException;
 import com.google.gson.*;
-
+import java.io.File;
 
 public class MLModelFactory {
 
@@ -36,7 +36,8 @@ public class MLModelFactory {
 
         try {
             Gson gson = new Gson();
-            String filePath = "src/main/java/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
+            String filePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
+            //String filePath = "src/main/java/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
 
             FileReader reader = new FileReader(filePath);
             JsonElement jsonElement = JsonParser.parseReader(reader);
@@ -74,7 +75,7 @@ public class MLModelFactory {
 
         try {
             Gson gson = new Gson();
-            String filePath = "src/main/java/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
+            String filePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
 
             FileReader reader = new FileReader(filePath);
             JsonElement jsonElement = JsonParser.parseReader(reader);
@@ -113,7 +114,7 @@ public class MLModelFactory {
     private String getPredictorsModelType(String predictorName){ //!!! lancia eccezione FILE NOT FOUND fuori metodo
         try{
             Gson gson = new Gson();
-            String filePath = "src/main/java/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
+            String filePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
             FileReader reader = new FileReader(filePath);
             JsonElement jsonElement = JsonParser.parseReader(reader);
 

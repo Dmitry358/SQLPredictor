@@ -35,7 +35,7 @@ public class MLSQLExpander {
             else if (fields[i].contains("+")) {
                 fieldsList.add("(" + fields[i] + ")");
             }
-            else fieldsList.add(fields[i]);
+            else fieldsList.add("(" + fields[i] + ")");
         }
 
         MLModelFactory mlmf = new MLModelFactory();

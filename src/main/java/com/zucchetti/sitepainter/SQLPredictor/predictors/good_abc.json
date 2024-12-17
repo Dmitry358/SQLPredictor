@@ -1,5 +1,5 @@
 {
-  "predictor_name": "good",
+  "predictor_name": "good_abc",
   "model_type": "abc",
   "version": 1,
   "last_train": "2024-12-11",

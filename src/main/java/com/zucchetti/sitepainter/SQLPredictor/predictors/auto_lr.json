@@ -1,5 +1,5 @@
 {
-  "predictor_name": "auto",
+  "predictor_name": "auto_lr",
   "model_type": "linear_regression",
   "version": 5,
   "last_train": "2023-10-1",
