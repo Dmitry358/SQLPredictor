@@ -32,9 +32,10 @@ public class MLSQLExpander {
                 fieldsList.add(component);
                 i+=c;
             }
+            /*
             else if (fields[i].contains("+")) {
                 fieldsList.add("(" + fields[i] + ")");
-            }
+            }*/
             else fieldsList.add("(" + fields[i] + ")");
         }
 

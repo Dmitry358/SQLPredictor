@@ -1,16 +1,19 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 //package SQLPredictor;
 
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
+
 import com.google.gson.*;
-import java.io.File;
 
 public class MLModelFactory {
 
     public MLPredictor getPredictor(String predictorName){
+        // FARE QUA ESTRAZIONE TUTTI DATI DA FILE JSON
         String predictorsModelType = this.getPredictorsModelType(predictorName);
         //cLASSFORNAME, REFLECTION
         if(predictorsModelType != null) {
@@ -19,14 +22,52 @@ public class MLModelFactory {
                     return this.getLRPredictor(predictorName);
                 case "abc":
                     return this.getABCPredictor(predictorName);
+                case "svm":
+                    return this.getSVMPredictor(predictorName);
                 default:
                     return null;
             }
         }
         else{
-            System.out.println("LRPredictor " + predictorName + " is not founded");
+            System.out.println("LRPredictor " + predictorName + " is not found"); // ?? SERVE?
             return null;
         }
+    }
+
+    private MLPredictor getSVMPredictor(String predictorName){
+        int version = 0;
+        String lastTrain = "";
+
+        try {
+            Gson gson = new Gson();
+            String filePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            FileReader reader = new FileReader(filePath);
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+
+            if (jsonElement.isJsonObject()) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+                //String value = "";
+                JsonArray param = new JsonArray();
+
+                for (String key : jsonObject.keySet()) {
+                    if(key.equals("version")) version = Integer.parseInt(jsonObject.get(key).getAsString());
+                    else if(key.equals("last_train")) lastTrain = jsonObject.get(key).getAsString();
+                }
+            }
+            else{
+                System.out.println("Il JSON non è né un oggetto né un array.");
+                return null;
+            }
+            reader.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return new SVMPredictor(predictorName, version, lastTrain);
     }
 
     private MLPredictor getABCPredictor(String predictorName){
@@ -37,7 +78,6 @@ public class MLModelFactory {
         try {
             Gson gson = new Gson();
             String filePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
-            //String filePath = "src/main/java/SQLPredictor/predictors/" + predictorName + ".json"; //!!!!!!!!!!!!!!!!!!!!!!!!!
 
             FileReader reader = new FileReader(filePath);
             JsonElement jsonElement = JsonParser.parseReader(reader);
@@ -45,7 +85,6 @@ public class MLModelFactory {
             if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-                //String value = "";
                 JsonArray param = new JsonArray();
 
                 for (String key : jsonObject.keySet()) {

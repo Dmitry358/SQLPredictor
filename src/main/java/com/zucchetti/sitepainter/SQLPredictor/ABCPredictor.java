@@ -1,10 +1,10 @@
 package com.zucchetti.sitepainter.SQLPredictor;
-//package SQLPredictor;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ABCPredictor extends MLPredictor{
+
+public class ABCPredictor extends MLPredictor {
     private String tableName; // !!!!!! const????
 
     ABCPredictor(){}
