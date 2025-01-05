@@ -1,7 +1,0 @@
-{
-  "predictor_name": "diabete_svm",
-  "model_type": "svm",
-  "version": 3,
-  "last_train": "2023-10-1",
-  "field_names": ["aaaaa","bbbbb"]
-}

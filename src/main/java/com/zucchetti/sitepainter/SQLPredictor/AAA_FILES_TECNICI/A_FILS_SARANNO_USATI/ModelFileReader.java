@@ -1,19 +1,13 @@
-package com.zucchetti.sitepainter.SQLPredictor;
+package com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.A_FILS_SARANNO_USATI;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-public class SVMPredictor extends MLPredictor {
-
-    SVMPredictor(){}
-    SVMPredictor(String predictorName, int version, String lastTrain){
-        super(predictorName, version, lastTrain);
-    }
-
-    public String getQuery(ArrayList<String> fieldsList){
+public class ModelFileReader {
+    public String getQuery(ArrayList<String> fieldsList,String predictorName){
         // !!! MOLTO IMPORTANTE !!! CONTROLLARE CONSISTENZA  clientCode.size()*2 == param.lenght
-        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + this.getPredictorName() + ".model";
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + predictorName + ".model";
         String query = "";
 
         try{
@@ -30,11 +24,11 @@ public class SVMPredictor extends MLPredictor {
 
             switch (kernelType){
                 case "linear":
-                    query = getLinearKernelQuery(fieldsList); break;
+                    query = getLinearKernelQuery(fieldsList, predictorName); break;
                 case "polynomial":
-                    query = getPolynomialKernelQuery(fieldsList); break;
+                    query = getPolynomialKernelQuery(fieldsList, predictorName); break;
                 case "rbf":
-                    query = getRBFKernelQuery(fieldsList); break;
+                    query = getRBFKernelQuery(fieldsList, predictorName); break;
                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!????default
             }
 
@@ -46,9 +40,8 @@ public class SVMPredictor extends MLPredictor {
 
         return query;
     }
-
-    private String getLinearKernelQuery(ArrayList<String> fieldsList){
-        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + this.getPredictorName() + ".model";
+    private String getLinearKernelQuery(ArrayList<String> fieldsList, String predictorName){
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + predictorName + ".model";
         BufferedReader buffer = null;
         String query = "(";
         int SVNumber = 0;
@@ -105,8 +98,8 @@ public class SVMPredictor extends MLPredictor {
         return query;
     }
 
-    private String getPolynomialKernelQuery(ArrayList<String> fieldsList){
-        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + this.getPredictorName() + ".model";
+    private String getPolynomialKernelQuery(ArrayList<String> fieldsList, String predictorName){
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + predictorName + ".model";
         BufferedReader buffer = null;
         int degree = 0;
         double gamma = 0;
@@ -182,8 +175,8 @@ public class SVMPredictor extends MLPredictor {
         return query;
     }
 
-    private String getRBFKernelQuery(ArrayList<String> fieldsList){
-        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + this.getPredictorName() + ".model";
+    private String getRBFKernelQuery(ArrayList<String> fieldsList, String predictorName){
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/models/" + predictorName + ".model";
         BufferedReader buffer = null;
         String query = "(";
         int SVNumber = 0;

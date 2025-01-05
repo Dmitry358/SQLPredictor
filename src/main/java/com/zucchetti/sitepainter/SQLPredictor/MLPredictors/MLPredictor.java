@@ -1,14 +1,12 @@
-package com.zucchetti.sitepainter.SQLPredictor;
-//package SQLPredictor;
+package com.zucchetti.sitepainter.SQLPredictor.MLPredictors;
 
 import java.util.ArrayList;
 
 public abstract class MLPredictor {
-    private String predictorName;// !!!!!! const????
-    private int version;// !!!!!! const????
-    private String lastTrain;// !!!!!! const????
+    private final String predictorName;
+    private final int version;
+    private final String lastTrain;
 
-    public MLPredictor(){}
     public MLPredictor(String predictorName, int version, String lastTrain){
         this.predictorName = predictorName;
         this.version = version;
@@ -16,11 +14,8 @@ public abstract class MLPredictor {
     }
 
     protected String getPredictorName(){ return predictorName; }
-    protected int getVersion(){ return version; }
-    protected String getLastTrain(){ return lastTrain; }
 
     public abstract String getQuery(ArrayList<String> fieldsList);
 
     //public abstract void printFields(); // SOLO PER TESTING !!!!!!!!!!!!!!!!!!!!!!!!
-    //public String getQuery(){ return "";};
 }
