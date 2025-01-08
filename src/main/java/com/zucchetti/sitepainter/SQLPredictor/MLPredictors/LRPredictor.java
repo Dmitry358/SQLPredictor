@@ -26,8 +26,8 @@ public class LRPredictor extends MLPredictor {
         String query = "(";
 
         for (int i=0; i <= fieldsNum; i++){
-            if (i < fieldsNum) query += fieldsList.get(i) + "*" + parameters[i] + " + ";
-            else query += parameters[i] + ")";
+            if (i < fieldsNum) { query += fieldsList.get(i) + "*" + parameters[i] + " + "; }
+            else { query += parameters[i] + ")"; }
         }
 
         return query;

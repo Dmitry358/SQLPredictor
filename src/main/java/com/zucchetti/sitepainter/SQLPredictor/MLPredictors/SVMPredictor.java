@@ -63,29 +63,29 @@ public class SVMPredictor extends MLPredictor {
 
             if (sv != 0) {
                 if (coef < 0) {
-                    if (coef == -1) query.append(" - (");
-                    else query.append(" - ").append(Math.abs(coef)).append("*(");
+                    if (coef == -1) { query.append(" - ("); }
+                    else { query.append(" - ").append(Math.abs(coef)).append("*("); }
                 }
                 else {
-                    if (coef == 1) query.append(" + (");
-                    else query.append(" + ").append(coef).append("*(");
+                    if (coef == 1) { query.append(" + ("); }
+                    else { query.append(" + ").append(coef).append("*("); }
                 }
             }
             else {
-                if (coef == -1) query.append("-");
-                else if (coef != 1) query.append(coef).append("*");
+                if (coef == -1) { query.append("-"); }
+                else if (coef != 1) {query.append(coef).append("*"); }
                 query.append("(");
             }
 
             for (int f = 0; f < fieldsList.size(); ++f) {
                 query.append(fieldsList.get(f)).append("*").append(supportVectors.get(sv).get(f + 1));
-                if (f < fieldsList.size() - 1) query.append(" + ");
+                if (f < fieldsList.size() - 1) { query.append(" + "); }
             }
             query.append(")");
         }
 
-        if (rho < 0) query.append(" + ").append(Math.abs(rho));
-        else query.append(" - ").append(rho);
+        if (rho < 0) { query.append(" + ").append(Math.abs(rho)); }
+        else { query.append(" - ").append(rho); }
         query.append(")");
 
         return query.toString();
@@ -102,24 +102,24 @@ public class SVMPredictor extends MLPredictor {
 
             if (sv != 0) {
                 if (coef < 0) {
-                    if (coef == -1) query.append(" - (");
-                    else query.append(" - ").append(Math.abs(coef)).append("*(");
+                    if (coef == -1) { query.append(" - ("); }
+                    else { query.append(" - ").append(Math.abs(coef)).append("*("); }
                 }
                 else {
-                    if (coef == 1) query.append(" + (");
-                    else query.append(" + ").append(coef).append("*(");
+                    if (coef == 1) { query.append(" + ("); }
+                    else { query.append(" + ").append(coef).append("*("); }
                 }
             }
             else {
-                if (coef == -1) query.append("-");
-                else if (coef != 1) query.append(coef).append("*");
+                if (coef == -1) { query.append("-"); }
+                else if (coef != 1) { query.append(coef).append("*"); }
                 query.append("(");
             }
 
             StringBuilder kFunctionValue = new StringBuilder("(" + gamma + "*(");
             for (int f = 0; f < fieldsList.size(); ++f) {
                 kFunctionValue.append(fieldsList.get(f)).append("*").append(supportVectors.get(sv).get(f + 1));
-                if (f < fieldsList.size() - 1) kFunctionValue.append(" + ");
+                if (f < fieldsList.size() - 1) { kFunctionValue.append(" + "); }
             }
             kFunctionValue.append(") + ").append(coef0).append(")");
 
@@ -133,8 +133,8 @@ public class SVMPredictor extends MLPredictor {
             query.append(")");
         }
 
-        if (rho < 0) query.append(" + ").append(Math.abs(rho));
-        else query.append(" - ").append(rho);
+        if (rho < 0) { query.append(" + ").append(Math.abs(rho)); }
+        else { query.append(" - ").append(rho); }
         query.append(")");
 
         return query.toString();
@@ -149,31 +149,31 @@ public class SVMPredictor extends MLPredictor {
 
             if (sv != 0) {
                 if (coef < 0) {
-                    if (coef == -1) query.append(" - ");
-                    else query.append(" - ").append(Math.abs(coef)).append("*");
+                    if (coef == -1) { query.append(" - "); }
+                    else { query.append(" - ").append(Math.abs(coef)).append("*"); }
                 }
                 else {
-                    if (coef == 1) query.append(" + ");
-                    else query.append(" + ").append(coef).append("*");
+                    if (coef == 1) { query.append(" + "); }
+                    else {query.append(" + ").append(coef).append("*"); }
                 }
             }
             else {
-                if (coef == -1) query.append("-");
-                else if (coef != 1) query.append(coef).append("*");
+                if (coef == -1) { query.append("-"); }
+                else if (coef != 1) { query.append(coef).append("*"); }
             }
 
             query.append("(POWER (EXP(1), -").append(gamma).append("*(");
 
             for (int f = 0; f < fieldsList.size(); ++f) {
                 query.append("POWER ((").append(fieldsList.get(f)).append(" - ").append(supportVectors.get(sv).get(f + 1)).append("), 2)");
-                if (f < fieldsList.size() - 1) query.append(" + ");
+                if (f < fieldsList.size() - 1) { query.append(" + "); }
             }
 
             query.append(")))");
         }
 
-        if (rho < 0) query.append(" + ").append(Math.abs(rho));
-        else query.append(" - ").append(rho);
+        if (rho < 0) { query.append(" + ").append(Math.abs(rho)); }
+        else { query.append(" - ").append(rho); }
         query.append(")");
 
         return query.toString();

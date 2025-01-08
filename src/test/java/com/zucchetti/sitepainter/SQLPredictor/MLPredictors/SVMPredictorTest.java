@@ -115,7 +115,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetLinearKernelQuery(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + ((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) - 0.333*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) - ((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) - 0.02*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) - 0.07949817180633545)";
 
@@ -132,7 +132,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetLinearKernelQueryWithRhoNegative(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + ((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) - 0.333*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) - ((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) - 0.02*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) + 0.07949817180633545)";
 
@@ -149,7 +149,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetLinearKernelQueryWithFirstVectorWithCoefficientMinusOne(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(-((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + ((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) - 0.333*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) - ((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) - 0.02*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) - 0.07949817180633545)";
 
@@ -166,7 +166,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetPolynomialKernelQuery(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*(POWER ((0.5*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + 0.6), 4)) + (POWER ((0.5*((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.6), 4)) + 0.5*(POWER ((0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) + 0.6), 4)) - 0.333*(POWER ((0.5*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) + 0.6), 4)) - (POWER ((0.5*((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) + 0.6), 4)) - 0.02*(POWER ((0.5*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) + 0.6), 4)) - 0.07949817180633545)";
 
@@ -183,7 +183,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetPolynomialKernelQueryWithRhoNegative(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*(POWER ((0.5*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + 0.6), 4)) + (POWER ((0.5*((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.6), 4)) + 0.5*(POWER ((0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) + 0.6), 4)) - 0.333*(POWER ((0.5*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) + 0.6), 4)) - (POWER ((0.5*((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) + 0.6), 4)) - 0.02*(POWER ((0.5*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) + 0.6), 4)) + 0.07949817180633545)";
 
@@ -200,7 +200,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetPolynomialKernelQueryWithFirstVectorWithCoefficientMinusOne(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(-(POWER ((0.5*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + 0.6), 4)) + (POWER ((0.5*((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.6), 4)) + 0.5*(POWER ((0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) + 0.6), 4)) - 0.333*(POWER ((0.5*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) + 0.6), 4)) - (POWER ((0.5*((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) + 0.6), 4)) - 0.02*(POWER ((0.5*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) + 0.6), 4)) - 0.07949817180633545)";
 
@@ -217,7 +217,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetRBFKernelQuery(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21751), 2) + POWER (((t.field_2) - 0.49433), 2) + POWER (((t.field_3) - 1.333), 2) + POWER (((t.field_4) - 1.4444), 2)))) + (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.23078), 2) + POWER (((t.field_2) - 0.51545), 2) + POWER (((t.field_3) - 2.333), 2) + POWER (((t.field_4) - 2.4444), 2)))) + 0.5*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22071), 2) + POWER (((t.field_2) - 0.51669), 2) + POWER (((t.field_3) - 3.333), 2) + POWER (((t.field_4) - 3.4444), 2)))) - 0.333*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21233), 2) + POWER (((t.field_2) - 0.46617), 2) + POWER (((t.field_3) - 4.333), 2) + POWER (((t.field_4) - 4.4444), 2)))) - (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22696), 2) + POWER (((t.field_2) - 0.49682), 2) + POWER (((t.field_3) - 5.333), 2) + POWER (((t.field_4) - 5.4444), 2)))) - 0.02*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22651), 2) + POWER (((t.field_2) - 0.48274), 2) + POWER (((t.field_3) - 6.333), 2) + POWER (((t.field_4) - 6.4444), 2)))) - 0.07949817180633545)";
 
@@ -234,7 +234,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetRBFKernelQueryWithRhoNegative(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21751), 2) + POWER (((t.field_2) - 0.49433), 2) + POWER (((t.field_3) - 1.333), 2) + POWER (((t.field_4) - 1.4444), 2)))) + (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.23078), 2) + POWER (((t.field_2) - 0.51545), 2) + POWER (((t.field_3) - 2.333), 2) + POWER (((t.field_4) - 2.4444), 2)))) + 0.5*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22071), 2) + POWER (((t.field_2) - 0.51669), 2) + POWER (((t.field_3) - 3.333), 2) + POWER (((t.field_4) - 3.4444), 2)))) - 0.333*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21233), 2) + POWER (((t.field_2) - 0.46617), 2) + POWER (((t.field_3) - 4.333), 2) + POWER (((t.field_4) - 4.4444), 2)))) - (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22696), 2) + POWER (((t.field_2) - 0.49682), 2) + POWER (((t.field_3) - 5.333), 2) + POWER (((t.field_4) - 5.4444), 2)))) - 0.02*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22651), 2) + POWER (((t.field_2) - 0.48274), 2) + POWER (((t.field_3) - 6.333), 2) + POWER (((t.field_4) - 6.4444), 2)))) + 0.07949817180633545)";
 
@@ -251,7 +251,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetRBFKernelQueryWithFirstVectorWithCoefficientMinusOne(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(-(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21751), 2) + POWER (((t.field_2) - 0.49433), 2) + POWER (((t.field_3) - 1.333), 2) + POWER (((t.field_4) - 1.4444), 2)))) + (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.23078), 2) + POWER (((t.field_2) - 0.51545), 2) + POWER (((t.field_3) - 2.333), 2) + POWER (((t.field_4) - 2.4444), 2)))) + 0.5*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22071), 2) + POWER (((t.field_2) - 0.51669), 2) + POWER (((t.field_3) - 3.333), 2) + POWER (((t.field_4) - 3.4444), 2)))) - 0.333*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21233), 2) + POWER (((t.field_2) - 0.46617), 2) + POWER (((t.field_3) - 4.333), 2) + POWER (((t.field_4) - 4.4444), 2)))) - (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22696), 2) + POWER (((t.field_2) - 0.49682), 2) + POWER (((t.field_3) - 5.333), 2) + POWER (((t.field_4) - 5.4444), 2)))) - 0.02*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22651), 2) + POWER (((t.field_2) - 0.48274), 2) + POWER (((t.field_3) - 6.333), 2) + POWER (((t.field_4) - 6.4444), 2)))) - 0.07949817180633545)";
 
@@ -268,7 +268,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetQueryWithLinearKernelPredictor(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + ((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) - 0.333*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) - ((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) - 0.02*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) - 0.07949817180633545)";
         String resultQuery = predictorLinear.getQuery(fieldsList);
@@ -277,7 +277,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetQueryWithPolynomialKernelPredictor(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*(POWER ((0.5*((t.field_1)*0.21751 + (t.field_2)*0.49433 + (t.field_3)*1.333 + (t.field_4)*1.4444) + 0.6), 4)) + (POWER ((0.5*((t.field_1)*0.23078 + (t.field_2)*0.51545 + (t.field_3)*2.333 + (t.field_4)*2.4444) + 0.6), 4)) + 0.5*(POWER ((0.5*((t.field_1)*0.22071 + (t.field_2)*0.51669 + (t.field_3)*3.333 + (t.field_4)*3.4444) + 0.6), 4)) - 0.333*(POWER ((0.5*((t.field_1)*0.21233 + (t.field_2)*0.46617 + (t.field_3)*4.333 + (t.field_4)*4.4444) + 0.6), 4)) - (POWER ((0.5*((t.field_1)*0.22696 + (t.field_2)*0.49682 + (t.field_3)*5.333 + (t.field_4)*5.4444) + 0.6), 4)) - 0.02*(POWER ((0.5*((t.field_1)*0.22651 + (t.field_2)*0.48274 + (t.field_3)*6.333 + (t.field_4)*6.4444) + 0.6), 4)) - 0.07949817180633545)";
         String resultQuery = predictorPolynomial.getQuery(fieldsList);
@@ -286,7 +286,7 @@ public class SVMPredictorTest {
     @Test
     public void testGetQueryWithRBFKernelPredictor(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("(t.field_"+i+")");
+        for (int i=1; i < 5; ++i) { fieldsList.add("(t.field_"+i+")"); }
 
         String expectedQuery = "(0.007*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21751), 2) + POWER (((t.field_2) - 0.49433), 2) + POWER (((t.field_3) - 1.333), 2) + POWER (((t.field_4) - 1.4444), 2)))) + (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.23078), 2) + POWER (((t.field_2) - 0.51545), 2) + POWER (((t.field_3) - 2.333), 2) + POWER (((t.field_4) - 2.4444), 2)))) + 0.5*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22071), 2) + POWER (((t.field_2) - 0.51669), 2) + POWER (((t.field_3) - 3.333), 2) + POWER (((t.field_4) - 3.4444), 2)))) - 0.333*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.21233), 2) + POWER (((t.field_2) - 0.46617), 2) + POWER (((t.field_3) - 4.333), 2) + POWER (((t.field_4) - 4.4444), 2)))) - (POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22696), 2) + POWER (((t.field_2) - 0.49682), 2) + POWER (((t.field_3) - 5.333), 2) + POWER (((t.field_4) - 5.4444), 2)))) - 0.02*(POWER (EXP(1), -0.5*(POWER (((t.field_1) - 0.22651), 2) + POWER (((t.field_2) - 0.48274), 2) + POWER (((t.field_3) - 6.333), 2) + POWER (((t.field_4) - 6.4444), 2)))) - 0.07949817180633545)";
         String resultQuery = predictorRBF.getQuery(fieldsList);
@@ -314,7 +314,7 @@ public class SVMPredictorTest {
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 4; ++i) fieldsList.add("t.field_"+i);
+        for (int i=1; i < 4; ++i) { fieldsList.add("t.field_"+i); }
         String resultQuery = emptyPredictor.getQuery(fieldsList);
 
         assertEquals(expectedOutput, outputResult.toString());
@@ -342,7 +342,7 @@ public class SVMPredictorTest {
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 4; ++i) fieldsList.add("t.field_"+i);
+        for (int i=1; i < 4; ++i) { fieldsList.add("t.field_"+i); }
         String resultQuery = predictorLinear.getQuery(fieldsList);
 
         assertEquals(expectedOutput, outputResult.toString());
@@ -357,7 +357,7 @@ public class SVMPredictorTest {
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 6; ++i) fieldsList.add("t.field_"+i);
+        for (int i=1; i < 6; ++i) { fieldsList.add("t.field_"+i); }
         String resultQuery = predictorLinear.getQuery(fieldsList);
 
         assertEquals(expectedOutput, outputResult.toString());
@@ -386,7 +386,7 @@ public class SVMPredictorTest {
             put("rho","0.07949817180633545");
         }};
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 5; ++i) fieldsList.add("t.field_"+i);
+        for (int i=1; i < 5; ++i) { fieldsList.add("t.field_"+i); }
 
         String expectedOutput = "Description file contain unmanageable kernel type" + nl;
         String expectedQuery = null;

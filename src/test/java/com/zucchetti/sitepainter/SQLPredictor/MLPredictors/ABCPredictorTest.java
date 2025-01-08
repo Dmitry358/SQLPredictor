@@ -44,7 +44,7 @@ public class ABCPredictorTest {
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=1; i < 3; ++i) fieldsList.add("t.field_"+i);
+        for (int i=1; i < 3; ++i) { fieldsList.add("t.field_"+i); }
 
         String resultQuery = this.predictor.getQuery(fieldsList);
 

@@ -23,8 +23,8 @@ public class MLSQLExpander {
 
         ArrayList<String> fieldsList = this.getFieldsList(result[1]);
 
-        if(predictor != null && fieldsList != null) return predictor.getQuery(fieldsList);
-        else return null;
+        if(predictor != null && fieldsList != null) { return predictor.getQuery(fieldsList); }
+        else { return null; }
     }
 
     private ArrayList<String> getFieldsList (String result){
@@ -56,7 +56,7 @@ public class MLSQLExpander {
                 fieldsList.add(component);
                 i+=c;
             }
-            else fieldsList.add("(" + fields[i] + ")");
+            else { fieldsList.add("(" + fields[i] + ")"); }
         }
         return fieldsList;
     }

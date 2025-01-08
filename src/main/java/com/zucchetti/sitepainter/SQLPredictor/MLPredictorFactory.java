@@ -1,11 +1,23 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.FileReader;
 
-import com.google.gson.*;
-import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.*;
+//
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.ABCPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.LRPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.MLPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.SVMPredictor;
 
 
 public class MLPredictorFactory {
@@ -20,7 +32,7 @@ public class MLPredictorFactory {
             if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-                if(jsonObject.has("model_type")) predictorModelType = jsonObject.get("model_type").getAsString();
+                if(jsonObject.has("model_type")) { predictorModelType = jsonObject.get("model_type").getAsString(); }
 
                 //CLASSFORNAME, REFLECTION
                 if (predictorModelType != null) {
@@ -95,10 +107,10 @@ public class MLPredictorFactory {
         }
         */
 
-        for (JsonElement element : parametersJson) parametersList.add(element.getAsDouble());
+        for (JsonElement element : parametersJson) { parametersList.add(element.getAsDouble()); }
 
         double[] parameters = new double[parametersList.size()];
-        for (int i=0; i < parametersList.size(); i++) parameters[i] = parametersList.get(i);
+        for (int i=0; i < parametersList.size(); i++) { parameters[i] = parametersList.get(i); }
 
         return new LRPredictor(predictorName, version, lastTrain, parameters);
     }

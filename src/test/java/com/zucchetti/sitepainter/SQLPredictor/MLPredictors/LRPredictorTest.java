@@ -48,7 +48,7 @@ public class LRPredictorTest {
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=0; i < 2; ++i) fieldsList.add("t.field_"+(i+1));
+        for (int i=0; i < 2; ++i) { fieldsList.add("t.field_"+(i+1)); }
         String resultQuery = predictor.getQuery(fieldsList);
 
         assertEquals(expectedOutput, outputResult.toString());
@@ -63,7 +63,7 @@ public class LRPredictorTest {
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=0; i < 4; ++i) fieldsList.add("t.field_"+(i+1));
+        for (int i=0; i < 4; ++i) { fieldsList.add("t.field_"+(i+1)); }
         String resultQuery = predictor.getQuery(fieldsList);
 
         assertEquals(expectedOutput, outputResult.toString());
@@ -72,13 +72,13 @@ public class LRPredictorTest {
     @Test
     public void testGetQueryWithCorrectInput(){
         ArrayList<String> fieldsList = new ArrayList<String>();
-        for (int i=0; i < 3; ++i) fieldsList.add("t.field_"+(i+1));
+        for (int i=0; i < 3; ++i) { fieldsList.add("t.field_"+(i+1)); }
         double[] parameters = {0.5, 0.8, 0.7, 0.9};
 
         String expectedQuery = "(";
         for (int i=0; i < parameters.length; ++i){
-            if(i < parameters.length-1) expectedQuery += fieldsList.get(i) + "*" + parameters[i] + " + ";
-            else expectedQuery += parameters[i] + ")";
+            if(i < parameters.length-1) { expectedQuery += fieldsList.get(i) + "*" + parameters[i] + " + "; }
+            else { expectedQuery += parameters[i] + ")"; }
         }
 
         assertEquals(expectedQuery, predictor.getQuery(fieldsList));

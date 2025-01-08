@@ -2,7 +2,10 @@ package com.zucchetti.sitepainter.SQLPredictor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.*;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.MLPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.ABCPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.LRPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.SVMPredictor;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
@@ -12,7 +15,10 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MLPredictorFactoryTest {
 
@@ -242,12 +248,12 @@ public class MLPredictorFactoryTest {
         modelData.addProperty("coef0", 0.8);
         modelData.addProperty("rho", 0.0789);
         JsonArray supportVectors = new JsonArray();
-        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) sv1.add(1+i%10+i%100);
-        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) sv2.add(2+i/10+i/100);
-        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) sv3.add(3+i/10+i/100);
-        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) sv4.add(4+i/10+i/100);
-        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) sv5.add(5+i/10+i/100);
-        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) sv6.add(6+i/10+i/100);
+        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) { sv1.add(1+i%10+i%100); }
+        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) { sv2.add(2+i/10+i/100); }
+        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) { sv3.add(3+i/10+i/100); }
+        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) { sv4.add(4+i/10+i/100); }
+        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) { sv5.add(5+i/10+i/100); }
+        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) { sv6.add(6+i/10+i/100); }
         supportVectors.add(sv1); supportVectors.add(sv2); supportVectors.add(sv3); supportVectors.add(sv4); supportVectors.add(sv5); supportVectors.add(sv6);
         modelData.add("support_vectors", supportVectors);
         jsonObject.add("model_data", modelData);
@@ -280,12 +286,12 @@ public class MLPredictorFactoryTest {
         modelData.addProperty("coef0", 0.8);
         modelData.addProperty("rho", 0.0789);
         JsonArray supportVectors = new JsonArray();
-        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) sv1.add(1+i%10+i%100);
-        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) sv2.add(2+i/10+i/100);
-        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) sv3.add(3+i/10+i/100);
-        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) sv4.add(4+i/10+i/100);
-        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) sv5.add(5+i/10+i/100);
-        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) sv6.add(6+i/10+i/100);
+        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) { sv1.add(1+i%10+i%100); }
+        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) { sv2.add(2+i/10+i/100); }
+        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) { sv3.add(3+i/10+i/100); }
+        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) { sv4.add(4+i/10+i/100); }
+        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) { sv5.add(5+i/10+i/100); }
+        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) { sv6.add(6+i/10+i/100); }
         supportVectors.add(sv1); supportVectors.add(sv2); supportVectors.add(sv3); supportVectors.add(sv4); supportVectors.add(sv5); supportVectors.add(sv6);
         modelData.add("support_vectors", supportVectors);
         jsonObject.add("model_data", modelData);
@@ -324,12 +330,12 @@ public class MLPredictorFactoryTest {
         modelData.addProperty("coef0", 0.8);
         modelData.addProperty("rho", 0.0789);
         JsonArray supportVectors = new JsonArray();
-        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) sv1.add(1+i%10+i%100);
-        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) sv2.add(2+i/10+i/100);
-        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) sv3.add(3+i/10+i/100);
-        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) sv4.add(4+i/10+i/100);
-        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) sv5.add(5+i/10+i/100);
-        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) sv6.add(6+i/10+i/100);
+        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) { sv1.add(1+i%10+i%100); }
+        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) { sv2.add(2+i/10+i/100); }
+        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) { sv3.add(3+i/10+i/100); }
+        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) { sv4.add(4+i/10+i/100); }
+        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) { sv5.add(5+i/10+i/100); }
+        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) { sv6.add(6+i/10+i/100); }
         supportVectors.add(sv1); supportVectors.add(sv2); supportVectors.add(sv3); supportVectors.add(sv4); supportVectors.add(sv5); supportVectors.add(sv6);
         modelData.add("support_vectors", supportVectors);
         jsonObject.add("model_data", modelData);
@@ -362,12 +368,12 @@ public class MLPredictorFactoryTest {
         modelData.addProperty("coef0", 0.8);
         modelData.addProperty("rho", 0.0789);
         JsonArray supportVectors = new JsonArray();
-        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) sv1.add(1+i%10+i%100);
-        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) sv2.add(2+i/10+i/100);
-        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) sv3.add(3+i/10+i/100);
-        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) sv4.add(4+i/10+i/100);
-        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) sv5.add(5+i/10+i/100);
-        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) sv6.add(6+i/10+i/100);
+        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) { sv1.add(1+i%10+i%100); }
+        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) { sv2.add(2+i/10+i/100); }
+        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) { sv3.add(3+i/10+i/100); }
+        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) { sv4.add(4+i/10+i/100); }
+        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) { sv5.add(5+i/10+i/100); }
+        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) { sv6.add(6+i/10+i/100); }
         supportVectors.add(sv1); supportVectors.add(sv2); supportVectors.add(sv3); supportVectors.add(sv4); supportVectors.add(sv5); supportVectors.add(sv6);
         modelData.add("support_vectors", supportVectors);
         jsonObject.add("model_data", modelData);
@@ -406,12 +412,12 @@ public class MLPredictorFactoryTest {
         modelData.addProperty("coef0", 0.8);
         modelData.addProperty("rho", 0.0789);
         JsonArray supportVectors = new JsonArray();
-        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) sv1.add(1+i%10+i%100);
-        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) sv2.add(2+i/10+i/100);
-        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) sv3.add(3+i/10+i/100);
-        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) sv4.add(4+i/10+i/100);
-        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) sv5.add(5+i/10+i/100);
-        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) sv6.add(6+i/10+i/100);
+        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) { sv1.add(1+i%10+i%100); }
+        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) { sv2.add(2+i/10+i/100); }
+        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) { sv3.add(3+i/10+i/100); }
+        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) { sv4.add(4+i/10+i/100); }
+        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) { sv5.add(5+i/10+i/100); }
+        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) { sv6.add(6+i/10+i/100); }
         supportVectors.add(sv1); supportVectors.add(sv2); supportVectors.add(sv3); supportVectors.add(sv4); supportVectors.add(sv5); supportVectors.add(sv6);
         modelData.add("support_vectors", supportVectors);
         jsonObject.add("model_data", modelData);
@@ -444,12 +450,12 @@ public class MLPredictorFactoryTest {
         modelData.addProperty("coef0", 0.8);
         modelData.addProperty("rho", 0.0789);
         JsonArray supportVectors = new JsonArray();
-        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) sv1.add(1+i%10+i%100);
-        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) sv2.add(2+i/10+i/100);
-        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) sv3.add(3+i/10+i/100);
-        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) sv4.add(4+i/10+i/100);
-        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) sv5.add(5+i/10+i/100);
-        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) sv6.add(6+i/10+i/100);
+        JsonArray sv1 = new JsonArray(); for(int i=0; i<5;++i ) { sv1.add(1+i%10+i%100); }
+        JsonArray sv2 = new JsonArray(); for(int i=0; i<5;++i ) { sv2.add(2+i/10+i/100); }
+        JsonArray sv3 = new JsonArray(); for(int i=0; i<5;++i ) { sv3.add(3+i/10+i/100); }
+        JsonArray sv4 = new JsonArray(); for(int i=0; i<5;++i ) { sv4.add(4+i/10+i/100); }
+        JsonArray sv5 = new JsonArray(); for(int i=0; i<5;++i ) { sv5.add(5+i/10+i/100); }
+        JsonArray sv6 = new JsonArray(); for(int i=0; i<5;++i ) { sv6.add(6+i/10+i/100); }
         supportVectors.add(sv1); supportVectors.add(sv2); supportVectors.add(sv3); supportVectors.add(sv4); supportVectors.add(sv5); supportVectors.add(sv6);
         modelData.add("support_vectors", supportVectors);
         jsonObject.add("model_data", modelData);

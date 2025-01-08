@@ -52,8 +52,8 @@ public class ModelFileReader {
             buffer = new BufferedReader(new FileReader(modelFilePath));
             while ((line = buffer.readLine()) != null) {
                 String substring = line.substring(line.indexOf(32) + 1);
-                if (line.startsWith("total_sv")) SVNumber = Integer.parseInt(substring);
-                if (line.startsWith("rho")) rho = Double.parseDouble(substring);
+                if (line.startsWith("total_sv")) { SVNumber = Integer.parseInt(substring); }
+                if (line.startsWith("rho")) { rho = Double.parseDouble(substring); }
                 if (line.startsWith("SV")) {
                     for (int sv = 0; sv < SVNumber; ++sv) {
                         line = buffer.readLine();
@@ -63,32 +63,32 @@ public class ModelFileReader {
 
                         if (sv != 0) {
                             if (coef < 0) {
-                                if (coef == -1) query += " - (";
-                                else query += " - " + Math.abs(coef) + "*(";
+                                if (coef == -1) { query += " - ("; }
+                                else { query += " - " + Math.abs(coef) + "*("; }
                             }
                             else {
-                                if (coef == 1) query += " + (";
-                                else query += " + " + coef + "*(";
+                                if (coef == 1) { query += " + ("; }
+                                else { query += " + " + coef + "*("; }
                             }
                         }
                         else {
-                            if (coef == -1) query += "-";
-                            else if (coef != 1) query += coef + "*";
+                            if (coef == -1) { query += "-"; }
+                            else if (coef != 1) { query += coef + "*"; }
                             query += "(";
                         }
 
                         for (int f = 0; f < fieldsList.size(); ++f) {
                             int p = (f * 2) + 1;
                             query += fieldsList.get(f) + "*" + param[p];
-                            if (f < fieldsList.size() - 1) query += " + ";
+                            if (f < fieldsList.size() - 1) { query += " + "; }
                         }
                         query += ")";
                     }
                 }
             }
 
-            if (rho < 0) query += " + " + Math.abs(rho);
-            else query += " - " + rho + ")";
+            if (rho < 0) { query += " + " + Math.abs(rho); }
+            else { query += " - " + rho + ")"; }
             buffer.close();
         }
         catch (Exception exception){
@@ -114,11 +114,11 @@ public class ModelFileReader {
             while ((line = buffer.readLine()) != null) {
 
                 String substring = line.substring(line.indexOf(32) + 1);
-                if (line.startsWith("degree")) degree = Integer.parseInt(substring);
-                if (line.startsWith("gamma")) gamma = Double.parseDouble(substring);
-                if (line.startsWith("coef0")) coef0 = Double.parseDouble(substring);
-                if (line.startsWith("total_sv")) SVNumber = Integer.parseInt(substring);
-                if (line.startsWith("rho")) rho = Double.parseDouble(substring);
+                if (line.startsWith("degree")) { degree = Integer.parseInt(substring); }
+                if (line.startsWith("gamma")) { gamma = Double.parseDouble(substring); }
+                if (line.startsWith("coef0")) { coef0 = Double.parseDouble(substring); }
+                if (line.startsWith("total_sv")) { SVNumber = Integer.parseInt(substring); }
+                if (line.startsWith("rho")) { rho = Double.parseDouble(substring); }
 
                 if (line.startsWith("SV")) {
                     for (int sv = 0; sv < SVNumber; ++sv) {
@@ -129,17 +129,17 @@ public class ModelFileReader {
 
                         if (sv != 0) {
                             if (coef < 0) {
-                                if (coef == -1) query += " - (";
-                                else query += " - " + Math.abs(coef) + "*(";
+                                if (coef == -1) { query += " - ("; }
+                                else { query += " - " + Math.abs(coef) + "*("; }
                             }
                             else {
-                                if (coef == 1) query += " + (";
-                                else query += " + " + coef + "*(";
+                                if (coef == 1) { query += " + ("; }
+                                else { query += " + " + coef + "*("; }
                             }
                         }
                         else {
-                            if (coef == -1) query += "-";
-                            else if (coef != 1) query += coef + "*";
+                            if (coef == -1) { query += "-"; }
+                            else if (coef != 1) { query += coef + "*"; }
                             query += "(";
                         }
 
@@ -147,7 +147,7 @@ public class ModelFileReader {
                         for (int f = 0; f < fieldsList.size(); ++f) {
                             int p = (f * 2) + 1;
                             kFunctionValue += fieldsList.get(f) + "*" + param[p];
-                            if (f < fieldsList.size() - 1) kFunctionValue += " + ";
+                            if (f < fieldsList.size() - 1) { kFunctionValue += " + "; }
                         }
                         kFunctionValue += ") + " + coef0 + ")";
 
@@ -163,8 +163,8 @@ public class ModelFileReader {
                 }
             }
 
-            if (rho < 0) query += " + " + Math.abs(rho);
-            else query += " - " + rho;
+            if (rho < 0) { query += " + " + Math.abs(rho); }
+            else { query += " - " + rho; }
             query += ")";
             buffer.close();
         }
@@ -188,9 +188,9 @@ public class ModelFileReader {
             buffer = new BufferedReader(new FileReader(modelFilePath));
             while ((line = buffer.readLine()) != null) {
                 String substring = line.substring(line.indexOf(32) + 1);
-                if (line.startsWith("gamma")) gamma = Double.parseDouble(substring);
-                if (line.startsWith("total_sv")) SVNumber = Integer.parseInt(substring);
-                if (line.startsWith("rho")) rho = Double.parseDouble(substring);
+                if (line.startsWith("gamma")) { gamma = Double.parseDouble(substring); }
+                if (line.startsWith("total_sv")) { SVNumber = Integer.parseInt(substring); }
+                if (line.startsWith("rho")) { rho = Double.parseDouble(substring); }
                 if (line.startsWith("SV")) {
                     for (int sv = 0; sv < SVNumber; ++sv) {
                         line = buffer.readLine();
@@ -200,17 +200,17 @@ public class ModelFileReader {
 
                         if (sv != 0) {
                             if (coef < 0) {
-                                if (coef == -1) query += " - ";
-                                else query += " - " + Math.abs(coef) + "*";
+                                if (coef == -1) { query += " - "; }
+                                else { query += " - " + Math.abs(coef) + "*"; }
                             }
                             else {
-                                if (coef == 1) query += " + ";
-                                else query += " + " + coef + "*";
+                                if (coef == 1) { query += " + "; }
+                                else { query += " + " + coef + "*"; }
                             }
                         }
                         else {
-                            if (coef == -1) query += "-";
-                            else if (coef != 1) query += coef + "*";
+                            if (coef == -1) { query += "-"; }
+                            else if (coef != 1) { query += coef + "*"; }
                         }
 
                         query += "(POWER (EXP(1), -" + gamma + "*(";
@@ -218,15 +218,15 @@ public class ModelFileReader {
                             int p = (f * 2) + 1;
                             query += "POWER ((" + fieldsList.get(f) + " - " + param[p] + "), 2)";
                             //query += "(" + fieldsList.get(f) + " - " + param[p] + ")*(" + fieldsList.get(f) + " - " + param[p] + ")";
-                            if (f < fieldsList.size() - 1) query += " + ";
+                            if (f < fieldsList.size() - 1) { query += " + "; }
                         }
                         query += ")))";
                     }
                 }
             }
 
-            if (rho < 0) query += " + " + Math.abs(rho);
-            else query += " - " + rho + ")";
+            if (rho < 0) { query += " + " + Math.abs(rho); }
+            else { query += " - " + rho + ")"; }
             buffer.close();
         }
         catch (Exception exception){
