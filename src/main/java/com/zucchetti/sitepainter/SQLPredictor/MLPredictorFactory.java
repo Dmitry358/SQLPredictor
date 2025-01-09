@@ -23,10 +23,10 @@ import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.SVMPredictor;
 public class MLPredictorFactory {
     public MLPredictor getPredictor(String predictorName){
         String predictorModelType = null;
-        String filePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
 
         try {
-            FileReader reader = new FileReader(filePath);
+            FileReader reader = new FileReader(descriptionFilePath);
             JsonElement jsonElement = JsonParser.parseReader(reader);
 
             if (jsonElement.isJsonObject()) {
@@ -71,7 +71,7 @@ public class MLPredictorFactory {
             return null;
         }
     }
-
+    //!!!!!!!!!!!!!!!!!!!! DA AGGIURNARE RISPETTO NUOVA STRUTTURA
     private MLPredictor getLRPredictor(JsonObject jsonObject){
         String predictorName = "";
         int version = 0;
