@@ -21,7 +21,7 @@ public class DataBaseConnecter {
         this.password = password;
     }
 
-    public double[][] getQueryResult(String tableName, String[] fields, String classField){
+    public double[][] getQueryResult(String tableName, String[] fieldsList, String classField){
         /*try {
             Class.forName("org.postgresql.Driver");  // Carica il driver PostgreSQL
         } catch (ClassNotFoundException e) {
@@ -33,7 +33,7 @@ public class DataBaseConnecter {
         //nomi di campi/tabella sbagliati
 
         String query = "SELECT ";
-        for(int i=0; i < fields.length; i++) { query += fields[i] + ", "; }
+        for(int i=0; i < fieldsList.length; i++) { query += fieldsList[i] + ", "; }
         query += classField + " FROM " + tableName;
 
         ArrayList<ArrayList<Double>> result = new ArrayList<>();
@@ -76,7 +76,6 @@ public class DataBaseConnecter {
             for(int j=0; j < result.get(0).size(); ++j){
                 resultQuery[i][j] = result.get(i).get(j);
             }
-
         }
         return resultQuery;
     }
