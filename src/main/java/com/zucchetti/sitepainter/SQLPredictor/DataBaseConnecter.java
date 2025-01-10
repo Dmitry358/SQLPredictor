@@ -1,6 +1,12 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 
-import java.sql.*;
+//import java.sql.*;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +36,6 @@ public class DataBaseConnecter {
         for(int i=0; i < fields.length; i++) { query += fields[i] + ", "; }
         query += classField + " FROM " + tableName;
 
-
         ArrayList<ArrayList<Double>> result = new ArrayList<>();
 
         try {
@@ -43,15 +48,12 @@ public class DataBaseConnecter {
             List<String> fieldsNameList = new ArrayList<>();
             for (int i = 1; i <= queryResultMetaData.getColumnCount(); i++) {
                 fieldsNameList.add(queryResultMetaData.getColumnName(i));
-                //System.out.println(queryResultMetaData.getColumnName(i));
             }
 
             while (queryResult.next()) {
                 ArrayList<Double> row = new ArrayList<>();
                 for(int i=0; i < fieldsNameList.size(); i++) {
                     row.add(queryResult.getDouble(fieldsNameList.get(i)));
-                    System.out.println(queryResult.getDouble(fieldsNameList.get(i)));
-                    //System.out.println("aaaa"+queryResult.getDouble(fieldsNameList.get(i)));
                 }
                 result.add(row);
                 /*

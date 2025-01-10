@@ -1,9 +1,21 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
-import com.google.gson.*;
-import java.time.LocalDate;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
@@ -159,8 +171,8 @@ public class LRTrainer {
                     this.parameters = this.calculateCoefficients();
 
 
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDate dateTime = LocalDate.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime dateTime = LocalDateTime.now();
                     String formattedDateTime = dateTime.format(formatter);
 
                     JsonArray parametersJsonArray = convertToJsonArrayParameters(this.parameters);
@@ -222,10 +234,11 @@ public class LRTrainer {
                 }
             }
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate dateTime = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+            LocalDateTime dateTime = LocalDateTime.now();
             String formattedDateTime = dateTime.format(formatter);
-
+            ++this.version;
+            this.lastTrain = formattedDateTime;
             JsonArray parametersJsonArray = convertToJsonArrayParameters(this.parameters);
             JsonArray xTxJsonArray = convertToJsonArrayMatrices(this.transposeOfXTimesX);
             JsonArray xTyJsonArray = convertToJsonArrayMatrices(this.transposeOfXTimesY);
@@ -233,7 +246,7 @@ public class LRTrainer {
             JsonObject jsonObject = new JsonObject();
             jsonObject.add("predictor_name", new JsonPrimitive(this.predictorName));
             jsonObject.add("model_type", new JsonPrimitive("linear_regression"));
-            jsonObject.add("version", new JsonPrimitive(this.version + 1));
+            jsonObject.add("version", new JsonPrimitive(this.version));
             jsonObject.add("last_train", new JsonPrimitive(formattedDateTime));
             jsonObject.add("parameters", parametersJsonArray);
             jsonObject.add("xTx", xTxJsonArray);
@@ -415,7 +428,7 @@ public class LRTrainer {
 
         int lead = 0; //?? double
         for (int k = 0; k < rows; ++k) {
-            if (columns <= lead) break; //return;
+            if (columns <= lead) { break; } //return;
 
             int i = k;
             while (A[i][lead] == 0) {
@@ -423,7 +436,7 @@ public class LRTrainer {
                 if (rows == i) {
                     i = k;
                     lead++;
-                    if (columns == lead) break; //return;
+                    if (columns == lead) { break; } //return;
                 }
             }
             double[] irow = A[i];
@@ -437,7 +450,7 @@ public class LRTrainer {
             }
 
             for (int r = 0; r < rows; ++r) { //!!!!!!!!
-                if (r == k) continue;
+                if (r == k) { continue; }
                 val = A[r][lead];
                 for (var j = 0; j < columns; ++j) {
                     A[r][j] -= val * A[k][j];
@@ -480,43 +493,10 @@ public class LRTrainer {
 
     private double[][] identityMatrix(int size){
         double[][] matrix = this.rectMatrix(size, size);
-        for(int i = 0; i < size; ++i)
+        for(int i = 0; i < size; ++i) {
             matrix[i][i] = 1;
+        }
         return matrix;
     }
 
-    /*
-    private double hypothesize(double[] options) {
-        /*
-        if(!options)
-            throw new Error('missing options')
-        if(!(options.x instanceof Array))
-            throw new Error('x property must be given as an array')
-/if(!this.coefficients) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //this.calculateCoefficients(); //!!!!!!!!!!!!!!!!!!!!!!!!
-        double[] hypothesis;
-        for(var x = 0; x < this.coefficients.length; x++) {
-            double[] coefficientRow = this.coefficients[x];
-            for(int y = 0; y < coefficientRow.length; y++)
-                hypothesis[y] = (hypothesis[y] || 0) + coefficientRow[y] * options.x[x]
-        }
-        return hypothesis;
-    }
-
-    hypothesize(options) {
-        if(!options)
-            throw new Error('missing options')
-        if(!(options.x instanceof Array))
-            throw new Error('x property must be given as an array')
-        if(!this.coefficients)
-            this.calculateCoefficients()
-        var hypothesis = []
-        for(var x = 0; x < this.coefficients.length; x++) {
-            var coefficientRow = this.coefficients[x]
-            for(var y = 0; y < coefficientRow.length; y++)
-                hypothesis[y] = (hypothesis[y] || 0) + coefficientRow[y] * options.x[x]
-        }
-        return hypothesis
-    }
-    */
 }

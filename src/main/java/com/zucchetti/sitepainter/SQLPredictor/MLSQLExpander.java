@@ -39,21 +39,21 @@ public class MLSQLExpander {
                 return null;
             }
             if (fields[i].contains("(")){
-                String component = "(" + fields[i];
-                Boolean end = false;
+                StringBuilder component = new StringBuilder("(" + fields[i]);
+                boolean end = false;
                 int c=0;
 
                 for(int j=0; j < fields.length - i && !end; j++) {
                     if(fields[i+j].contains("(")){
-                        component += ", " + fields[i+j+1];
+                        component.append(", ").append(fields[i + j + 1]);
                         c++;
                     }
                     else{
-                        component += ")";
+                        component.append(")");
                         end = true;
                     }
                 }
-                fieldsList.add(component);
+                fieldsList.add(component.toString());
                 i+=c;
             }
             else { fieldsList.add("(" + fields[i] + ")"); }

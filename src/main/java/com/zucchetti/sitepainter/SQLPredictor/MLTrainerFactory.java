@@ -1,15 +1,14 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 
-import com.google.gson.*;
-import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.MLPredictor;
+//import com.google.gson.;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+
 
 public class MLTrainerFactory {
+    /*
     public LRTrainer getPredictor(String predictorName){
         String trainerModelType = null;
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
@@ -56,6 +55,7 @@ public class MLTrainerFactory {
             return null;
         }
     }
+    */
     /*
     public getLRTrainer(String predictorName, int numX, int numY){
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";

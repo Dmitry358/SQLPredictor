@@ -1,9 +1,0 @@
-{
-  "predictor_name": "lr_auto",
-  "model_type": "linear_regression",
-  "version": 5,
-  "last_train": "2023-10-1",
-  "parameters" : [1.46, 2.23, 3.0],
-  "xTx" : [[4,5],[8,9]],
-  "xTy" : [[45], [75], [88]]
-}
