@@ -21,13 +21,7 @@ public class DataBaseConnecter {
         this.password = password;
     }
 
-    public double[][] getQueryResult(String tableName, String[] fieldsList, String classField){
-        /*try {
-            Class.forName("org.postgresql.Driver");  // Carica il driver PostgreSQL
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        */
+    public double[][] getTrainingData(String tableName, String[] fieldsList, String classField){
         //!!!! TEST SE CONNESSIONE A DB è ANDATA A BUON FINE
         // !!! TEST CHE QUERY è ANDATA A BUON FINE
         //nomi di campi/tabella sbagliati
@@ -42,7 +36,6 @@ public class DataBaseConnecter {
             Connection connection = DriverManager.getConnection(this.dataBaseURL, this.username, this.password);
             Statement statement = connection.createStatement();
             ResultSet queryResult = statement.executeQuery(query);
-
             ResultSetMetaData queryResultMetaData = queryResult.getMetaData();
 
             List<String> fieldsNameList = new ArrayList<>();
@@ -79,4 +72,15 @@ public class DataBaseConnecter {
         }
         return resultQuery;
     }
+
+    public String getDataBaseURL(){
+        return this.dataBaseURL;
+    }
+    public String getUsername(){
+        return this.username;
+    }
+    public String getPassword(){
+        return this.password;
+    }
+
 }

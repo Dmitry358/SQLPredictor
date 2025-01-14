@@ -213,7 +213,7 @@ public class MLPredictorFactory {
         }
         if (linKer < 7 || polKer < 10 || rbfKer < 8) {
             System.out.println("Description file does not contain all information needed to create object");
-            return null;
+            //return null;
         }
         return new SVMPredictor(predictorName, version, lastTrain, modelParameters, supportVectors);
     }

@@ -1,9 +1,21 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
-import java.io.IOException;
-import java.io.File;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import com.google.gson.*;
 import libsvm.*;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SVMTrainer {
     private String predictorName = "";
@@ -19,6 +31,7 @@ public class SVMTrainer {
     //final private ArrayList<ArrayList<Double>> supportVectors;
 
     public SVMTrainer(String predictorName, int version, String lastTrain, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
+        // !!!!!!!!!!!!! CONTROLLO SE PREDICTOR E MODEL NON ESISTONO GIA
         this.predictorName = predictorName;
         this.version = version;
         this.lastTrain = lastTrain;
@@ -27,7 +40,7 @@ public class SVMTrainer {
         this.degree = polDegree;
         this.gamma = gamma;
         this.coef0 = coef0;
-        this.rho = rho;
+        this.rho = rho; // !!!!!!!!!! FORSE NON SERVE
         this.paramC = paramC;
     }
 
@@ -51,7 +64,6 @@ public class SVMTrainer {
             }
         }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         svm_parameter param = new svm_parameter();
 
         switch (this.SVMType){
@@ -68,7 +80,6 @@ public class SVMTrainer {
             default:
                 System.out.println("Valore tipo SVM non valido"); break;
         }
-
         switch (this.kernelType){
             case "linear":
                 param.kernel_type = svm_parameter.LINEAR; break;
@@ -97,7 +108,6 @@ public class SVMTrainer {
         String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + predictorName + ".model";
         try {
             File file = new File(modelFilePath);
-
             if (!file.exists()) {
                 try {
                     if (file.createNewFile()) {
@@ -117,8 +127,113 @@ public class SVMTrainer {
         catch (IOException e) {
             e.printStackTrace();
         }
-
+        this.createDescriptionFile();
     }
 
+    private void createDescriptionFile() {
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + predictorName + ".model";
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
+        File descriptionFile = new File(descriptionFilePath);
 
+        if (!descriptionFile.exists()) {
+            try {
+                if (!descriptionFile.createNewFile()) {
+                    System.out.println("Failed to create description file");
+                    return; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO
+            }
+        }
+
+        JsonObject completeObject = new JsonObject();
+        completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
+        completeObject.add("model_type", new JsonPrimitive("svm"));
+        completeObject.add("version", new JsonPrimitive(this.version));
+        completeObject.add("last_train", new JsonPrimitive(this.lastTrain));
+
+        JsonObject modelData = new JsonObject();
+        try (BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFilePath))) {
+            String lineFromModelFile;
+            while ((lineFromModelFile = modelFileReader.readLine()) != null) {
+                String[] splittedLine = lineFromModelFile.split(" ");
+                if (splittedLine[0].equals("svm_type")) {
+                    modelData.add("svm_type", new JsonPrimitive(splittedLine[1]));
+                }
+                else if (splittedLine[0].equals("kernel_type")) {
+                    modelData.add("kernel_type", new JsonPrimitive(splittedLine[1]));
+                }
+                else if (splittedLine[0].equals("degree")) {
+                    modelData.add("degree", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("gamma")) {
+                    modelData.add("gamma", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("coef0")) {
+                    modelData.add("coef0", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("nr_class")) {
+                    modelData.add("nr_class", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("total_sv")) {
+                    modelData.add("total_sv", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
+                } else if (splittedLine[0].equals("rho")) { //!!!!!!!!!!!!!!!! PUO ESSERE FORMARO E-9
+                    modelData.add("rho", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
+                    //modelData.add("rho", new JsonPrimitive(splittedLine[1]));
+                }
+                else if (splittedLine[0].equals("label")) {
+                    JsonArray jsonArray = new JsonArray();
+                    for (int i = 1; i < splittedLine.length; ++i) {
+                        jsonArray.add(Double.parseDouble(splittedLine[i]));
+                    }
+                    modelData.add("label", jsonArray);
+                }
+                else if (splittedLine[0].equals("nr_sv")) {
+                    JsonArray jsonArray = new JsonArray();
+                    for (int i = 1; i < splittedLine.length; ++i) {
+                        jsonArray.add(Integer.parseInt(splittedLine[i]));
+                    }
+                    modelData.add("nr_sv", jsonArray);
+                    // !!!!!!!!!!!!!!!! DA PORTARE FUORI
+                    modelData.add("paramC", new JsonPrimitive(this.paramC));
+                }
+                else if (splittedLine[0].equals("SV")) {
+                    JsonArray allVectors = new JsonArray();
+                    String vectorsLine;
+                    while ((vectorsLine = modelFileReader.readLine()) != null) {
+                        JsonArray jsonVector = new JsonArray();
+                        String[] splittedVectorsLine = vectorsLine.split(" ");
+                        jsonVector.add(Double.parseDouble(splittedVectorsLine[0]));
+                        for (int i = 1; i < splittedVectorsLine.length; ++i) {
+                            jsonVector.add(Double.parseDouble(splittedVectorsLine[i].split(":")[1]));
+                        }
+                        allVectors.add(jsonVector);
+                    }
+                    modelData.add("support_vectors",allVectors);
+                }
+            }
+            completeObject.add("model_data", modelData);
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
+        }
+        try (FileWriter writer = new FileWriter(descriptionFilePath)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            // Scrivi l'array JSON nel file di output
+            gson.toJson(completeObject, writer);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
+        }
+    }
 }
+
+
+

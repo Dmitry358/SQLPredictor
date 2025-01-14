@@ -28,37 +28,6 @@ public class LRTrainer {
     private double[][] identity; //!!!!!final
     private double[] parameters; //???double[][]
 
-    private JsonObject getDescriptionFileData(String predictorName){
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
-        File descriptionFile = new File(descriptionFilePath);
-
-        JsonObject jsonObject = null;
-
-        try {
-                FileReader reader = new FileReader(descriptionFilePath);
-                JsonElement jsonElement = JsonParser.parseReader(reader);
-
-                if (jsonElement.isJsonObject()) {
-                    return jsonElement.getAsJsonObject();
-                }
-                else{
-                    System.out.println("Description file has incorrect structure, reading failed");
-                    return null;
-                }
-            }
-            catch (FileNotFoundException e) {
-                    System.out.println("Description file of predictor \"" + predictorName + "\" is not found");
-                    return null;
-            }
-            catch (JsonIOException e) {
-                    System.out.println("Error of processing description file");
-                    return null;
-            }
-            catch (JsonSyntaxException e) {
-                    System.out.println("Syntax of description file is incorrect");
-                    return null;
-            } //???? SERVE ????
-    }
 
     public LRTrainer(String predictorName, int numX, int numY){
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
@@ -170,7 +139,6 @@ public class LRTrainer {
                     this.identity = this.identityMatrix(numX);
                     this.parameters = this.calculateCoefficients();
 
-
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                     LocalDateTime dateTime = LocalDateTime.now();
                     String formattedDateTime = dateTime.format(formatter);
@@ -198,7 +166,7 @@ public class LRTrainer {
                     }
                 }
                 else {
-                    System.out.println("The file already exists"); return;
+                    System.out.println("The file already exists"); return; // MESSAGGIO CORRETTO???
                 }
             }
             catch (IOException e) {
@@ -208,6 +176,7 @@ public class LRTrainer {
     }
 
     public void train(double[][] samples){
+        // !!! CONTROLLO SE DATI COMPATIBILI CON MODELLO
         //!!!!AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
         if(samples.length > 0){
             if(samples[0].length != transposeOfXTimesX.length){
@@ -222,6 +191,9 @@ public class LRTrainer {
                 }
             }
         }
+        else {
+            System.out.println("Data size is incompatible with model");
+        }
 
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
         File descriptionFile = new File(descriptionFilePath);
@@ -229,7 +201,7 @@ public class LRTrainer {
         try{
             if (!descriptionFile.exists()){
                 if (!descriptionFile.createNewFile()) {
-                    System.out.println("description file does not exist and could not be created");
+                    System.out.println("Description file does not exist and could not be created");
                     //!!!!!!!!!!!!! INTERRUPT
                 }
             }
@@ -265,6 +237,38 @@ public class LRTrainer {
             // Per errore creazione description file
             e.getMessage();
         }
+    }
+
+    private JsonObject getDescriptionFileData(String predictorName){
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
+        File descriptionFile = new File(descriptionFilePath);
+
+        JsonObject jsonObject = null;
+
+        try {
+            FileReader reader = new FileReader(descriptionFilePath);
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+
+            if (jsonElement.isJsonObject()) {
+                return jsonElement.getAsJsonObject();
+            }
+            else{
+                System.out.println("Description file has incorrect structure, reading failed");
+                return null;
+            }
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Description file of predictor \"" + predictorName + "\" is not found");
+            return null;
+        }
+        catch (JsonIOException e) {
+            System.out.println("Error of processing description file");
+            return null;
+        }
+        catch (JsonSyntaxException e) {
+            System.out.println("Syntax of description file is incorrect");
+            return null;
+        } //???? SERVE ????
     }
 
     private JsonArray convertToJsonArrayMatrices(double[][] array) {

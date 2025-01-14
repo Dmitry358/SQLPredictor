@@ -16,11 +16,18 @@ public class SVMPredictor extends MLPredictor {
         super(predictorName, version, lastTrain);
         this.SVMType = modelParameters.get("svm_type");
         this.kernelType = modelParameters.get("kernel_type");
-        this.degree = Integer.parseInt(modelParameters.get("degree"));
-        this.gamma = Double.parseDouble(modelParameters.get("gamma"));
-        this.coef0 = Double.parseDouble(modelParameters.get("coef0"));
         this.rho = Double.parseDouble(modelParameters.get("rho"));
         this.supportVectors = supportVectors;
+
+        if (modelParameters.get("kernel_type").equals("rbf")){
+            this.gamma = Double.parseDouble(modelParameters.get("gamma"));
+        }
+        if (modelParameters.get("kernel_type").equals("polynomial")){
+            this.coef0 = Double.parseDouble(modelParameters.get("coef0"));
+            this.degree = Integer.parseInt(modelParameters.get("degree"));
+
+        }
+
     }
 
     public String getQuery(ArrayList<String> fieldsList){
