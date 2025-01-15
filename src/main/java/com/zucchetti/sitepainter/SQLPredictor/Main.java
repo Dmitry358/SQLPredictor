@@ -5,6 +5,7 @@ import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.QueryPredictor.Q
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.ABCTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;
 //import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.SVMTrainer;
+import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.MLTrainer;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
@@ -18,6 +19,24 @@ public class Main {
         String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
         String username = "postgres";
         String password = "";
+        //*/// ---------- BUILDER ABC ------------------------------------
+
+        /*
+        String predictorModelType = "abc";
+        String dataTableName = "abc_data-table";
+        String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
+        String classificationField = "abc-class-field";
+        */
+        String predictorName = "svm_polynomial";
+        String predictorModelType = null;
+        String dataTableName = null;
+        String[] dataTableFieldNamesList = null;
+        String classificationField = null;
+
+        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
+        MLTrainer mlTrainerTest = trainerBuilder.build(predictorName, predictorModelType, dataTableName, dataTableFieldNamesList, classificationField);
+        int a = 6;
+        //*/// ---------- BUILDER ABC END --------------------------------
         /*
         String request = null;
         //request = "<  !!!!!   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
@@ -30,11 +49,11 @@ public class Main {
         //request = "<       svm_polynomial   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
         //request = "<       svm_rbf   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
         //request = "<       svm_polynomial   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        request = "<       svm_rbf   >(       )";
+        request = "<       svm_linear   >(     A,B,C,h  )";
         MLSQLExpander expander = new MLSQLExpander();
         String query = expander.translate(request);
         if (query != null) { System.out.println(query); }
-        */
+        //*/
         /*
         DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
 
@@ -68,8 +87,7 @@ public class Main {
         lrt.train(ts2);
         lrt.train(ts3);
         String request = "<       " + tableName + "   >( aaa, vvv, uuu      )";
-        //*///--------- LR-TRAINER END -----------------
-
+        //*///--------- LR-TRAINER END ------------------
         /*///--------- SVM-TRAINER END -----------------
         String tableName = "pazienti";
         String[] fieldNames = {"xxx", "yyy"};
@@ -120,8 +138,7 @@ public class Main {
             System.out.println("Q = " + queryPredictionResult[0][0]);
         }
         //*///--------- SVM-TRAINER END -----------------
-
-        //*///--------- ABC-TRAINER  -----------------
+        /*///--------- ABC-TRAINER  -----------------
         DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
         String predictorName = "abc_predictor";
         String dataTableName = "pazienti";
@@ -130,7 +147,6 @@ public class Main {
         ABCTrainer abc = new ABCTrainer(predictorName);
         abc.train(dataTableName, idField, classificationField, dbc);
         //*///--------- ABC-TRAINER END -----------------
-
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,5 +207,4 @@ public class Main {
         }
         return extractedValues;
     }
-
 }

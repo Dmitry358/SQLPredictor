@@ -44,7 +44,7 @@ public class LRPredictorTest {
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
-        String expectedOutput = "Request must contain 3 fields" + nl;
+        String expectedOutput = "Request must contain 3 field names" + nl;
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
@@ -59,7 +59,7 @@ public class LRPredictorTest {
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
-        String expectedOutput = "Request must contain 3 fields" + nl;
+        String expectedOutput = "Request must contain 3 field names" + nl;
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();

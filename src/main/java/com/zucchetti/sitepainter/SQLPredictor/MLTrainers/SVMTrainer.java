@@ -17,24 +17,23 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class SVMTrainer {
-    private String predictorName = "";
-    private int version = 0;
-    private String lastTrain = "";
-    private String SVMType = ""; //?????????????????
+public class SVMTrainer extends MLTrainer{
+    // --- TUTTI CAMPI FINAL ???
+
+    private String SVMType = ""; // ?????????????????
     private String kernelType = "";
     private int degree = 0;
     private double gamma = 0;
     private double coef0 = 0;
     private double rho = 0;
     private double paramC =0;
+
     //final private ArrayList<ArrayList<Double>> supportVectors;
 
-    public SVMTrainer(String predictorName, int version, String lastTrain, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
+    public SVMTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
         // !!!!!!!!!!!!! CONTROLLO SE PREDICTOR E MODEL NON ESISTONO GIA
-        this.predictorName = predictorName;
-        this.version = version;
-        this.lastTrain = lastTrain;
+        super(predictorName, "svm", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList);
+
         this.SVMType = svmType;
         this.kernelType = kernelType;
         this.degree = polDegree;
@@ -105,7 +104,7 @@ public class SVMTrainer {
 
         svm_model model = svm.svm_train(problem, param);
 
-        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + predictorName + ".model";
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.getPredictorName() + ".model";
         try {
             File file = new File(modelFilePath);
             if (!file.exists()) {
@@ -131,8 +130,10 @@ public class SVMTrainer {
     }
 
     private void createDescriptionFile() {
-        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + predictorName + ".model";
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
+
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.getPredictorName() + ".model";
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.getPredictorName() + ".json";
+
         File descriptionFile = new File(descriptionFilePath);
 
         if (!descriptionFile.exists()) {
@@ -148,10 +149,10 @@ public class SVMTrainer {
         }
 
         JsonObject completeObject = new JsonObject();
-        completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
+        completeObject.add("predictor_name", new JsonPrimitive(this.getPredictorName()));
         completeObject.add("model_type", new JsonPrimitive("svm"));
-        completeObject.add("version", new JsonPrimitive(this.version));
-        completeObject.add("last_train", new JsonPrimitive(this.lastTrain));
+        completeObject.add("version", new JsonPrimitive(this.getVersion()));
+        completeObject.add("last_train", new JsonPrimitive(this.getPredictorName()));
 
         JsonObject modelData = new JsonObject();
         try (BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFilePath))) {
@@ -178,7 +179,8 @@ public class SVMTrainer {
                 }
                 else if (splittedLine[0].equals("total_sv")) {
                     modelData.add("total_sv", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
-                } else if (splittedLine[0].equals("rho")) { //!!!!!!!!!!!!!!!! PUO ESSERE FORMARO E-9
+                }
+                else if (splittedLine[0].equals("rho")) { //!!!!!!!!!!!!!!!! PUO ESSERE FORMARO E-9
                     modelData.add("rho", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
                     //modelData.add("rho", new JsonPrimitive(splittedLine[1]));
                 }

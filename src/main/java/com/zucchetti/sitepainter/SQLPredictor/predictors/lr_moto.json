@@ -3,5 +3,7 @@
   "model_type": "linear_regression",
   "version": 2,
   "last_train": "2024-5-7",
-  "parameters" : [5.07, 3.45, 0.95, 1.06, 6.85]
+  "parameters" : [5.07, 3.45, 0.95, 1.06, 6.85],
+  "xTx": [[2,5],[6,3]],
+  "xTy": [[7,9]]
 }

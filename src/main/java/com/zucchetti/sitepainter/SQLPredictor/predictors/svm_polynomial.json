@@ -12,6 +12,7 @@
     "nr_class": 2,
     "total_sv": 6,
     "rho": 0.07949817180633545,
+    "paramC": 0.8,
     "label": [3, 1],
     "nr_sv": [3, 3],
     "support_vectors": [

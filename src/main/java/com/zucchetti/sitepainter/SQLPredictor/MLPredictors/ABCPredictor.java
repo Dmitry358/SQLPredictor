@@ -5,11 +5,11 @@ import java.util.Random;
 
 
 public class ABCPredictor extends MLPredictor {
-    private final String tableName;
+    private final String predictionTableName;
 
-    public ABCPredictor(String predictorName, int version, String lastTrain, String tableName){
+    public ABCPredictor(String predictorName, int version, String lastTrain, String predictionTableName){
         super(predictorName, version, lastTrain);
-        this.tableName = tableName;
+        this.predictionTableName = predictionTableName;
     }
 
     public String getQuery(ArrayList<String> fieldsList){
@@ -28,6 +28,6 @@ public class ABCPredictor extends MLPredictor {
             casualName.append(CHARACTERS.charAt(index));
         }
 
-        return "(SELECT classe FROM " + tableName + " AS  " + casualName + " WHERE " + casualName + ".codice_cliente = " + fieldsList.get(0) + ")";
+        return "(SELECT class FROM " + predictionTableName + " AS  " + casualName + " WHERE " + casualName + ".codice_cliente = " + fieldsList.get(0) + ")";
     }
 }

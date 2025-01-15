@@ -25,9 +25,7 @@ public class SVMPredictor extends MLPredictor {
         if (modelParameters.get("kernel_type").equals("polynomial")){
             this.coef0 = Double.parseDouble(modelParameters.get("coef0"));
             this.degree = Integer.parseInt(modelParameters.get("degree"));
-
         }
-
     }
 
     public String getQuery(ArrayList<String> fieldsList){
@@ -41,7 +39,7 @@ public class SVMPredictor extends MLPredictor {
             return null;
         }
         if(fieldsNum != (supportVectors.get(0).size() - 1)){
-            System.out.println("Request must contain " + (supportVectors.get(0).size() - 1) + " fields");
+            System.out.println("Request must contain " + (supportVectors.get(0).size() - 1) + " field names");
             return null;
         }
 
@@ -131,12 +129,6 @@ public class SVMPredictor extends MLPredictor {
             kFunctionValue.append(") + ").append(coef0).append(")");
 
             query.append("POWER (").append(kFunctionValue).append(", ").append(degree).append(")");
-            /*
-            for (int d=0; d < degree; ++d){
-                query += kFunctionValue;
-                if(d < degree - 1) query += "*";
-            }
-            */
             query.append(")");
         }
 

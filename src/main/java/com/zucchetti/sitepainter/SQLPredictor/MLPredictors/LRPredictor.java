@@ -19,7 +19,7 @@ public class LRPredictor extends MLPredictor {
             return null;
         }
         if(fieldsNum != (parameters.length - 1)){
-            System.out.println("Request must contain " + (parameters.length - 1) + " fields");
+            System.out.println("Request must contain " + (parameters.length - 1) + " field names");
             return null;
         }
 

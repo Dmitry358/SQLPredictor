@@ -338,7 +338,7 @@ public class SVMPredictorTest {
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
-        String expectedOutput = "Request must contain 4 fields" + nl;
+        String expectedOutput = "Request must contain 4 field names" + nl;
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
@@ -353,7 +353,7 @@ public class SVMPredictorTest {
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
-        String expectedOutput = "Request must contain 4 fields" + nl;
+        String expectedOutput = "Request must contain 4 field names" + nl;
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();

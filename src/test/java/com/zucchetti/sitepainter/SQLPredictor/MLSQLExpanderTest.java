@@ -200,7 +200,7 @@ public class MLSQLExpanderTest {
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
-        String expectedOutput = "Request must contain 4 fields"+nl;
+        String expectedOutput = "Request must contain 4 field names"+nl;
 
         String request = "<   lr_moto     >(  t.aaaa, t.bbbb, t.cccc    )";
 
@@ -214,7 +214,7 @@ public class MLSQLExpanderTest {
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
-        String expectedOutput = "Request must contain 4 fields"+nl;
+        String expectedOutput = "Request must contain 4 field names"+nl;
 
         String request = "<   lr_moto     >( t.aaaa, t.bbbb, t.cccc, t.dddd, t.eeee       )";
 
@@ -228,7 +228,7 @@ public class MLSQLExpanderTest {
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
-        String expectedOutput = "Request must contain 4 fields"+nl;
+        String expectedOutput = "Request must contain 4 field names"+nl;
 
         String request = "<   lr_moto     >(  t.aaaa, t.bbbb, t.cccc    )";
 
@@ -242,7 +242,7 @@ public class MLSQLExpanderTest {
         String nl = System.lineSeparator();
         System.setOut(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
-        String expectedOutput = "Request must contain 4 fields"+nl;
+        String expectedOutput = "Request must contain 4 field names"+nl;
 
         String request = "<   lr_moto     >( t.aaaa, t.bbbb, t.cccc, t.dddd, t.eeee       )";
 

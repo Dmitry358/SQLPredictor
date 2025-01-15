@@ -18,18 +18,23 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
-public class LRTrainer {
-    private String predictorName; //!!!!!final
-    private int version;
-    private String lastTrain;
+public class LRTrainer extends MLTrainer{
+    // --- TUTTI CAMPI FINAL??
     private double[][] transposeOfXTimesX;
     private double[][] transposeOfXTimesY;
-    private double[][] identity; //!!!!!final
-    private double[] parameters; //???double[][]
+    final private double[][] identity;
+    private double[] parametersLR; //???double[][]
 
 
-    public LRTrainer(String predictorName, int numX, int numY){
+    public LRTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, double[][] xTx, double[][] xTy, double[] parametersLR, String trainingDataTableName, String[] trainingFieldNamesList) {
+    //public LRTrainer(String predictorName, String trainingModelType, int version, String lastTrain, int numX, int numY) {
+        super(predictorName, "linear_regression", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList);
+        this.transposeOfXTimesX = xTx;
+        this.transposeOfXTimesY = xTy;
+        this.identity = identityMatrix(xTx.length);
+        this.parametersLR = parametersLR;
+
+        /*
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
         File descriptionFile = new File(descriptionFilePath);
 
@@ -59,7 +64,7 @@ public class LRTrainer {
                             for (int i = 0; i < parametersJson.size(); i++) {
                                 parametersFromJson[i] = parametersJson.get(i).getAsDouble();
                             }
-                            this.parameters = parametersFromJson; ++f;
+                            this.parametersLR = parametersFromJson; ++f;
                         }
                         else if(key.equals("xTx")) {
                             JsonArray xTxJson = jsonObject.get(key).getAsJsonArray();
@@ -107,7 +112,7 @@ public class LRTrainer {
                             else {
                                 System.out.println("The xTx parameter of description file does not contain any elements");
                             }
-                            */
+                            //////////////////////
                         }
                     }
                     if (f < 6){
@@ -170,12 +175,14 @@ public class LRTrainer {
                 }
             }
             catch (IOException e) {
-                System.out.println("An error occurred while creating the file: " + e.getMessage()); /*!!!!!!!!!!*/return;
+                System.out.println("An error occurred while creating the file: " + e.getMessage()); //!!!!!!!!!! return;
             }
         }
+        */
     }
 
-    public void train(double[][] samples){
+    // !!!!!!!!!!!!!!!!!!!!! passare nome tabella e lista di campi
+    public void train(double[][] samples) {
         // !!! CONTROLLO SE DATI COMPATIBILI CON MODELLO
         //!!!!AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
         if(samples.length > 0){
@@ -195,7 +202,7 @@ public class LRTrainer {
             System.out.println("Data size is incompatible with model");
         }
 
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.getPredictorName() + ".json";
         File descriptionFile = new File(descriptionFilePath);
 
         try{
@@ -208,18 +215,18 @@ public class LRTrainer {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
             LocalDateTime dateTime = LocalDateTime.now();
-            String formattedDateTime = dateTime.format(formatter);
-            ++this.version;
-            this.lastTrain = formattedDateTime;
-            JsonArray parametersJsonArray = convertToJsonArrayParameters(this.parameters);
+            String trainingDateTime = dateTime.format(formatter);
+            this.incrementVersion();
+            this.setLastTrain(trainingDateTime);
+            JsonArray parametersJsonArray = convertToJsonArrayParameters(this.parametersLR);
             JsonArray xTxJsonArray = convertToJsonArrayMatrices(this.transposeOfXTimesX);
             JsonArray xTyJsonArray = convertToJsonArrayMatrices(this.transposeOfXTimesY);
 
             JsonObject jsonObject = new JsonObject();
-            jsonObject.add("predictor_name", new JsonPrimitive(this.predictorName));
+            jsonObject.add("predictor_name", new JsonPrimitive(this.getPredictorName()));
             jsonObject.add("model_type", new JsonPrimitive("linear_regression"));
-            jsonObject.add("version", new JsonPrimitive(this.version));
-            jsonObject.add("last_train", new JsonPrimitive(formattedDateTime));
+            jsonObject.add("version", new JsonPrimitive(this.getVersion()));
+            jsonObject.add("last_train", new JsonPrimitive(trainingDateTime));
             jsonObject.add("parameters", parametersJsonArray);
             jsonObject.add("xTx", xTxJsonArray);
             jsonObject.add("xTy", xTyJsonArray);
@@ -469,7 +476,7 @@ public class LRTrainer {
     private void addObservation(double[] x, double[] y){
         this.addRowAndColumn(this.transposeOfXTimesX, x, x);
         this.addRowAndColumn(this.transposeOfXTimesY, x, y);
-        this.parameters = this.calculateCoefficients(); // !!!!!!!!!!!!!!!!!!!!!!!!!!
+        this.parametersLR = this.calculateCoefficients(); // !!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
     private void addRowAndColumn(double[][] product, double[] lhsColumn, double[] rhsRow){
@@ -502,5 +509,4 @@ public class LRTrainer {
         }
         return matrix;
     }
-
 }

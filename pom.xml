@@ -43,6 +43,13 @@
             <artifactId>libsvm</artifactId>
             <version>3.35</version>
         </dependency-->
+        <!--dependency>
+            <groupId>com.example</groupId>
+            <artifactId>mylibrary</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/mylibrary.jar</systemPath>
+        </dependency-->
     </dependencies>
 
     <build>
