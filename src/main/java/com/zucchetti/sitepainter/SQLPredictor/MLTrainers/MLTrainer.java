@@ -1,10 +1,9 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
 public abstract class MLTrainer {
-    // --- TUTTI CAMPI FINAL ???
     final private String predictorName;
     final private String trainingModelType;
-    private int version = 0;
+    private int version;
     private String lastTrain = null;
     final private int trainingExpiration;
     final private String trainingDataTableName;
@@ -19,20 +18,30 @@ public abstract class MLTrainer {
         this.trainingDataTableName = trainingDataTableName;
         this.trainingFieldNamesList = trainingFieldNamesList;
     }
+    public abstract void train(double[][] samples, double[] classType);
 
-    public String getPredictorName(){
+    protected String getPredictorName(){
         return this.predictorName;
     }
-    public int getVersion(){
+    protected int getVersion(){
         return this.version;
     }
-    public String getLastTrain(){
+    protected String getLastTrain(){
         return this.lastTrain;
     }
-    public void incrementVersion(){
+    protected void incrementVersion(){
         ++this.version;
     }
-    public void setLastTrain(String trainingDateTime){
+    protected int getTrainingExpiration(){
+        return this.trainingExpiration;
+    }
+    protected String getTrainingDataTableName(){
+        return this.trainingDataTableName;
+    }
+    protected String[] getTrainingFieldNamesList(){
+        return this.trainingFieldNamesList;
+    }
+    protected void setLastTrain(String trainingDateTime){
         this.lastTrain = trainingDateTime;
     } //???????????????????????????????????????
 }

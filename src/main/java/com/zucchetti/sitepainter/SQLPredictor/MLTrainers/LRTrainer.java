@@ -18,12 +18,11 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LRTrainer extends MLTrainer{
-    // --- TUTTI CAMPI FINAL??
+public class LRTrainer extends MLTrainer {
     private double[][] transposeOfXTimesX;
     private double[][] transposeOfXTimesY;
     final private double[][] identity;
-    private double[] parametersLR; //???double[][]
+    private double[] parametersLR;
 
 
     public LRTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, double[][] xTx, double[][] xTy, double[] parametersLR, String trainingDataTableName, String[] trainingFieldNamesList) {
@@ -182,24 +181,24 @@ public class LRTrainer extends MLTrainer{
     }
 
     // !!!!!!!!!!!!!!!!!!!!! passare nome tabella e lista di campi
-    public void train(double[][] samples) {
+    public void train(double[][] samples, double[] classType) {
         // !!! CONTROLLO SE DATI COMPATIBILI CON MODELLO
         //!!!!AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
         if(samples.length > 0){
-            if(samples[0].length != transposeOfXTimesX.length){
-                System.out.println("Data size is incompatible with model");
+            if(samples[0].length != this.transposeOfXTimesX.length){
+                System.err.println("Data size is incompatible with model");
             }
             else {
                 int sampleDataLength = samples[0].length - 1;
                 for (int i = 0; i < samples.length; ++i) {
                     double[] sampleData = new double[sampleDataLength];
                     System.arraycopy(samples[i], 0, sampleData, 0, sampleDataLength);
-                    this.addSample(sampleData, samples[i][sampleDataLength]);    // !!!!!! DA VERIFICARE CORRETTEZZA
+                    this.addSample(sampleData, samples[i][sampleDataLength]);
                 }
             }
         }
         else {
-            System.out.println("Data size is incompatible with model");
+            System.err.println("Training data is empty");
         }
 
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.getPredictorName() + ".json";
@@ -227,7 +226,11 @@ public class LRTrainer extends MLTrainer{
             jsonObject.add("model_type", new JsonPrimitive("linear_regression"));
             jsonObject.add("version", new JsonPrimitive(this.getVersion()));
             jsonObject.add("last_train", new JsonPrimitive(trainingDateTime));
-            jsonObject.add("parameters", parametersJsonArray);
+            jsonObject.add("training_expiration", new JsonPrimitive(this.getTrainingExpiration()));
+            jsonObject.add("training_data_table_name", new JsonPrimitive(this.getTrainingDataTableName()));
+            JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.getTrainingFieldNamesList());
+            jsonObject.add("training_field_names_list", trainingFieldListJsonArray);
+            jsonObject.add("parametersLR", parametersJsonArray);
             jsonObject.add("xTx", xTxJsonArray);
             jsonObject.add("xTy", xTyJsonArray);
 
@@ -246,7 +249,7 @@ public class LRTrainer extends MLTrainer{
         }
     }
 
-    private JsonObject getDescriptionFileData(String predictorName){
+    private JsonObject getDescriptionFileData(String predictorName) {
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
         File descriptionFile = new File(descriptionFilePath);
 
@@ -299,6 +302,13 @@ public class LRTrainer extends MLTrainer{
         }
         return jsonArray;
     }
+    private JsonArray convertToJsonArrayFieldNamesList(String[] array) {
+        JsonArray jsonArray = new JsonArray();
+        for (String value : array) {
+            jsonArray.add(new JsonPrimitive(value));
+        }
+        return jsonArray;
+    }
     //!!!!!! COSA TORNARE SE NON HA
     private double[][] getXtXMatrixFromJson(JsonObject jsonObject){
         double[][] xTxMatrix;
@@ -329,7 +339,6 @@ public class LRTrainer extends MLTrainer{
 
         return  xTxMatrix;
     }
-
     private double[][] getXtYMatrixFromJson(JsonObject jsonObject){
         double[][] xTyMatrix;
 
@@ -365,10 +374,10 @@ public class LRTrainer extends MLTrainer{
         dataVector[0] = 1;
         System.arraycopy(sampleData,0, dataVector,1, sampleData.length);
         /*
-            for (int i = 0; i < sampleData.length; ++i) {
-                dataVector[i + 1] = sampleData[i];
-            }
-            */
+        for (int i = 0; i < sampleData.length; ++i) {
+            dataVector[i + 1] = sampleData[i];
+        }
+        //*/
         double[] valueVector = new double[1];
         valueVector[0] = sampleValue;
         this.addObservation(dataVector, valueVector);

@@ -24,7 +24,7 @@ public class DataBaseConnecter {
     public double[][] getTrainingData(String tableName, String[] fieldsList, String classField){
         //!!!! TEST SE CONNESSIONE A DB è ANDATA A BUON FINE
         // !!! TEST CHE QUERY è ANDATA A BUON FINE
-        //nomi di campi/tabella sbagliati
+        //!!!!!!!!!!!!!!!! TEST nomi di campi/tabella CON SINTASSI SBAGLIATA, O NN PRESENTI
 
         String query = "SELECT ";
         for(int i=0; i < fieldsList.length; i++) { query += fieldsList[i] + ", "; }

@@ -91,6 +91,8 @@ public class ABCTrainer extends MLTrainer {
         */
     }
 
+    public void train(double[][] samples, double[] classType) {}
+    /*
     public void train(String dataTableName, String idField, String classificationField, DataBaseConnecter dbConnecter) {
         //CONNESSIONE CON DB
         //CONTROLLO SE NEL DB NON è GIA PRESENTE TABELLA DI PREDICTOR COME MI COMPORTO??
@@ -166,5 +168,6 @@ public class ABCTrainer extends MLTrainer {
             e.printStackTrace();
         }
     }
+    */
 }
 
