@@ -31,7 +31,9 @@ public class MLPredictorFactory {
             if (jsonElement.isJsonObject()) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-                if(jsonObject.has("model_type")) { predictorModelType = jsonObject.get("model_type").getAsString(); }
+                if(jsonObject.has("model_type")) {
+                    predictorModelType = jsonObject.get("model_type").getAsString();
+                }
 
                 //CLASSFORNAME, REFLECTION
                 if (predictorModelType != null) {
@@ -90,7 +92,7 @@ public class MLPredictorFactory {
             else if(key.equals("last_train")) {
                 lastTrain = jsonObject.get(key).getAsString(); ++f;
             }
-            else if(key.equals("parameters")) {
+            else if(key.equals("parametersLR")) {
                 parametersJson = jsonObject.get(key).getAsJsonArray(); ++f;
             }
         }

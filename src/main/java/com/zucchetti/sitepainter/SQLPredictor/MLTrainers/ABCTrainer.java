@@ -15,8 +15,8 @@ import java.time.format.DateTimeFormatter;
 public class ABCTrainer extends MLTrainer {
     final private String predictionTableName;
 
-    public ABCTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String predictionTableName) {
-        super(predictorName, "abc", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList);
+    public ABCTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String predictionTableName, String classificationField) {
+        super(predictorName, "abc", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
         this.predictionTableName = predictionTableName;
 
         /*
@@ -91,8 +91,9 @@ public class ABCTrainer extends MLTrainer {
         */
     }
 
-    public void train(double[][] samples, double[] classType) {}
-    /*
+    public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
+    //public boolean train(double[][] samples, double[] classType) {
+         /*
     public void train(String dataTableName, String idField, String classificationField, DataBaseConnecter dbConnecter) {
         //CONNESSIONE CON DB
         //CONTROLLO SE NEL DB NON è GIA PRESENTE TABELLA DI PREDICTOR COME MI COMPORTO??
@@ -169,5 +170,8 @@ public class ABCTrainer extends MLTrainer {
         }
     }
     */
+        return false;
+    }
+
 }
 

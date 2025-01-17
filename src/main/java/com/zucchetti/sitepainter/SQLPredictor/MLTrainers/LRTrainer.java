@@ -15,6 +15,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -25,9 +27,9 @@ public class LRTrainer extends MLTrainer {
     private double[] parametersLR;
 
 
-    public LRTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, double[][] xTx, double[][] xTy, double[] parametersLR, String trainingDataTableName, String[] trainingFieldNamesList) {
+    public LRTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, double[][] xTx, double[][] xTy, double[] parametersLR, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField) {
     //public LRTrainer(String predictorName, String trainingModelType, int version, String lastTrain, int numX, int numY) {
-        super(predictorName, "linear_regression", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList);
+        super(predictorName, "linear_regression", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
         this.transposeOfXTimesX = xTx;
         this.transposeOfXTimesY = xTy;
         this.identity = identityMatrix(xTx.length);
@@ -180,13 +182,16 @@ public class LRTrainer extends MLTrainer {
         */
     }
 
-    // !!!!!!!!!!!!!!!!!!!!! passare nome tabella e lista di campi
-    public void train(double[][] samples, double[] classType) {
+    public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
+    //public boolean train(double[][] samples, double[] classType) {
         // !!! CONTROLLO SE DATI COMPATIBILI CON MODELLO
         //!!!!AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
+
+        double[][] samples = dbConnetter.getTrainingData(dataTableName, dataTableFieldNamesList, classificationFieldName);
         if(samples.length > 0){
             if(samples[0].length != this.transposeOfXTimesX.length){
                 System.err.println("Data size is incompatible with model");
+                return false;
             }
             else {
                 int sampleDataLength = samples[0].length - 1;
@@ -199,6 +204,7 @@ public class LRTrainer extends MLTrainer {
         }
         else {
             System.err.println("Training data is empty");
+            return false;
         }
 
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.getPredictorName() + ".json";
@@ -208,7 +214,7 @@ public class LRTrainer extends MLTrainer {
             if (!descriptionFile.exists()){
                 if (!descriptionFile.createNewFile()) {
                     System.out.println("Description file does not exist and could not be created");
-                    //!!!!!!!!!!!!! INTERRUPT
+                    return false;
                 }
             }
 
@@ -228,6 +234,7 @@ public class LRTrainer extends MLTrainer {
             jsonObject.add("last_train", new JsonPrimitive(trainingDateTime));
             jsonObject.add("training_expiration", new JsonPrimitive(this.getTrainingExpiration()));
             jsonObject.add("training_data_table_name", new JsonPrimitive(this.getTrainingDataTableName()));
+            jsonObject.add("classification_field_name", new JsonPrimitive(this.getClassificationField()));
             JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.getTrainingFieldNamesList());
             jsonObject.add("training_field_names_list", trainingFieldListJsonArray);
             jsonObject.add("parametersLR", parametersJsonArray);
@@ -241,14 +248,19 @@ public class LRTrainer extends MLTrainer {
             catch (IOException e) {
                 System.out.println("Error writing description file, failed to update parameters: ");
                 e.printStackTrace();
+                return false;
             }
         }
         catch (IOException e) {
             // Per errore creazione description file
             e.getMessage();
+            return false;
         }
+
+        return true;
     }
 
+    // --------------------- METODI TECNICI MIEI ------------------------
     private JsonObject getDescriptionFileData(String predictorName) {
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
         File descriptionFile = new File(descriptionFilePath);
@@ -280,7 +292,6 @@ public class LRTrainer extends MLTrainer {
             return null;
         } //???? SERVE ????
     }
-
     private JsonArray convertToJsonArrayMatrices(double[][] array) {
         JsonArray jsonArray = new JsonArray();
 
@@ -294,7 +305,6 @@ public class LRTrainer extends MLTrainer {
 
         return jsonArray;
     }
-
     private JsonArray convertToJsonArrayParameters(double[] array) {
         JsonArray jsonArray = new JsonArray();
         for (double value : array) {
@@ -368,6 +378,7 @@ public class LRTrainer extends MLTrainer {
         return  xTyMatrix;
     }
 
+    // ------------------- METODI TECNICI DI MODELLO --------------------
     private void addSample(double[] sampleData, double sampleValue){
         int dataLenght = sampleData.length + 1;
         double[] dataVector = new double[dataLenght];

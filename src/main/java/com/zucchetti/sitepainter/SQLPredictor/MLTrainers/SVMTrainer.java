@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.google.gson.*;
+import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
 import libsvm.*;
 
 import com.google.gson.Gson;
@@ -20,19 +21,19 @@ import java.io.IOException;
 public class SVMTrainer extends MLTrainer{
     // --- TUTTI CAMPI FINAL ???
 
-    private String SVMType = ""; // ?????????????????
-    private String kernelType = "";
+    private String SVMType = null;
+    private String kernelType = null;
     private int degree = 0;
     private double gamma = 0;
     private double coef0 = 0;
+    private double paramC = 0;
     private double rho = 0;
-    private double paramC =0;
-
     //final private ArrayList<ArrayList<Double>> supportVectors;
 
-    public SVMTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
+
+    public SVMTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
         // !!!!!!!!!!!!! CONTROLLO SE PREDICTOR E MODEL NON ESISTONO GIA
-        super(predictorName, "svm", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList);
+        super(predictorName, "svm", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
 
         this.SVMType = svmType;
         this.kernelType = kernelType;
@@ -43,7 +44,10 @@ public class SVMTrainer extends MLTrainer{
         this.paramC = paramC;
     }
 
-    public void train(double[][] data, double[] classType){
+    public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
+    //public boolean train(double[][] data, double[] classType){
+        double[][] data = new double[10][10];
+        double[] classType = new double[10];; // !!!!!!!!!!! DA TOGLIERE
         int numExamples = data.length;
         int numFeatures = data[0].length;
 
@@ -77,7 +81,8 @@ public class SVMTrainer extends MLTrainer{
             case "nu_svr":
                 param.svm_type = svm_parameter.NU_SVR; break;
             default:
-                System.out.println("Valore tipo SVM non valido"); break;
+                System.out.println("Valore tipo SVM non valido");
+                return false;
         }
         switch (this.kernelType){
             case "linear":
@@ -97,10 +102,11 @@ public class SVMTrainer extends MLTrainer{
             case "precomputed":
                 param.kernel_type = svm_parameter.PRECOMPUTED; break;
             default:
-                System.out.println("Valore tipo kernel non valido"); break;
+                System.out.println("Valore tipo kernel non valido");
+                return false;
         }
 
-        param.C = paramC;
+        param.C = this.paramC;
 
         svm_model model = svm.svm_train(problem, param);
 
@@ -109,15 +115,21 @@ public class SVMTrainer extends MLTrainer{
             File file = new File(modelFilePath);
             if (!file.exists()) {
                 try {
+                    file.createNewFile();
+                    /*
                     if (file.createNewFile()) {
-                        System.out.println("File creato con successo: " + file.getName());
+                        //System.out.println("File creato con successo: " + file.getName());
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     }
                     else {
-                        System.out.println("Errore nella creazione del file.");
+                        System.err.println("Errore nella creazione del file.");
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     }
+                    */
                 }
                 catch (IOException e) {
-                    System.out.println("Si è verificato un errore: " + e.getMessage());
+                    System.err.println(e.getMessage());
+                    return false;
                 }
             }
 
@@ -125,12 +137,16 @@ public class SVMTrainer extends MLTrainer{
         }
         catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-        this.createDescriptionFile();
+
+        if(this.createDescriptionFile()){
+            System.err.println("Error creating description file");
+        }
+        return true;
     }
 
-    private void createDescriptionFile() {
-
+    private boolean createDescriptionFile() {
         String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.getPredictorName() + ".model";
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.getPredictorName() + ".json";
 
@@ -139,12 +155,13 @@ public class SVMTrainer extends MLTrainer{
         if (!descriptionFile.exists()) {
             try {
                 if (!descriptionFile.createNewFile()) {
-                    System.out.println("Failed to create description file");
-                    return; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    System.err.println("Failed to create description file");
+                    return false;
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
-                //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO
+                return false;
             }
         }
 
@@ -153,6 +170,8 @@ public class SVMTrainer extends MLTrainer{
         completeObject.add("model_type", new JsonPrimitive("svm"));
         completeObject.add("version", new JsonPrimitive(this.getVersion()));
         completeObject.add("last_train", new JsonPrimitive(this.getPredictorName()));
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!! AGGIUNGERE ALTRI CAMPI !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         JsonObject modelData = new JsonObject();
         try (BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFilePath))) {
@@ -219,10 +238,12 @@ public class SVMTrainer extends MLTrainer{
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
+            return false;
             //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
         catch (IOException e) {
             e.printStackTrace();
+            return false;
             //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
         try (FileWriter writer = new FileWriter(descriptionFilePath)) {
@@ -232,8 +253,10 @@ public class SVMTrainer extends MLTrainer{
         }
         catch (IOException e) {
             e.printStackTrace();
+            return false;
             //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
+        return true;
     }
 }
 

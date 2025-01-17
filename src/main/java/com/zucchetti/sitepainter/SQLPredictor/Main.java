@@ -2,6 +2,7 @@ package com.zucchetti.sitepainter.SQLPredictor;
 
 import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.ExampleGenerator.ExampleGenerator;
 import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.QueryPredictor.QueryPredictor;
+import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.LRPredictor;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.ABCTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;
 //import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.SVMTrainer;
@@ -23,7 +24,29 @@ public class Main {
         String username = "postgres";
         String password = "";
 
-        /*///--------- SVM-TRAINER  -----------------
+        /*///--------- SVM-TRAINER (NUOVO) -----------------
+        Map<String, String> trainerData = new HashMap<>();
+        trainerData.put("predictorName", "A-SVM-SVM");
+        trainerData.put("machineLearningModelType", "svm");
+        trainerData.put("trainingExpiration", "13");
+
+        trainerData.put("SVMType", "  c_svc ");
+        trainerData.put("kernelType", "  poly ");
+        trainerData.put("degree", " 2 ");
+        trainerData.put("gamma", "  0.7 ");
+        trainerData.put("coef0", " 0.5  ");
+        trainerData.put("paramC", " 1.5  ");
+
+        String dataTableName = "lr_auto";
+        String[] dataTableFieldNamesList = { "x1", "x2", "x3" };
+        String classificationField = "y";
+
+        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
+        MLTrainer LRTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
+
+        //*///---------------- END SVM-TRAINER (NUOVO) -----------------
+
+        /*///--------- SVM-TRAINER (VECCHIO) -----------------
         String tableName = "pazienti";
         String[] fieldNames = {"xxx", "yyy"};
         String fieldClassName = "ccc";
@@ -72,11 +95,12 @@ public class Main {
             int[][] queryPredictionResult = qp.predict(exampleTableName, exampleId, predictorQuery);
             System.out.println("Q = " + queryPredictionResult[0][0]);
         }
-        //*///---------- SVM-TRAINER END -----------------
+        //*///------------- END SVM-TRAINER (VECCHIO) -----------------
 
-        //*//------------- BUILD LR-TRAINER -----------------
+        /*//------------- BUILD LR-TRAINER -----------------
+        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
         Map<String, String> trainerData = new HashMap<>();
-        trainerData.put("predictorName", "AAAAAAAAA");
+        trainerData.put("predictorName", "A-LR-LR");
         trainerData.put("machineLearningModelType", "linear_regression");
         trainerData.put("trainingExpiration", "13");
         String dataTableName = "lr_auto";
@@ -86,7 +110,19 @@ public class Main {
         MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
         MLTrainer LRTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
         //*///------------- END BUILD LR-TRAINER -----------------
-        //*//------------- TRAINING LR-TRAINER -----------------
+        /*//------------- TRAINING LR-TRAINER -----------------
+        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        int a=8;
+        //*///------------- END TRAINING LR-TRAINER -----------------
+        /*//-------------- LR-PREDICTOR -----------------
+        String request = "<    A-LR-LR   >(     aaa, bbb,    )";
+        MLSQLExpander expander = new MLSQLExpander();
+        String query = expander.translate(request);
+        if (query != null) { System.out.println(query); }
+        //*///------------- END LR-PREDICTOR -----------------
+
+        /*//------------- TRAINING LR-TRAINER (VECCHIO) -----------------
         DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
         double[][] queryResult = dbc.getTrainingData(dataTableName, dataTableFieldNamesList, classificationField);
 
@@ -118,14 +154,11 @@ public class Main {
                 ts3[i][j] = queryResult[i+usedRowNum][j];
             }
         }
-
         LRTrainerTest.train(ts1, moc);
-
         int a = 8;
         LRTrainerTest.train(ts2, moc);
         LRTrainerTest.train(ts3, moc);
-
-        //*///--------- END TRAINING LR-TRAINER ------------
+        //*///------------- END TRAINING LR-TRAINER (VECCHIO) ------------
 
         /*/// ---------- BUILDER ABC ------------------------------------
         String predictorModelType = "abc";
@@ -133,7 +166,8 @@ public class Main {
         String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
         String classificationField = "abc-class-field";
 
-        //*///---------- BUILDER ABC END ---------------
+        //*///------------- END BUILDER ABC ---------------
+
         /*///--------- ABC-TRAINER  -----------------
         DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
         String predictorName = "abc_predictor";
@@ -142,27 +176,17 @@ public class Main {
         String classificationField = "yyy";
         ABCTrainer abc = new ABCTrainer(predictorName);
         abc.train(dataTableName, idField, classificationField, dbc);
-        //*///---------- ABC-TRAINER END -----------------
-
+        //*///------------- END ABC-TRAINER -----------------
 
 
         /*
         String request = null;
-        //request = "<  !!!!!   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
         //request = "<     diabete_svm  >(    t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.bbb, tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        //request = "<     diabete_svm  >(     t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13) , t.aaa+77,  t.bbb, tccc +44 )";
-        //request = "<       diabete_svm   >(      aaaa, bbbb , cccc , dddd )";
-        //request = "<       lr_moto   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        //request = "<       abc_good   >(      t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) +  left(t.nome1_3,13) )";
-        //request = "<       svm_linear   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        //request = "<       svm_polynomial   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        //request = "<       svm_rbf   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        //request = "<       svm_polynomial   >(       t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),  tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-        request = "<       svm_linear   >(     A,B,C,h  )";
+
         MLSQLExpander expander = new MLSQLExpander();
         String query = expander.translate(request);
         if (query != null) { System.out.println(query); }
-        //*/
+        //*///------------- END ELENCO REQUESTS -----------------
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

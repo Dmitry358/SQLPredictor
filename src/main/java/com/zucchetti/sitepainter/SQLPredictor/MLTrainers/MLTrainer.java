@@ -1,5 +1,7 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
+import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
+
 public abstract class MLTrainer {
     final private String predictorName;
     final private String trainingModelType;
@@ -8,8 +10,9 @@ public abstract class MLTrainer {
     final private int trainingExpiration;
     final private String trainingDataTableName;
     private String[] trainingFieldNamesList;
+    private String classificationField;
 
-    public MLTrainer(String predictorName, String trainingModelType, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList){
+    public MLTrainer(String predictorName, String trainingModelType, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField){
         this.predictorName = predictorName;
         this.trainingModelType = trainingModelType;
         this.version = version;
@@ -17,8 +20,17 @@ public abstract class MLTrainer {
         this.trainingExpiration = trainingExpiration;
         this.trainingDataTableName = trainingDataTableName;
         this.trainingFieldNamesList = trainingFieldNamesList;
+        this.classificationField = classificationField;
     }
-    public abstract void train(double[][] samples, double[] classType);
+    //public abstract boolean train(double[][] samples, double[] classType);
+    public abstract boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter);
+
+    protected void incrementVersion(){
+        ++this.version;
+    }
+    protected void setLastTrain(String trainingDateTime){
+        this.lastTrain = trainingDateTime;
+    } //???????????????????????????????????????
 
     protected String getPredictorName(){
         return this.predictorName;
@@ -29,9 +41,7 @@ public abstract class MLTrainer {
     protected String getLastTrain(){
         return this.lastTrain;
     }
-    protected void incrementVersion(){
-        ++this.version;
-    }
+
     protected int getTrainingExpiration(){
         return this.trainingExpiration;
     }
@@ -41,8 +51,7 @@ public abstract class MLTrainer {
     protected String[] getTrainingFieldNamesList(){
         return this.trainingFieldNamesList;
     }
-    protected void setLastTrain(String trainingDateTime){
-        this.lastTrain = trainingDateTime;
-    } //???????????????????????????????????????
+    protected String getClassificationField(){ return this.classificationField;}
+
 }
 
