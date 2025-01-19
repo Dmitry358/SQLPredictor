@@ -186,6 +186,7 @@ public class LRTrainer extends MLTrainer {
     //public boolean train(double[][] samples, double[] classType) {
         // !!! CONTROLLO SE DATI COMPATIBILI CON MODELLO
         //!!!!AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
+        // !!!!!!!!!!!!! CONTROLLO SE this != null
 
         double[][] samples = dbConnetter.getTrainingData(dataTableName, dataTableFieldNamesList, classificationFieldName);
         if(samples.length > 0){

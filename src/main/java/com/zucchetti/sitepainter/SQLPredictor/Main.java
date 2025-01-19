@@ -16,27 +16,65 @@ import java.util.HashMap;
 import java.io.IOException;
 
 
-
 public class Main {
     public static void main(String[] args) {
-        // !!!!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALENAMENTO, COSA FARE CON FILE JSON???
+        // !!!!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
         String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
         String username = "postgres";
         String password = "";
 
-        /*///--------- SVM-TRAINER (NUOVO) -----------------
+        /*///---------------- SVM-TRAINER -----------------
+        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
         Map<String, String> trainerData = new HashMap<>();
-        trainerData.put("predictorName", "A-SVM-SVM");
-        trainerData.put("machineLearningModelType", "svm");
-        trainerData.put("trainingExpiration", "13");
+        trainerData.put("predictorName", "  A-SVM-SVM   ");
+        trainerData.put("machineLearningModelType", "   svm  ");
+        trainerData.put("trainingExpiration", "   14   ");
 
         trainerData.put("SVMType", "  c_svc ");
-        trainerData.put("kernelType", "  poly ");
+        trainerData.put("kernelType", "  polynomial ");
         trainerData.put("degree", " 2 ");
-        trainerData.put("gamma", "  0.7 ");
+        trainerData.put("gamma", "  0.95558 ");
         trainerData.put("coef0", " 0.5  ");
-        trainerData.put("paramC", " 1.5  ");
+        trainerData.put("paramC", " 0.1  ");
 
+        String dataTableName = "   lr_auto   ";
+        String[] dataTableFieldNamesList = { "   x1 " , " x2   "};
+        String classificationField = "  y   ";
+
+        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
+        MLTrainer SVMTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
+        SVMTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        SVMTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        int g=0;
+        //*///---------------- END SVM-TRAINER -----------------
+        //*///------------------ SVM-PREDICTOR -------------------
+        //*///---------------- END SVM-PREDICTOR -----------------
+
+
+
+        /*/// ---------- BUILDER ABC ------------------------------------
+        String predictorModelType = "abc";
+        String dataTableName = "abc_data-table";
+        String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
+        String classificationField = "abc-class-field";
+
+        //*///------------- END BUILDER ABC ---------------
+        /*///--------- ABC-TRAINER  -----------------
+        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
+        String predictorName = "abc_predictor";
+        String dataTableName = "pazienti";
+        String idField = "id";
+        String classificationField = "yyy";
+        ABCTrainer abc = new ABCTrainer(predictorName);
+        abc.train(dataTableName, idField, classificationField, dbc);
+        //*///------------- END ABC-TRAINER ---------------
+
+        /*//------------- BUILD & TRAIN LR-TRAINER -----------------
+        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
+        Map<String, String> trainerData = new HashMap<>();
+        trainerData.put("predictorName", "A-LR-LR");
+        trainerData.put("machineLearningModelType", "linear_regression");
+        trainerData.put("trainingExpiration", "13");
         String dataTableName = "lr_auto";
         String[] dataTableFieldNamesList = { "x1", "x2", "x3" };
         String classificationField = "y";
@@ -44,8 +82,65 @@ public class Main {
         MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
         MLTrainer LRTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
 
-        //*///---------------- END SVM-TRAINER (NUOVO) -----------------
+        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        int a=8;
+        //*///------------- END BUILD & TRAIN LR-TRAINER -----------------
+        /*//-------------- LR-PREDICTOR -----------------
+        String request = "<    A-LR-LR   >(     aaa, bbb, NN   )";
+        MLSQLExpander expander = new MLSQLExpander();
+        String query = "\033[32m" + expander.translate(request) + "\033[0m";
+        if (query != null) { System.out.println(query); }
+        //*///------------- END LR-PREDICTOR -----------------
 
+
+
+        ///////////////////////////// CODICE VECCHIO /////////////////////////////
+        /*
+        String request = null;
+        //request = "<     diabete_svm  >(    t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.bbb, tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
+
+        MLSQLExpander expander = new MLSQLExpander();
+        String query = expander.translate(request);
+        if (query != null) { System.out.println(query); }
+        //*///------------- END ELENCO REQUESTS -----------------
+        /*//------------- TRAINING LR-TRAINER (VECCHIO) -----------------
+        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
+        double[][] queryResult = dbc.getTrainingData(dataTableName, dataTableFieldNamesList, classificationField);
+
+        int samplesNum = queryResult.length;
+        int fieldsNum = dataTableFieldNamesList.length + 1;
+        int usedRowNum = 0;
+        double[] moc = new double[1];
+
+        int set1 = 3;
+        double[][] ts1 = new double[set1][fieldsNum];
+        for (int i=0; i < set1; ++i){
+            for (int j=0; j < fieldsNum; ++j){
+                ts1[i][j] = queryResult[i+usedRowNum][j];
+            }
+        }
+        usedRowNum += set1;
+        int set2 = 1;
+        double[][] ts2= new double[set2][fieldsNum];;
+        for (int i=0; i < set2; ++i){
+            for (int j=0; j < fieldsNum; ++j){
+                ts2[i][j] = queryResult[i+usedRowNum][j];
+            }
+        }
+        usedRowNum += set2;
+        int set3 = 2;
+        double[][] ts3= new double[set3][fieldsNum];;
+        for (int i=0; i < set3; ++i){
+            for (int j=0; j < fieldsNum; ++j){
+                ts3[i][j] = queryResult[i+usedRowNum][j];
+            }
+        }
+        LRTrainerTest.train(ts1, moc);
+        int a = 8;
+        LRTrainerTest.train(ts2, moc);
+        LRTrainerTest.train(ts3, moc);
+        //*///------------- END TRAINING LR-TRAINER (VECCHIO) ------------
         /*///--------- SVM-TRAINER (VECCHIO) -----------------
         String tableName = "pazienti";
         String[] fieldNames = {"xxx", "yyy"};
@@ -96,97 +191,6 @@ public class Main {
             System.out.println("Q = " + queryPredictionResult[0][0]);
         }
         //*///------------- END SVM-TRAINER (VECCHIO) -----------------
-
-        /*//------------- BUILD LR-TRAINER -----------------
-        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
-        Map<String, String> trainerData = new HashMap<>();
-        trainerData.put("predictorName", "A-LR-LR");
-        trainerData.put("machineLearningModelType", "linear_regression");
-        trainerData.put("trainingExpiration", "13");
-        String dataTableName = "lr_auto";
-        String[] dataTableFieldNamesList = { "x1", "x2", "x3" };
-        String classificationField = "y";
-
-        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
-        MLTrainer LRTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
-        //*///------------- END BUILD LR-TRAINER -----------------
-        /*//------------- TRAINING LR-TRAINER -----------------
-        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
-        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
-        int a=8;
-        //*///------------- END TRAINING LR-TRAINER -----------------
-        /*//-------------- LR-PREDICTOR -----------------
-        String request = "<    A-LR-LR   >(     aaa, bbb,    )";
-        MLSQLExpander expander = new MLSQLExpander();
-        String query = expander.translate(request);
-        if (query != null) { System.out.println(query); }
-        //*///------------- END LR-PREDICTOR -----------------
-
-        /*//------------- TRAINING LR-TRAINER (VECCHIO) -----------------
-        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
-        double[][] queryResult = dbc.getTrainingData(dataTableName, dataTableFieldNamesList, classificationField);
-
-        int samplesNum = queryResult.length;
-        int fieldsNum = dataTableFieldNamesList.length + 1;
-        int usedRowNum = 0;
-        double[] moc = new double[1];
-
-        int set1 = 3;
-        double[][] ts1 = new double[set1][fieldsNum];
-        for (int i=0; i < set1; ++i){
-            for (int j=0; j < fieldsNum; ++j){
-                ts1[i][j] = queryResult[i+usedRowNum][j];
-            }
-        }
-        usedRowNum += set1;
-        int set2 = 1;
-        double[][] ts2= new double[set2][fieldsNum];;
-        for (int i=0; i < set2; ++i){
-            for (int j=0; j < fieldsNum; ++j){
-                ts2[i][j] = queryResult[i+usedRowNum][j];
-            }
-        }
-        usedRowNum += set2;
-        int set3 = 2;
-        double[][] ts3= new double[set3][fieldsNum];;
-        for (int i=0; i < set3; ++i){
-            for (int j=0; j < fieldsNum; ++j){
-                ts3[i][j] = queryResult[i+usedRowNum][j];
-            }
-        }
-        LRTrainerTest.train(ts1, moc);
-        int a = 8;
-        LRTrainerTest.train(ts2, moc);
-        LRTrainerTest.train(ts3, moc);
-        //*///------------- END TRAINING LR-TRAINER (VECCHIO) ------------
-
-        /*/// ---------- BUILDER ABC ------------------------------------
-        String predictorModelType = "abc";
-        String dataTableName = "abc_data-table";
-        String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
-        String classificationField = "abc-class-field";
-
-        //*///------------- END BUILDER ABC ---------------
-
-        /*///--------- ABC-TRAINER  -----------------
-        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
-        String predictorName = "abc_predictor";
-        String dataTableName = "pazienti";
-        String idField = "id";
-        String classificationField = "yyy";
-        ABCTrainer abc = new ABCTrainer(predictorName);
-        abc.train(dataTableName, idField, classificationField, dbc);
-        //*///------------- END ABC-TRAINER -----------------
-
-
-        /*
-        String request = null;
-        //request = "<     diabete_svm  >(    t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.bbb, tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
-
-        MLSQLExpander expander = new MLSQLExpander();
-        String query = expander.translate(request);
-        if (query != null) { System.out.println(query); }
-        //*///------------- END ELENCO REQUESTS -----------------
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

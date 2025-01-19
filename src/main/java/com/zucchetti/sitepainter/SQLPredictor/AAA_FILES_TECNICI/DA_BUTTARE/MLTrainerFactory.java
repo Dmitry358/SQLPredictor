@@ -1,4 +1,4 @@
-package com.zucchetti.sitepainter.SQLPredictor;
+package com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.DA_BUTTARE;
 
 //import com.google.gson.;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;

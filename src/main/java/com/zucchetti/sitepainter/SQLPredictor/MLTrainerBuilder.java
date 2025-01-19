@@ -10,6 +10,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -22,16 +23,13 @@ public class MLTrainerBuilder {
     private int trainingExpiration = 0;
     private String trainingDataTableName = null;
     private String[] trainingFieldNamesList = null;
-    private String classificationField;
-
+    private String classificationField = null;
     // -------------- ABC ----------------
     private String predictionTableName = null;
-
     // -------------- LR ----------------
     private double[][] xTx = null;
     private double[][] xTy = null;
     private double[] parametersLR = null;
-
     // -------------- SVM ----------------
     private String SVMType = null;
     private String kernelType = null;
@@ -39,9 +37,8 @@ public class MLTrainerBuilder {
     private double gamma = 0;   // for poly/rbf/sigmoid
     private double coef0 = 0;   // for poly/sigmoid
     private double paramC = 0;  // for C_SVC, EPSILON_SVR and NU_SVR
-
     private double rho = 0;
-    //final private ArrayList<ArrayList<Double>> supportVectors;
+    private ArrayList<ArrayList<Double>> supportVectors = null;
 
     /*  !!!!!!!! NON TOCCARE, DEVONO RESTARE !!!!!!!!!
     private double cacheSize = 0;   // in MB
@@ -58,8 +55,12 @@ public class MLTrainerBuilder {
 
 
     public MLTrainer build(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField) {
+        trainingDataTableName = trainingDataTableName.trim();
+        classificationField = classificationField.trim();
+        this.trimInputData(trainerData, trainingDataTableName, dataTableFieldNamesList, classificationField);
         if (this.setTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList, classificationField)){
             if (this.machineLearningModelType.equals("abc")) {
+                //this.createABCDescriptionFile();
                 return new ABCTrainer(this.predictorName, this.version, this.lastTrain, this.trainingExpiration, this.trainingDataTableName, this.trainingFieldNamesList, this.predictionTableName, this.classificationField);
             }
             else if (this.machineLearningModelType.equals("linear_regression")) {
@@ -71,28 +72,36 @@ public class MLTrainerBuilder {
                 return new SVMTrainer(this.predictorName, this.version, this.lastTrain, this.trainingExpiration, this.trainingDataTableName, this.trainingFieldNamesList, this.classificationField, this.SVMType, this.kernelType, this.polDegree, this.gamma, this.coef0, this.rho, this.paramC);
             }
             else {
-                System.out.println("Unknown model type entered, could not create trainer");
+                System.err.println("Unknown model type entered, could not create trainer");
                 return null;
             }
         }
-        System.out.println("Error reading description file, could not create trainer"); // !!!!!!!!!!!!!!!!!!!!! NON PROPRIO VERO
+        System.err.println("Error reading description file, could not create trainer"); // !!!!!!!!!!!!!!!!!!!!! NON PROPRIO VERO
         return null;
     }
 
     private boolean setTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField){
         if(!trainerData.containsKey("predictorName")) {
-            System.err.println("Unable to create trainer, the request does not contain predictor name"); return false;
+            System.err.println("Unable to create trainer, the request does not contain predictor name");
+            return false;
         }
+        String predName = trainerData.get("predictorName");
+        //if(predName == null || predName.trim().isEmpty() || predName.trim().contains(" "))
+        if(predName == null || predName.isEmpty() || predName.contains(" ")) {
+            System.err.println("Unable to create trainer, the value of the \"predictorName\" field in the description file is invalid");
+            return false;
+        }
+
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
         File descriptionFile = new File(descriptionFilePath);
-        if (descriptionFile.exists()) {
+        if (descriptionFile.exists() && trainerData.get("machineLearningModelType").equals("linear_regression")) {
             try {
                 FileReader reader = new FileReader(descriptionFilePath); // ??? FORSE SI PUO METTERE COME CONTROLLO ESISTENZA DEL FILE
                 JsonElement jsonElement = JsonParser.parseReader(reader);
 
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
-                    
+                    // ??????? CONTROLLO NUMERO MINIMO CAMPI NECESSARI
                     for (String key : jsonObject.keySet()) {
                         // ------- ML-TRAINER -----------------------------------------
                         if (key.equals("predictor_name")) {
@@ -124,11 +133,7 @@ public class MLTrainerBuilder {
                         else if (key.equals("classification_field_name")) {
                             this.setClassiticationField(jsonObject.get(key).getAsString());
                         }
-                        // ------- ABC-TRAINER  ---------------------------------------
-                        else if (key.equals("prediction_table_name")) {
-                            this.setPredictionTableName(jsonObject.get(key).getAsString());
-                            //this.predictionTableName = jsonObject.get(key).getAsString();
-                        }
+
                         // ------- LR-TRAINER -----------------------------------------
                         else if (key.equals("xTx")) {
                             JsonArray xTxJson = jsonObject.get(key).getAsJsonArray();
@@ -188,7 +193,15 @@ public class MLTrainerBuilder {
                             this.setParametersLR(parametersFromJson);
                             //this.parametersLR = parametersFromJson;
                         }
-                        // ------- SVM-TRAINER  ---------------------------------------
+                        // ------- ABC-TRAINER  ??? FORSE NON SERVE ???? ---------------------------------------
+                        /*
+                        else if (key.equals("prediction_table_name")) {
+                            this.setPredictionTableName(jsonObject.get(key).getAsString());
+                            //this.predictionTableName = jsonObject.get(key).getAsString();
+                        }
+                        */
+                        // ------- SVM-TRAINER  --??? FORSE NON SERVE ???? ------------
+                        /*
                         else if (key.equals("model_data")) {
                             //for (String modelDataRow : jsonObject.keySet()) {
                             JsonObject modelData = jsonObject.get(key).getAsJsonObject();
@@ -227,10 +240,11 @@ public class MLTrainerBuilder {
                                         }
                                         svFromJson[i] = svFromJsonRow;
                                     }
-                                    this.setXtX(svFromJson); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                    this.setXtX(svFromJson); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 }
                             }
                         }
+                        */
                     }
                     /*if (f < 3) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         System.out.println("Description file does not contain all information needed to create object");
@@ -238,127 +252,112 @@ public class MLTrainerBuilder {
                     }*/
                 }
                 else {
-                    System.out.println("Description file has wrong structure");
+                    System.err.println("Description file has wrong structure");
                     return false;
                 }
             }
             catch (FileNotFoundException e) { // SERVE??????????????????
-                System.out.println("Description file of predictor \"" + predictorName + "\" is not found");
+                System.err.println("Description file of predictor \"" + predictorName + "\" is not found");
                 return false;
             }
             catch (JsonIOException e) {
-                System.out.println("Error of processing description file");
+                System.err.println("Error of processing description file");
                 return false;
             }
             catch (JsonSyntaxException e) {
-                System.out.println("Syntax of description file is incorrect");
+                System.err.println("Syntax of description file is incorrect");
                 return false;
             }
         }
-        else {
+        else { // FILE DI DESCRIZIONE NON ESISTE O TIPO MODELLO == LINEAR_REGRESSION
             if(!trainerData.containsKey("machineLearningModelType")) {
-                System.err.println("Unable to create trainer, the request does not contain predictor model type"); return false;
+                System.err.println("Unable to create trainer, the request does not contain predictor model type");
+                return false;
             }
-            // !!!!!AGGIUNGERE CONTROLLO SE machineLearningModelType NOT NULL, NOT EMPTY E SENZA SPAZI DENTRO
+            String modType = trainerData.get("machineLearningModelType");
+            if(modType == null || modType.isEmpty() || modType.contains(" ")){
+                System.err.println("Unable to create trainer, the value of the \"machineLearningModelType\" field in the description file is invalid");
+                return false;
+            }
             if(!trainerData.containsKey("trainingExpiration")) {
-                System.err.println("Unable to create trainer, the request does not contain training expiration"); return false;
+                System.err.println("Unable to create trainer, the request does not contain training expiration");
+                return false;
             }
-            if(trainingDataTableName == null || trainingDataTableName.trim().isEmpty() || trainingDataTableName.trim().contains(" ")) {
-                System.err.println("Unable to create trainer, invalid training data table name"); return false;
+            if(trainingDataTableName == null || trainingDataTableName.isEmpty() || trainingDataTableName.contains(" ")) {
+                System.err.println("Unable to create trainer, invalid training data table name");
+                return false;
             }
             if(dataTableFieldNamesList == null || dataTableFieldNamesList.length < 1) {
-                System.err.println("Unable to create trainer, no training table field name present"); return false;
+                System.err.println("Unable to create trainer, no training table field name present");
+                return false;
             }
             for (int i =0; i < dataTableFieldNamesList.length; ++i){
                 if(dataTableFieldNamesList[i] == null || dataTableFieldNamesList[i].trim().isEmpty() || dataTableFieldNamesList[i].trim().contains(" ")){
-                    System.err.println("Unable to create trainer, field name list contains names without information"); return false;
+                    System.err.println("Unable to create trainer, field name list contains names without information");
+                    return false;
                 }
             }
-            if(classificationField == null || classificationField.trim().isEmpty() || classificationField.trim().contains(" ")) {
-                System.err.println("Unable to create trainer, invalid classification field name"); return false;
+            if(classificationField == null || classificationField.isEmpty() || classificationField.contains(" ")) {
+                System.err.println("Unable to create trainer, invalid classification field name");
+                return false;
             }
 
             if(this.setMLTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList, classificationField)) {
+                // CONTROLLO PER ABC E SVM VLIDITA CLASSIFICATION FIELD (==1, NOT NULL, NOT MPTY, SENZA SPAZI DENTRO)
+                // CONTROLLO SE SONO SETTATI TUTTI CAMPI NECESSARI
                 if (trainerData.get("machineLearningModelType").equals("linear_regression")) {
-                    return setLRTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList);
+                    return setLRTrainerData(/*trainerData, trainingDataTableName,*/ dataTableFieldNamesList);
                 }
                 if (trainerData.get("machineLearningModelType").equals("svm")) {
-                    return setSVMTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList);
+                    return setSVMTrainerData(trainerData/*, trainingDataTableName, dataTableFieldNamesList*/);
                 }
-                // CONTROLLO PER ABC E SVM VLIDITA CLASSIFICATION FIELD (==1, NOT NULL, NOT MPTY, SENZA SPAZI DENTRO)
+                if (trainerData.get("machineLearningModelType").equals("abc")) {
+                    return setABCTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList);
+                }
                 else {
-                    System.out.println("Unknown model type entered, could not create trainer");
+                    System.err.println("Unknown model type entered, could not create trainer");
                     return false;
                 }
             }
             else {
                 return false;
             }
-
         }
 
         return true;
     }
-    private boolean setSVMTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList){
-        /*
-        private String svmType = null;
-        private String kernelType = null;
-        private int polDegree = 0;  // for poly
-        private double gamma = 0;   // for poly/rbf/sigmoid
-        private double coef0 = 0;   // for poly/sigmoid
-        private double rho = 0;
-        //final private ArrayList<ArrayList<Double>> supportVectors;
-        private double paramC = 0;
-        */
-        // !!!!!AGGIUNGERE CONTROLLO SE SVMType NOT NULL, NOT EMPTY E SENZA SPAZI DENTRO
-        if(!trainerData.containsKey("SVMType")) {
-            System.err.println("Unable to create trainer, the request does not contain information about svm type"); return false;
+
+    private boolean setMLTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField){
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
+        File descriptionFile = new File(descriptionFilePath);
+        try {
+            descriptionFile.createNewFile();
+            /*
+            if (!descriptionFile.createNewFile()) {
+                System.err.println("Error creating description file");
+                return false;
+            }
+            */
         }
-        String[] svmTypes = {"c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr"};
-        if(!Arrays.asList(svmTypes).contains(trainerData.get("SVMType").trim())){
-            System.err.println("Unable to create trainer, the svm type entered does not exist"); return false;
-        }
-        if(!trainerData.containsKey("kernelType")) {
-            System.err.println("Unable to create trainer, the request does not contain information about kernel type"); return false;
-        }
-        String[] kernelTypes = {"linear", "poly", "rbf", "sigmoid", "precomputed"};
-        if(!Arrays.asList(kernelTypes).contains(trainerData.get("kernelType").trim())){
-            System.err.println("Unable to create trainer, the kernel type entered does not exist"); return false;
-        }
-        if(trainerData.get("kernelType").trim().equals("poly") && !trainerData.containsKey("degree")){
-            System.err.println("Unable to create trainer, for polynomial kernel must be specified degree"); return false;
-        }
-        String[] gammaKernels = {"poly", "rbf", "sigmoid"};
-        if(Arrays.asList(gammaKernels).contains(trainerData.get("kernelType").trim()) && !trainerData.containsKey("gamma")){
-            System.err.println("Unable to create trainer, for this type of kernel you need to specify gamma parameter"); return false;
-        }
-        String[] coef0Kernels = {"poly", "sigmoid"};
-        if(Arrays.asList(coef0Kernels).contains(trainerData.get("kernelType").trim()) && !trainerData.containsKey("coef0")){
-            System.err.println("Unable to create trainer, for this type of kernel you need to specify coef0 parameter"); return false;
-        }
-        if(trainerData.get("SVMType").trim().equals("c_svc") && !trainerData.containsKey("paramC")){
-            System.err.println("Unable to create trainer, for c_svc model you need to specify C parameter"); return false;
+        catch (IOException e) {
+            System.err.println(e.getMessage());
+            return false;
         }
 
-
-        this.setSvmType(trainerData.get("SVMType").trim());
-        this.setKernelType(trainerData.get("kernelType").trim());
-        if(trainerData.containsKey("degree")){
-            this.setDegree(Integer.parseInt(trainerData.get("degree").trim()));
-        }
-        if(trainerData.containsKey("gamma")){
-            this.setGamma(Double.parseDouble(trainerData.get("gamma").trim()));
-        }
-        if(trainerData.containsKey("coef0")){
-            this.setCoef0(Double.parseDouble(trainerData.get("coef0").trim()));
-        }
-        if(trainerData.containsKey("paramC")){
-            this.setCoef0(Double.parseDouble(trainerData.get("paramC").trim()));
-        }
-
+        this.setPredictorName(trainerData.get("predictorName"));
+        this.setPredictorModelType(trainerData.get("machineLearningModelType"));
+        this.setVersion(0);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.now();
+        String trainingDateTime = dateTime.format(formatter);
+        this.setLastTrain(trainingDateTime);
+        this.setTrainingExpiration(Integer.parseInt(trainerData.get("trainingExpiration")));
+        this.setTrainingDataTableName(trainingDataTableName);
+        this.setTrainingFieldNamesList(dataTableFieldNamesList);
+        this.setClassiticationField(classificationField);
         return true;
     }
-    private boolean setLRTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList){
+    private boolean setLRTrainerData(/*Map<String,String> trainerData, String trainingDataTableName,*/ String[] dataTableFieldNamesList){
         /*
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
         File descriptionFile = new File(descriptionFilePath);
@@ -398,36 +397,79 @@ public class MLTrainerBuilder {
 
         return true; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
-    private boolean setMLTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField){
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
-        File descriptionFile = new File(descriptionFilePath);
-        try {
-            if (!descriptionFile.createNewFile()) {
-                System.err.println("Error creating description file");
-                return false;
-            }
+    private boolean setSVMTrainerData(Map<String,String> trainerData/*, String trainingDataTableName, String[] dataTableFieldNamesList*/){
+        /*
+        private String svmType = null;
+        private String kernelType = null;
+        private int polDegree = 0;  // for poly
+        private double gamma = 0;   // for poly/rbf/sigmoid
+        private double coef0 = 0;   // for poly/sigmoid
+        private double rho = 0;
+        //final private ArrayList<ArrayList<Double>> supportVectors;
+        private double paramC = 0;
+        */
+        // !!!!!AGGIUNGERE CONTROLLO SE SVMType NOT NULL, NOT EMPTY E SENZA SPAZI DENTRO
+        if(!trainerData.containsKey("SVMType")) {
+            System.err.println("Unable to create trainer, the request does not contain information about svm type");
+            return false;
         }
-        catch (IOException e) {
-            // Per errore creazione description file
-            e.getMessage(); // !!!!!!!!!!!!!!!!!!!!!!!!!! DA DESCRIVERE MEGLIO ERRORE
+        String[] svmTypes = {"c_svc", "nu_svc", "one_class", "epsilon_svr", "nu_svr"};
+        if(!Arrays.asList(svmTypes).contains(trainerData.get("SVMType").trim())){
+            System.err.println("Unable to create trainer, the svm type entered does not exist");
+            return false;
+        }
+        if(!trainerData.containsKey("kernelType")) {
+            System.err.println("Unable to create trainer, the request does not contain information about kernel type");
+            return false;
+        }
+        String[] kernelTypes = {"linear", "polynomial", "rbf", "sigmoid", "precomputed"};
+        if(!Arrays.asList(kernelTypes).contains(trainerData.get("kernelType").trim())){
+            System.err.println("Unable to create trainer, the kernel type entered does not exist");
+            return false;
+        }
+        if(trainerData.get("kernelType").trim().equals("polynomial") && !trainerData.containsKey("degree")){
+            System.err.println("Unable to create trainer, for polynomial kernel must be specified degree");
+            return false;
+        }
+        String[] gammaKernels = {"polynomial", "rbf", "sigmoid"};
+        if(Arrays.asList(gammaKernels).contains(trainerData.get("kernelType").trim()) && !trainerData.containsKey("gamma")){
+            System.err.println("Unable to create trainer, for this type of kernel you need to specify gamma parameter");
+            return false;
+        }
+        String[] coef0Kernels = {"polynomial", "sigmoid"};
+        if(Arrays.asList(coef0Kernels).contains(trainerData.get("kernelType").trim()) && !trainerData.containsKey("coef0")){
+            System.err.println("Unable to create trainer, for this type of kernel you need to specify coef0 parameter");
+            return false;
+        }
+        if(trainerData.get("SVMType").trim().equals("c_svc") && !trainerData.containsKey("paramC")){
+            System.err.println("Unable to create trainer, for c_svc model you need to specify C parameter");
             return false;
         }
 
-        this.setPredictorName(trainerData.get("predictorName"));
-        this.setPredictorModelType(trainerData.get("machineLearningModelType"));
-        this.setVersion(0);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.now();
-        String trainingDateTime = dateTime.format(formatter);
-        this.setLastTrain(trainingDateTime);
-        this.setTrainingExpiration(Integer.parseInt(trainerData.get("trainingExpiration")));
-        this.setTrainingDataTableName(trainingDataTableName);
-        this.setTrainingFieldNamesList(dataTableFieldNamesList);
-        this.setClassiticationField(classificationField);
+        this.setSvmType(trainerData.get("SVMType").trim());
+        this.setKernelType(trainerData.get("kernelType").trim());
+        if(trainerData.containsKey("degree")){
+            this.setDegree(Integer.parseInt(trainerData.get("degree").trim()));
+        }
+        if(trainerData.containsKey("gamma")){
+            this.setGamma(Double.parseDouble(trainerData.get("gamma").trim()));
+        }
+        if(trainerData.containsKey("coef0")){
+            this.setCoef0(Double.parseDouble(trainerData.get("coef0").trim()));
+        }
+        if(trainerData.containsKey("paramC")){
+            this.setParamC(Double.parseDouble(trainerData.get("paramC").trim()));
+        }
+        // ???????? CONTROLLO SE SONO SETTATI TUTTI CAMPI NECESSARI PER ?? SVM_TYPE E KERNEL-TYPE
+
+        return true;
+    }
+    private boolean setABCTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList){
         return true;
     }
 
     private boolean createSVMDescriptionFile(){
+        /*
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("predictor_name", new JsonPrimitive(this.predictorName));
         jsonObject.add("model_type", new JsonPrimitive("svm"));
@@ -451,9 +493,10 @@ public class MLTrainerBuilder {
         if (this.kernelType.equals("poly") || this.kernelType.equals("sigmoid")) {
             modelData.add("coef0", new JsonPrimitive(this.coef0));
         }
+        if (this.SVMType.equals("c_svc") || this.SVMType.equals("epsilon_svr") || this.SVMType.equals("nu_svr")) {
+            modelData.add("paramC", new JsonPrimitive(this.paramC));
+        }
         jsonObject.add("model_data", modelData);
-
-
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
@@ -461,9 +504,131 @@ public class MLTrainerBuilder {
             gson.toJson(jsonObject, writer);
         }
         catch (IOException e) {
-            System.out.println("Error writing description file, failed to update parameters: ");
+            System.err.println("Error writing description file, failed to update parameters: ");
             e.printStackTrace();
             return false;
+        }
+        return true;
+        */
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.predictorName + ".model";
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
+
+        File descriptionFile = new File(descriptionFilePath);
+
+        if (!descriptionFile.exists()) {
+            try {
+                if (!descriptionFile.createNewFile()) {
+                    System.err.println("Failed to create description file");
+                    return false;
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        JsonObject completeObject = new JsonObject();
+        completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
+        completeObject.add("model_type", new JsonPrimitive("svm"));
+        //completeObject.add("version", new JsonPrimitive(this.getVersion()));
+        completeObject.add("version", new JsonPrimitive(1));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.now();
+        String trainingDateTime = dateTime.format(formatter);
+        completeObject.add("last_train", new JsonPrimitive(trainingDateTime));
+        completeObject.add("training_expiration", new JsonPrimitive(this.trainingExpiration));
+        completeObject.add("training_data_table_name", new JsonPrimitive(this.trainingDataTableName));
+        completeObject.add("classification_field_name", new JsonPrimitive(this.classificationField));
+        JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.trainingFieldNamesList);
+        completeObject.add("training_field_names_list", trainingFieldListJsonArray);
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!! AGGIUNGERE ALTRI CAMPI !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        JsonObject modelData = new JsonObject();
+        /*
+        try (BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFilePath))) {
+            String lineFromModelFile;
+            while ((lineFromModelFile = modelFileReader.readLine()) != null) {
+                String[] splittedLine = lineFromModelFile.split(" ");
+                if (splittedLine[0].equals("svm_type")) {
+                    modelData.add("svm_type", new JsonPrimitive(splittedLine[1]));
+                }
+                else if (splittedLine[0].equals("kernel_type")) {
+                    modelData.add("kernel_type", new JsonPrimitive(splittedLine[1]));
+                }
+                else if (splittedLine[0].equals("degree")) {
+                    modelData.add("degree", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("gamma")) {
+                    modelData.add("gamma", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("coef0")) {
+                    modelData.add("coef0", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("nr_class")) {
+                    modelData.add("nr_class", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("total_sv")) {
+                    modelData.add("total_sv", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
+                }
+                else if (splittedLine[0].equals("rho")) { //!!!!!!!!!!!!!!!! PUO ESSERE FORMARO E-9
+                    modelData.add("rho", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
+                    //modelData.add("rho", new JsonPrimitive(splittedLine[1]));
+                }
+                else if (splittedLine[0].equals("label")) {
+                    JsonArray jsonArray = new JsonArray();
+                    for (int i = 1; i < splittedLine.length; ++i) {
+                        jsonArray.add(Double.parseDouble(splittedLine[i]));
+                    }
+                    modelData.add("label", jsonArray);
+                }
+                else if (splittedLine[0].equals("nr_sv")) {
+                    JsonArray jsonArray = new JsonArray();
+                    for (int i = 1; i < splittedLine.length; ++i) {
+                        jsonArray.add(Integer.parseInt(splittedLine[i]));
+                    }
+                    modelData.add("nr_sv", jsonArray);
+                    // !!!!!!!!!!!!!!!! DA PORTARE FUORI
+                    modelData.add("paramC", new JsonPrimitive(this.paramC));
+                }
+                else if (splittedLine[0].equals("SV")) {
+                    JsonArray allVectors = new JsonArray();
+                    String vectorsLine;
+                    while ((vectorsLine = modelFileReader.readLine()) != null) {
+                        JsonArray jsonVector = new JsonArray();
+                        String[] splittedVectorsLine = vectorsLine.split(" ");
+                        jsonVector.add(Double.parseDouble(splittedVectorsLine[0]));
+                        for (int i = 1; i < splittedVectorsLine.length; ++i) {
+                            jsonVector.add(Double.parseDouble(splittedVectorsLine[i].split(":")[1]));
+                        }
+                        allVectors.add(jsonVector);
+                    }
+                    modelData.add("support_vectors",allVectors);
+                }
+
+            }
+            completeObject.add("model_data", modelData);
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return false;
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
+        }
+        */
+
+        try (FileWriter writer = new FileWriter(descriptionFilePath)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(completeObject, writer);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return false;
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
         return true;
     }
@@ -499,6 +664,17 @@ public class MLTrainerBuilder {
         return true;
     }
 
+    private void trimInputData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField){
+        //trainingDataTableName = aux;
+        for (Map.Entry<String, String> entry : trainerData.entrySet()) {
+            entry.setValue(entry.getValue().trim());
+        }
+        for (int i = 0; i < dataTableFieldNamesList.length; i++) {
+            dataTableFieldNamesList[i] = dataTableFieldNamesList[i].trim();
+        }
+        //aux = classificationField.trim();
+        //classificationField = aux;
+    }
     private double[][] rectMatrix(int numRows, int numColumns){
         double[][] matrix = new double[numRows][];
         for (int r = 0; r < numRows; ++r) {
@@ -537,8 +713,9 @@ public class MLTrainerBuilder {
     }
 
 
-
-    //////////////////////////////////////  SETTERS  //////////////////////////////////////////////
+    //#############################################################################################
+    //######################################     SETTERS     ######################################
+    //#############################################################################################
     // -------------- ML SETTERS ----------------
     public MLTrainerBuilder setPredictorName(String predictorName){
         this.predictorName = predictorName;
@@ -627,6 +804,10 @@ public class MLTrainerBuilder {
     }
     public MLTrainerBuilder setParamC(double paramC){
         this.paramC = paramC;
+        return this;
+    }
+    public MLTrainerBuilder setSupportVectors(double[][] xTy){
+        this.supportVectors = new ArrayList<>();
         return this;
     }
 

@@ -92,6 +92,8 @@ public class ABCTrainer extends MLTrainer {
     }
 
     public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTROLLO SE this != null
+
     //public boolean train(double[][] samples, double[] classType) {
          /*
     public void train(String dataTableName, String idField, String classificationField, DataBaseConnecter dbConnecter) {

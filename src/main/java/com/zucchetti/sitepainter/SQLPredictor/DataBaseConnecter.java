@@ -1,6 +1,5 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 
-//import java.sql.*;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -9,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class DataBaseConnecter {
     final private String dataBaseURL;
@@ -27,7 +27,9 @@ public class DataBaseConnecter {
         //!!!!!!!!!!!!!!!! TEST nomi di campi/tabella CON SINTASSI SBAGLIATA, O NN PRESENTI
 
         String query = "SELECT ";
-        for(int i=0; i < fieldsList.length; i++) { query += fieldsList[i] + ", "; }
+        for(int i=0; i < fieldsList.length; i++) {
+            query += fieldsList[i] + ", ";
+        }
         query += classField + " FROM " + tableName;
 
         ArrayList<ArrayList<Double>> result = new ArrayList<>();
@@ -73,6 +75,7 @@ public class DataBaseConnecter {
         return resultQuery;
     }
 
+    /*
     public String getDataBaseURL(){
         return this.dataBaseURL;
     }
@@ -82,5 +85,5 @@ public class DataBaseConnecter {
     public String getPassword(){
         return this.password;
     }
-
+    */
 }

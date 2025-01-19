@@ -17,10 +17,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class SVMTrainer extends MLTrainer{
-    // --- TUTTI CAMPI FINAL ???
-
     private String SVMType = null;
     private String kernelType = null;
     private int degree = 0;
@@ -28,7 +27,7 @@ public class SVMTrainer extends MLTrainer{
     private double coef0 = 0;
     private double paramC = 0;
     private double rho = 0;
-    //final private ArrayList<ArrayList<Double>> supportVectors;
+    private ArrayList<ArrayList<Double>> supportVectors = null;
 
 
     public SVMTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
@@ -45,11 +44,12 @@ public class SVMTrainer extends MLTrainer{
     }
 
     public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
-    //public boolean train(double[][] data, double[] classType){
+    /*/public boolean train(double[][] data, double[] classType){
+        // !!!!!!!!!!!!! CONTROLLO SE this != null
         double[][] data = new double[10][10];
         double[] classType = new double[10];; // !!!!!!!!!!! DA TOGLIERE
         int numExamples = data.length;
-        int numFeatures = data[0].length;
+        int numFeatures = data[0].length; // ??? -1 ??
 
         svm_problem problem = new svm_problem();
         problem.l = numExamples;
@@ -64,6 +64,110 @@ public class SVMTrainer extends MLTrainer{
                 problem.x[i][j] = new svm_node();
                 problem.x[i][j].index = j+1;
                 problem.x[i][j].value = data[i][j];
+            }
+        }
+
+        svm_parameter param = new svm_parameter();
+
+        switch (this.SVMType){
+            case "c_svc":
+                param.svm_type = svm_parameter.C_SVC; break;
+            case "nu_svc":
+                param.svm_type = svm_parameter.NU_SVC; break;
+            case "one_class":
+                param.svm_type = svm_parameter.ONE_CLASS; break;
+            case "epsilon_svr":
+                param.svm_type = svm_parameter.EPSILON_SVR; break;
+            case "nu_svr":
+                param.svm_type = svm_parameter.NU_SVR; break;
+            default:
+                System.out.println("Valore tipo SVM non valido");
+                return false;
+        }
+        switch (this.kernelType){
+            case "linear":
+                param.kernel_type = svm_parameter.LINEAR; break;
+            case "polynomial":
+                param.kernel_type = svm_parameter.POLY;
+                param.degree = this.degree;
+                param.gamma = this.gamma;
+                param.coef0 = this.coef0;
+                break;
+            case "rbf":
+                param.kernel_type = svm_parameter.RBF;
+                param.gamma = this.gamma;
+                break;
+            case "sigmoid":
+                param.kernel_type = svm_parameter.SIGMOID; break;
+            case "precomputed":
+                param.kernel_type = svm_parameter.PRECOMPUTED; break;
+            default:
+                System.out.println("Valore tipo kernel non valido");
+                return false;
+        }
+
+        param.C = this.paramC;
+
+        svm_model model = svm.svm_train(problem, param);
+
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.getPredictorName() + ".model";
+        try {
+            File file = new File(modelFilePath);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                    /*
+                    if (file.createNewFile()) {
+                        //System.out.println("File creato con successo: " + file.getName());
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    }
+                    else {
+                        System.err.println("Errore nella creazione del file.");
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    }
+
+                }
+                catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    return false;
+                }
+            }
+
+            svm.svm_save_model(modelFilePath, model);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if(this.createDescriptionFile()){
+            System.err.println("Error creating description file");
+            return false;
+        }
+        return true;
+        */
+        //public boolean train(double[][] data, double[] classType){
+        // !!!!!!!!!!!!! CONTROLLO SE this != null
+
+        double[][] samples = dbConnetter.getTrainingData(dataTableName, dataTableFieldNamesList, classificationFieldName);
+        // !!!!!!! CONTROLLO SE ESEMPI CONTENGONO SOLO 2 TIPI DI CLASSI
+
+        int numExamples = samples.length;
+        int numFeatures = samples[0].length - 1;
+
+        svm_problem problem = new svm_problem();
+        problem.l = numExamples;
+        problem.x = new svm_node[numExamples][numFeatures];
+        problem.y = new double[numExamples];
+
+        for (int i=0; i < numExamples; i++){
+            problem.y[i] = samples[i][numFeatures];
+            problem.x[i] = new svm_node[numFeatures];
+
+            for (int j=0; j < numFeatures ; j++){
+                problem.x[i][j] = new svm_node();
+                problem.x[i][j].index = j+1;
+                problem.x[i][j].value = samples[i][j];
             }
         }
 
@@ -140,8 +244,9 @@ public class SVMTrainer extends MLTrainer{
             return false;
         }
 
-        if(this.createDescriptionFile()){
+        if(!this.createDescriptionFile()){
             System.err.println("Error creating description file");
+            return false;
         }
         return true;
     }
@@ -168,11 +273,19 @@ public class SVMTrainer extends MLTrainer{
         JsonObject completeObject = new JsonObject();
         completeObject.add("predictor_name", new JsonPrimitive(this.getPredictorName()));
         completeObject.add("model_type", new JsonPrimitive("svm"));
-        completeObject.add("version", new JsonPrimitive(this.getVersion()));
-        completeObject.add("last_train", new JsonPrimitive(this.getPredictorName()));
+        //completeObject.add("version", new JsonPrimitive(this.getVersion()));
+        completeObject.add("version", new JsonPrimitive(1));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.now();
+        String trainingDateTime = dateTime.format(formatter);
+        completeObject.add("last_train", new JsonPrimitive(trainingDateTime));
+        completeObject.add("training_expiration", new JsonPrimitive(this.getTrainingExpiration()));
+        completeObject.add("training_data_table_name", new JsonPrimitive(this.getTrainingDataTableName()));
+        completeObject.add("classification_field_name", new JsonPrimitive(this.getClassificationField().trim()));
+        JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.getTrainingFieldNamesList());
+        completeObject.add("training_field_names_list", trainingFieldListJsonArray);
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!! AGGIUNGERE ALTRI CAMPI !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
         JsonObject modelData = new JsonObject();
         try (BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFilePath))) {
             String lineFromModelFile;
@@ -257,6 +370,13 @@ public class SVMTrainer extends MLTrainer{
             //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
         return true;
+    }
+    private JsonArray convertToJsonArrayFieldNamesList(String[] array) {
+        JsonArray jsonArray = new JsonArray();
+        for (String value : array) {
+            jsonArray.add(new JsonPrimitive(value.trim()));
+        }
+        return jsonArray;
     }
 }
 
