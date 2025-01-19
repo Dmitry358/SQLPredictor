@@ -14,8 +14,10 @@ import java.time.format.DateTimeFormatter;
 
 public class ABCTrainer extends MLTrainer {
     final private String predictionTableName;
+    private double boundA = 0;
+    private double boundB = 0;
 
-    public ABCTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String predictionTableName, String classificationField) {
+    public ABCTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList,  String classificationField, String predictionTableName, double boundA, double boundB) {
         super(predictorName, "abc", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
         this.predictionTableName = predictionTableName;
 
@@ -91,22 +93,21 @@ public class ABCTrainer extends MLTrainer {
         */
     }
 
-    public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTROLLO SE this != null
-
-    //public boolean train(double[][] samples, double[] classType) {
-         /*
-    public void train(String dataTableName, String idField, String classificationField, DataBaseConnecter dbConnecter) {
+    public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnecter){
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTROLLO SE this != null
+    //*
         //CONNESSIONE CON DB
         //CONTROLLO SE NEL DB NON è GIA PRESENTE TABELLA DI PREDICTOR COME MI COMPORTO??
         //CONTROLLO SE dataTableName
-        String trainQuery = "DROP TABLE IF EXISTS " + this.getPredictorName() + ";\n" +
-                "CREATE TABLE " + this.getPredictorName() + " AS \n" +
+        String idField = dataTableFieldNamesList[0];
+
+        String trainQuery = "DROP TABLE IF EXISTS " + this.predictionTableName + ";\n" +
+                "CREATE TABLE " + this.predictionTableName + " AS \n" +
                 "SELECT " + idField + ", 'A' AS class \n" +
                 "FROM (\n" +
                     "SELECT " + idField + ", " +
-                        "SUM("+classificationField+") OVER (ORDER BY " + classificationField + " desc ) AS run_sum, " +
-                        "SUM("+classificationField+") OVER () AS total \n"+
+                        "SUM(" + classificationFieldName + ") OVER (ORDER BY " + classificationFieldName + " desc ) AS run_sum, " +
+                        "SUM(" + classificationFieldName + ") OVER () AS total \n" +
                     "FROM " + dataTableName + " ) AS subquery \n" +
                 "WHERE run_sum <= 0.8 * total \n" +
 
@@ -114,22 +115,22 @@ public class ABCTrainer extends MLTrainer {
 
                 "SELECT sub_ABE." + idField + ", 'B' as class \n" +
                 "FROM \n" +
-                    "(SELECT sub_AB." + idField + ", " + classificationField + " \n" +
+                    "(SELECT sub_AB." + idField + ", " + classificationFieldName + " \n" +
                     "FROM ( \n" +
                         "SELECT " + idField + ", " +
-                        "" + classificationField + ", " +
-                        "SUM(" + classificationField + ") OVER (ORDER BY " + classificationField + " desc ) AS run_sum, " +
-                        "SUM(" + classificationField + ") OVER () AS total \n" +
+                        "" + classificationFieldName + ", " +
+                        "SUM(" + classificationFieldName + ") OVER (ORDER BY " + classificationFieldName + " desc ) AS run_sum, " +
+                        "SUM(" + classificationFieldName + ") OVER () AS total \n" +
                         "FROM " + dataTableName + " ) AS sub_AB \n" +
                     "WHERE run_sum <= 0.95 * total) AS sub_ABE \n" +
 
                 "LEFT JOIN \n" +
 
-                "(SELECT sub_A." + idField + ", sub_A." + classificationField + " \n" +
+                "(SELECT sub_A." + idField + ", sub_A." + classificationFieldName + " \n" +
                 "FROM ( \n" +
-                    "SELECT " + idField + ", " + classificationField + ", " +
-                    "SUM(" + classificationField + ") OVER (ORDER BY " + classificationField + " desc) AS run_sum, " +
-                    "SUM(" + classificationField + ") OVER () AS total \n" +
+                    "SELECT " + idField + ", " + classificationFieldName + ", " +
+                    "SUM(" + classificationFieldName + ") OVER (ORDER BY " + classificationFieldName + " desc) AS run_sum, " +
+                    "SUM(" + classificationFieldName + ") OVER () AS total \n" +
                     "FROM " + dataTableName +
                     ") AS sub_A \n" +
                 "WHERE run_sum <= 0.8 * total) AS sub_AE \n" +
@@ -140,19 +141,19 @@ public class ABCTrainer extends MLTrainer {
 
                 "SELECT sub_ABE." + idField + ", 'C' as class \n" +
                 "FROM \n" +
-                    "(SELECT sub_AB." + idField + ", " + classificationField + " \n" +
+                    "(SELECT sub_AB." + idField + ", " + classificationFieldName + " \n" +
                     "FROM ( \n" +
-                        "SELECT " + idField + ", " + classificationField + ", " +
-                        "SUM(" + classificationField + ") OVER (ORDER BY " + classificationField + " desc ) AS run_sum, " +
-                        "SUM(" + classificationField + ") OVER () AS total \n" +
+                        "SELECT " + idField + ", " + classificationFieldName + ", " +
+                        "SUM(" + classificationFieldName + ") OVER (ORDER BY " + classificationFieldName + " desc ) AS run_sum, " +
+                        "SUM(" + classificationFieldName + ") OVER () AS total \n" +
                         "FROM " + dataTableName + ") AS sub_AB \n" +
                         "WHERE run_sum <= total) AS sub_ABE \n" +
                 "LEFT JOIN \n" +
-                "(SELECT sub_A." + idField + ", sub_A." + classificationField + " \n" +
+                "(SELECT sub_A." + idField + ", sub_A." + classificationFieldName + " \n" +
                 "FROM ( \n" +
-                    "SELECT " + idField + ", " + classificationField + ", " +
-                        "SUM(" + classificationField + ") OVER (ORDER BY " + classificationField + " desc) AS run_sum, " +
-                        "SUM("+classificationField+") OVER () AS total \n" +
+                    "SELECT " + idField + ", " + classificationFieldName + ", " +
+                        "SUM(" + classificationFieldName + ") OVER (ORDER BY " + classificationFieldName + " desc) AS run_sum, " +
+                        "SUM(" + classificationFieldName + ") OVER () AS total \n" +
                     "FROM " + dataTableName + ") AS sub_A \n" +
                     "WHERE run_sum <= 0.95 * total) AS sub_AE \n" +
                 "ON sub_ABE." + idField + " = sub_AE." + idField + " \n" +
@@ -165,15 +166,18 @@ public class ABCTrainer extends MLTrainer {
             }
             catch (SQLException e) {
                 e.printStackTrace();
+                return false;
             }
         }
         catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
-    */
-        return false;
-    }
+    //*/
 
 }
+
 

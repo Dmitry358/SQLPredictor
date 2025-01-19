@@ -23,6 +23,28 @@ public class Main {
         String username = "postgres";
         String password = "";
 
+        //*/// ---------- BUILDER & TRAINER ABC ------------------------------------
+        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
+        Map<String, String> trainerData = new HashMap<>();
+        trainerData.put("predictorName", "  A-ABC-ABC   ");
+        trainerData.put("machineLearningModelType", "   abc  ");
+        trainerData.put("trainingExpiration", "   8   ");
+
+        trainerData.put("predictionTableName", "  abc_predictor ");
+        trainerData.put("boundA", "  0.8 ");
+        trainerData.put("boundB", "  0.95 ");
+
+        String dataTableName = "   abc_trainer   ";
+        String[] dataTableFieldNamesList = { "   id " };
+        String classificationField = "  yyy   ";
+
+        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
+        MLTrainer ABCTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
+
+        ABCTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        int b = 9;
+        //*///------------- END BUILDER & TRAINER ABC ---------------
+
         /*///---------------- SVM-TRAINER -----------------
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
         Map<String, String> trainerData = new HashMap<>();
@@ -49,25 +71,6 @@ public class Main {
         //*///---------------- END SVM-TRAINER -----------------
         //*///------------------ SVM-PREDICTOR -------------------
         //*///---------------- END SVM-PREDICTOR -----------------
-
-
-
-        /*/// ---------- BUILDER ABC ------------------------------------
-        String predictorModelType = "abc";
-        String dataTableName = "abc_data-table";
-        String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
-        String classificationField = "abc-class-field";
-
-        //*///------------- END BUILDER ABC ---------------
-        /*///--------- ABC-TRAINER  -----------------
-        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
-        String predictorName = "abc_predictor";
-        String dataTableName = "pazienti";
-        String idField = "id";
-        String classificationField = "yyy";
-        ABCTrainer abc = new ABCTrainer(predictorName);
-        abc.train(dataTableName, idField, classificationField, dbc);
-        //*///------------- END ABC-TRAINER ---------------
 
         /*//------------- BUILD & TRAIN LR-TRAINER -----------------
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
@@ -104,6 +107,21 @@ public class Main {
         String query = expander.translate(request);
         if (query != null) { System.out.println(query); }
         //*///------------- END ELENCO REQUESTS -----------------
+        /*/// ---------- BUILDER ABC (VECCHIO) ------------------------------------
+        String predictorModelType = "abc";
+        String dataTableName = "abc_data-table";
+        String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
+        String classificationField = "abc-class-field";
+        //*///------------- END BUILDER ABC (VECCHIO) ---------------
+        /*///--------- ABC-TRAINER (VECCHIO) -----------------
+        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
+        String predictorName = "abc_predictor";
+        String dataTableName = "pazienti";
+        String idField = "id";
+        String classificationField = "yyy";
+        ABCTrainer abc = new ABCTrainer(predictorName);
+        abc.train(dataTableName, idField, classificationField, dbc);
+        //*///------------- END ABC-TRAINER (VECCHIO) ---------------
         /*//------------- TRAINING LR-TRAINER (VECCHIO) -----------------
         DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
         double[][] queryResult = dbc.getTrainingData(dataTableName, dataTableFieldNamesList, classificationField);
@@ -191,6 +209,7 @@ public class Main {
             System.out.println("Q = " + queryPredictionResult[0][0]);
         }
         //*///------------- END SVM-TRAINER (VECCHIO) -----------------
+
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

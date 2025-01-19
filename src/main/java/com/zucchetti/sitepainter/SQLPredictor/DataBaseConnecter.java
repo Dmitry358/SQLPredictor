@@ -75,7 +75,6 @@ public class DataBaseConnecter {
         return resultQuery;
     }
 
-    /*
     public String getDataBaseURL(){
         return this.dataBaseURL;
     }
@@ -85,5 +84,5 @@ public class DataBaseConnecter {
     public String getPassword(){
         return this.password;
     }
-    */
+
 }

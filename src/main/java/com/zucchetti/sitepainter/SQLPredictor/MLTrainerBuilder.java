@@ -25,6 +25,8 @@ public class MLTrainerBuilder {
     private String[] trainingFieldNamesList = null;
     private String classificationField = null;
     // -------------- ABC ----------------
+    private double boundA = 0;
+    private double boundB = 0;
     private String predictionTableName = null;
     // -------------- LR ----------------
     private double[][] xTx = null;
@@ -57,11 +59,11 @@ public class MLTrainerBuilder {
     public MLTrainer build(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField) {
         trainingDataTableName = trainingDataTableName.trim();
         classificationField = classificationField.trim();
-        this.trimInputData(trainerData, trainingDataTableName, dataTableFieldNamesList, classificationField);
+        this.trimInputData(trainerData, dataTableFieldNamesList);
         if (this.setTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList, classificationField)){
             if (this.machineLearningModelType.equals("abc")) {
-                //this.createABCDescriptionFile();
-                return new ABCTrainer(this.predictorName, this.version, this.lastTrain, this.trainingExpiration, this.trainingDataTableName, this.trainingFieldNamesList, this.predictionTableName, this.classificationField);
+                this.createABCDescriptionFile();
+                return new ABCTrainer(this.predictorName, this.version, this.lastTrain, this.trainingExpiration, this.trainingDataTableName, this.trainingFieldNamesList, this.classificationField, this.predictionTableName, this.boundA, this.boundB);
             }
             else if (this.machineLearningModelType.equals("linear_regression")) {
                 this.createLRDescriptionFile();
@@ -86,7 +88,6 @@ public class MLTrainerBuilder {
             return false;
         }
         String predName = trainerData.get("predictorName");
-        //if(predName == null || predName.trim().isEmpty() || predName.trim().contains(" "))
         if(predName == null || predName.isEmpty() || predName.contains(" ")) {
             System.err.println("Unable to create trainer, the value of the \"predictorName\" field in the description file is invalid");
             return false;
@@ -246,10 +247,6 @@ public class MLTrainerBuilder {
                         }
                         */
                     }
-                    /*if (f < 3) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        System.out.println("Description file does not contain all information needed to create object");
-                        return false;
-                    }*/
                 }
                 else {
                     System.err.println("Description file has wrong structure");
@@ -283,6 +280,7 @@ public class MLTrainerBuilder {
                 System.err.println("Unable to create trainer, the request does not contain training expiration");
                 return false;
             }
+
             if(trainingDataTableName == null || trainingDataTableName.isEmpty() || trainingDataTableName.contains(" ")) {
                 System.err.println("Unable to create trainer, invalid training data table name");
                 return false;
@@ -306,10 +304,10 @@ public class MLTrainerBuilder {
                 // CONTROLLO PER ABC E SVM VLIDITA CLASSIFICATION FIELD (==1, NOT NULL, NOT MPTY, SENZA SPAZI DENTRO)
                 // CONTROLLO SE SONO SETTATI TUTTI CAMPI NECESSARI
                 if (trainerData.get("machineLearningModelType").equals("linear_regression")) {
-                    return setLRTrainerData(/*trainerData, trainingDataTableName,*/ dataTableFieldNamesList);
+                    return setLRTrainerData(dataTableFieldNamesList);
                 }
                 if (trainerData.get("machineLearningModelType").equals("svm")) {
-                    return setSVMTrainerData(trainerData/*, trainingDataTableName, dataTableFieldNamesList*/);
+                    return setSVMTrainerData(trainerData);
                 }
                 if (trainerData.get("machineLearningModelType").equals("abc")) {
                     return setABCTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList);
@@ -357,7 +355,7 @@ public class MLTrainerBuilder {
         this.setClassiticationField(classificationField);
         return true;
     }
-    private boolean setLRTrainerData(/*Map<String,String> trainerData, String trainingDataTableName,*/ String[] dataTableFieldNamesList){
+    private boolean setLRTrainerData(String[] dataTableFieldNamesList){
         /*
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
         File descriptionFile = new File(descriptionFilePath);
@@ -397,7 +395,7 @@ public class MLTrainerBuilder {
 
         return true; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
-    private boolean setSVMTrainerData(Map<String,String> trainerData/*, String trainingDataTableName, String[] dataTableFieldNamesList*/){
+    private boolean setSVMTrainerData(Map<String,String> trainerData){
         /*
         private String svmType = null;
         private String kernelType = null;
@@ -465,9 +463,91 @@ public class MLTrainerBuilder {
         return true;
     }
     private boolean setABCTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList){
+        if(!trainerData.containsKey("boundA")) {
+            System.err.println("Unable to create trainer, the request does not contain information about bound A value");
+            return false;
+        }
+        String boundAval = trainerData.get("boundA");
+        if(boundAval == null || boundAval.isEmpty() || boundAval.contains(" ")){
+            System.err.println("Unable to create trainer, request contains unacceptable bound A value");
+            return false;
+        }
+        if(!trainerData.containsKey("boundB")) {
+            System.err.println("Unable to create trainer, the request does not contain information about bound B value");
+            return false;
+        }
+        String boundBval = trainerData.get("boundB");
+        if(boundBval == null || boundBval.isEmpty() || boundBval.contains(" ")){
+            System.err.println("Unable to create trainer, request contains unacceptable bound B value");
+            return false;
+        }
+        if(!trainerData.containsKey("predictionTableName")) {
+            System.err.println("Unable to create trainer, request does not contain table name where prediction results will be saved");
+            return false;
+        }
+        String predTabName = trainerData.get("predictionTableName");
+        if(predTabName == null || predTabName.isEmpty() || predTabName.contains(" ") || predTabName.contains("-")){
+            System.err.println("Unable to create trainer, table name where prediction results will be saved is unacceptable");
+            return false;
+        }
+
+        this.setBoundA(Double.parseDouble(trainerData.get("boundA")));
+        this.setBoundB(Double.parseDouble(trainerData.get("boundB")));
+        this.setPredictionTableName(trainerData.get("predictionTableName"));
+
         return true;
     }
 
+    private boolean createABCDescriptionFile(){
+        String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.predictorName + ".model";
+        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
+
+        File descriptionFile = new File(descriptionFilePath);
+
+        if (!descriptionFile.exists()) {
+            try {
+                if (!descriptionFile.createNewFile()) {
+                    System.err.println("Failed to create description file");
+                    return false;
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        JsonObject completeObject = new JsonObject();
+        completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
+        completeObject.add("model_type", new JsonPrimitive("svm"));
+        //completeObject.add("version", new JsonPrimitive(this.getVersion()));
+        completeObject.add("version", new JsonPrimitive(1));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.now();
+        String trainingDateTime = dateTime.format(formatter);
+        completeObject.add("last_train", new JsonPrimitive(trainingDateTime));
+        completeObject.add("training_expiration", new JsonPrimitive(this.trainingExpiration));
+        completeObject.add("training_data_table_name", new JsonPrimitive(this.trainingDataTableName));
+        completeObject.add("classification_field_name", new JsonPrimitive(this.classificationField));
+        JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.trainingFieldNamesList);
+        completeObject.add("training_field_names_list", trainingFieldListJsonArray);
+
+        completeObject.add("bound_A", new JsonPrimitive(this.boundA));
+        completeObject.add("bound_B", new JsonPrimitive(this.boundB));
+        completeObject.add("prediction_table_name", new JsonPrimitive(this.predictionTableName));
+
+        try (FileWriter writer = new FileWriter(descriptionFilePath)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(completeObject, writer);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return false;
+            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
+        }
+
+        return  true;
+    }
     private boolean createSVMDescriptionFile(){
         /*
         JsonObject jsonObject = new JsonObject();
@@ -664,16 +744,13 @@ public class MLTrainerBuilder {
         return true;
     }
 
-    private void trimInputData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField){
-        //trainingDataTableName = aux;
+    private void trimInputData(Map<String,String> trainerData, String[] dataTableFieldNamesList){
         for (Map.Entry<String, String> entry : trainerData.entrySet()) {
             entry.setValue(entry.getValue().trim());
         }
         for (int i = 0; i < dataTableFieldNamesList.length; i++) {
             dataTableFieldNamesList[i] = dataTableFieldNamesList[i].trim();
         }
-        //aux = classificationField.trim();
-        //classificationField = aux;
     }
     private double[][] rectMatrix(int numRows, int numColumns){
         double[][] matrix = new double[numRows][];
@@ -753,6 +830,14 @@ public class MLTrainerBuilder {
     // -------------- ABC SETTERS ----------------
     public MLTrainerBuilder setPredictionTableName(String predictionTableName){
         this.predictionTableName = predictionTableName;
+        return this;
+    }
+    public MLTrainerBuilder setBoundA(double boundA){
+        this.boundA = boundA;
+        return this;
+    }
+    public MLTrainerBuilder setBoundB(double boundB){
+        this.boundB = boundB;
         return this;
     }
 
