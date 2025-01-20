@@ -23,6 +23,7 @@ public class SVMPredictor extends MLPredictor {
             this.gamma = Double.parseDouble(modelParameters.get("gamma"));
         }
         if (modelParameters.get("kernel_type").equals("polynomial")){
+            this.gamma = Double.parseDouble(modelParameters.get("gamma"));
             this.coef0 = Double.parseDouble(modelParameters.get("coef0"));
             this.degree = Integer.parseInt(modelParameters.get("degree"));
         }
@@ -39,7 +40,7 @@ public class SVMPredictor extends MLPredictor {
             return null;
         }
         if(fieldsNum != (supportVectors.get(0).size() - 1)){
-            System.out.println("Request must contain " + (supportVectors.get(0).size() - 1) + " field names");
+            System.err.println("Request must contain " + (supportVectors.get(0).size() - 1) + " field names");
             return null;
         }
 
@@ -104,7 +105,7 @@ public class SVMPredictor extends MLPredictor {
         for (int sv = 0; sv < SVNumber; ++sv) {
 
             double coef = supportVectors.get(sv).get(0);
-
+            // coefficienti dei supportvectors
             if (sv != 0) {
                 if (coef < 0) {
                     if (coef == -1) { query.append(" - ("); }

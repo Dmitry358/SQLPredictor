@@ -33,7 +33,6 @@ public class SVMTrainer extends MLTrainer{
     public SVMTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField, String svmType, String kernelType, int polDegree, double gamma, double coef0, double rho, double paramC){
         // !!!!!!!!!!!!! CONTROLLO SE PREDICTOR E MODEL NON ESISTONO GIA
         super(predictorName, "svm", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
-
         this.SVMType = svmType;
         this.kernelType = kernelType;
         this.degree = polDegree;

@@ -15,9 +15,9 @@ public class MLSQLExpanderTest {
     @Test
     public void testGetFieldsListWithCorrectInput(){
         MLSQLExpander expander = new MLSQLExpander();
-        String result = "    t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   ";
+        String result = "    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   ";
         ArrayList<String> expectedFieldsList = new ArrayList<String>();
-        expectedFieldsList.add("(t.aaa+77)");
+        expectedFieldsList.add("(t.insurance_samples.csv+77)");
         expectedFieldsList.add("(t.tttt)");
         expectedFieldsList.add("(t.km1 + left(t.nome1_1, 11) + left(t.nome1_2, 12) + left(t.nome1_3, 13))");
         expectedFieldsList.add("(tccc +44)");
@@ -44,7 +44,7 @@ public class MLSQLExpanderTest {
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Fields in the fields list cannot be empty"+nl;
 
-        String result = "    t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),   ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   ";
+        String result = "    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),   ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   ";
 
         try {
             Method getFieldsList = MLSQLExpander.class.getDeclaredMethod("getFieldsList", String.class);
@@ -118,7 +118,7 @@ public class MLSQLExpanderTest {
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Predictor field cannot be empty"+nl;
 
-        String request = "<         >(     t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.ccc  ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   )";
+        String request = "<         >(     t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.ccc  ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   )";
 
         String resultQuery = expander.translate(request);
         assertNull(resultQuery, "Method does not return null");
@@ -160,7 +160,7 @@ public class MLSQLExpanderTest {
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Fields in the fields list cannot be empty"+nl;
 
-        String request = "<   svm_polynomial     >(    t.aaa+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),   ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   )";
+        String request = "<   svm_polynomial     >(    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),   ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   )";
 
         String resultQuery = expander.translate(request);
         assertNull(resultQuery, "Method does not return null");

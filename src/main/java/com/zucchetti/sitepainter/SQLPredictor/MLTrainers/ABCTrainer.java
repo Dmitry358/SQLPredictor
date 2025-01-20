@@ -1,15 +1,10 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
-import com.google.gson.*;
 import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
-
-import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 public class ABCTrainer extends MLTrainer {
@@ -118,7 +113,7 @@ public class ABCTrainer extends MLTrainer {
                     "(SELECT sub_AB." + idField + ", " + classificationFieldName + " \n" +
                     "FROM ( \n" +
                         "SELECT " + idField + ", " +
-                        "" + classificationFieldName + ", " +
+                        classificationFieldName + ", " +
                         "SUM(" + classificationFieldName + ") OVER (ORDER BY " + classificationFieldName + " desc ) AS run_sum, " +
                         "SUM(" + classificationFieldName + ") OVER () AS total \n" +
                         "FROM " + dataTableName + " ) AS sub_AB \n" +

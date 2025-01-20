@@ -14,30 +14,39 @@ public class LRPredictor extends MLPredictor {
     public String getQuery(ArrayList<String> fieldsList){
         int fieldsNum = fieldsList.size();
 
-        if (fieldsNum < 1){
+        if(fieldsNum < 1){
             System.out.println("Fields list must not be empty");
             return null;
         }
         if(fieldsNum != (parameters.length - 1)){
-            System.out.println("Request must contain " + (parameters.length - 1) + " field names");
+            System.err.println("Request must contain " + (parameters.length - 1) + " field names");
             return null;
         }
 
-        String query = "(";
+        StringBuilder query = new StringBuilder("(");
 
         for (int i=0; i <= fieldsNum; i++){
-            if (i < fieldsNum - 1) { query += fieldsList.get(i) + "*" + parameters[i] + " + "; }
-            else if (i == fieldsNum - 1){ query += fieldsList.get(i) + "*" + parameters[i]; }
+            if(i==0){
+                query.append(parameters[i]).append(" + ");
+            }
+            else if (i < fieldsNum) {
+                query.append(fieldsList.get(i-1)).append("*").append(parameters[i]).append(" + ");
+            }
+            else if (i == fieldsNum){
+                query.append(fieldsList.get(i-1)).append("*").append(parameters[i]).append(")");
+            }
+            /*
             else {
                 if (parameters[i]>=0){
-                    query +=" + " + parameters[i] + ")";
+                    query.append(" + ").append(parameters[i]).append(")");
                 }
                 else {
-                    query +=" " + parameters[i] + ")";
+                    query.append(" ").append(parameters[i]).append(")");
                 }
             }
+            */
         }
 
-        return query;
+        return query.toString();
     }
 }

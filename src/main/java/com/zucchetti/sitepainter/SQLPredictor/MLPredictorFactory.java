@@ -98,7 +98,7 @@ public class MLPredictorFactory {
         }
 
         if (f < 4){
-            System.out.println("Description file does not contain all information needed to create object");
+            System.err.println("Description file does not contain all information needed to create object");
             return null;
         }
         /*
@@ -138,7 +138,7 @@ public class MLPredictorFactory {
             }
         }
         if (f < 4){
-            System.out.println("Description file does not contain all information needed to create object");
+            System.err.println("Description file does not contain all information needed to create object");
             return null;
         }
         return new ABCPredictor(predictorName, version, lastTrain, tableNane);
@@ -212,9 +212,9 @@ public class MLPredictorFactory {
                 }
             }
         }
-        if (linKer < 7 || polKer < 10 || rbfKer < 8) {
-            System.out.println("Description file does not contain all information needed to create object");
-            //return null;
+        if ((linKer < 7 && modelParameters.get("kernel_type").equals("linear")) || (polKer < 10 && modelParameters.get("kernel_type").equals("polynomial")) || (rbfKer < 8 && modelParameters.get("kernel_type").equals("rbf"))) {
+            System.err.println("Description file does not contain all information needed to create object");
+            return null;
         }
         return new SVMPredictor(predictorName, version, lastTrain, modelParameters, supportVectors);
     }
