@@ -28,6 +28,26 @@ public class Main {
         String password = "";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
 
+        //*///////////////////////////   ABC   ///////////////////////////////
+        Map<String, String> trainerData = new HashMap<>();
+        trainerData.put("predictorName", "  A-ABC-ABC   ");
+        trainerData.put("machineLearningModelType", "   abc  ");
+        trainerData.put("trainingExpiration", "   8   ");
+
+        trainerData.put("predictionTableName", "  abc_predictor ");
+        trainerData.put("boundA", "  0.8 ");
+        trainerData.put("boundB", "  0.95 ");
+
+        String dataTableName = "   abc_trainer   ";
+        String[] dataTableFieldNamesList = { "   id " };
+        String classificationField = "  yyy   ";
+
+        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
+        MLTrainer ABCTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
+
+        ABCTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        int b = 9;
+        //*///////////////////////////   ABC END  ///////////////////////////////
 
         /*///////////////////////////   LR   ///////////////////////////////
 
@@ -36,7 +56,7 @@ public class Main {
         trainerData.put("predictorName", predictorName);
         trainerData.put("machineLearningModelType", "linear_regression");
         trainerData.put("trainingExpiration", "13");
-        String dataTableName = "a_insurance25";
+        String dataTableName = "a_insurance";
         String[] dataTableFieldNamesList = { "  age  ", "  bmi  ", "  children  " };
         String classificationField = "  charges  ";
 
@@ -60,7 +80,7 @@ public class Main {
         MLSQLExpander expander = new MLSQLExpander();
         String query = "\033[32m" + expander.translate(request) + "\033[0m";
         if (query != null) { System.out.println(query); }
-        /*///////////////////////////   LR END   ///////////////////////////////
+        //*////////////////////////////   LR END   ///////////////////////////////
 
         /*///////////////////////  SVM  /////////////////////////
         //--- IMPOSTAZIONE PARAMETRI MODELLO
@@ -129,29 +149,7 @@ public class Main {
         System.out.println("False number = " + falseNum);
         System.out.println("Libsvm error = " + libError);
         System.out.println("Query error = " + queryError);
-        /*//////////////////////////   SVM END   ///////////////////////////////
-
-        /*///////////////////////////   ABC   ///////////////////////////////
-        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
-        Map<String, String> trainerData = new HashMap<>();
-        trainerData.put("predictorName", "  A-ABC-ABC   ");
-        trainerData.put("machineLearningModelType", "   abc  ");
-        trainerData.put("trainingExpiration", "   8   ");
-
-        trainerData.put("predictionTableName", "  abc_predictor ");
-        trainerData.put("boundA", "  0.8 ");
-        trainerData.put("boundB", "  0.95 ");
-
-        String dataTableName = "   abc_trainer   ";
-        String[] dataTableFieldNamesList = { "   id " };
-        String classificationField = "  yyy   ";
-
-        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
-        MLTrainer ABCTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
-
-        ABCTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
-        int b = 9;
-        /*///////////////////////////   ABC END  ///////////////////////////////
+        //*//////////////////////////   SVM END   ///////////////////////////////
 
     }
 
@@ -301,7 +299,7 @@ public class Main {
 
 
     /////////////////////////////////////// CODICE VECCHIO /////////////////////////////////////////////
-        /*///--------- SVM-TRAINER (VECCHIO) -----------------
+        /*--------- SVM-TRAINER (VECCHIO) -----------------
         private static int predictionLIBSVM(String modelName, double[] data){
             // !!!!! controllo se data contiene giusto numero elementi per modello
 
@@ -374,7 +372,7 @@ public class Main {
             int[][] queryPredictionResult = qp.predict(exampleTableName, exampleId, predictorQuery);
             System.out.println("Q = " + queryPredictionResult[0][0]);
         }
-        //*///------------- END SVM-TRAINER (VECCHIO) -----------------
+        *///------------- END SVM-TRAINER (VECCHIO) -----------------
         /*
         String request = null;
         //request = "<     diabete_svm  >(    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.bbb, tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
