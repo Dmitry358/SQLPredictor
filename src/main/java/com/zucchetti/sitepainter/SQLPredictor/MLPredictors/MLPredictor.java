@@ -16,6 +16,4 @@ public abstract class MLPredictor {
     protected String getPredictorName(){ return predictorName; }
 
     public abstract String getQuery(ArrayList<String> fieldsList);
-
-    //public abstract void printFields(); // SOLO PER TESTING !!!!!!!!!!!!!!!!!!!!!!!!
 }

@@ -63,11 +63,11 @@ public class MLPredictorFactory {
             return null;
         }
         catch (JsonIOException e) {
-            System.out.println("Error of processing description file");
+            System.err.println("Error of processing description file");
             return null;
         }
         catch (JsonSyntaxException e) {
-            System.out.println("Syntax of description file is incorrect");
+            System.err.println("Syntax of description file is incorrect");
             return null;
         }
     }
@@ -100,12 +100,6 @@ public class MLPredictorFactory {
             System.err.println("Description file does not contain all information needed to create object");
             return null;
         }
-        /*
-        if (f > 4){
-            System.out.println("Description file contains multiple fields with same name");
-            return null;
-        }
-        */
 
         for (JsonElement element : parametersJson) { parametersList.add(element.getAsDouble()); }
 
@@ -206,7 +200,7 @@ public class MLPredictorFactory {
                             }
                             supportVectors.add(list);
                         }
-                        ++linKer; ++polKer; ++rbfKer; //!!!!!!!!!!!!!!! FORSE NON SERVE
+                        ++linKer; ++polKer; ++rbfKer;
                     }
                 }
             }

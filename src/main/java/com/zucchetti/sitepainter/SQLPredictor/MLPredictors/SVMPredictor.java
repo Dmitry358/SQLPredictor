@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class SVMPredictor extends MLPredictor {
-    private String SVMType = ""; //?????????????????
+    private String SVMType = "";
     private String kernelType = "";
     private int degree = 0;
     private double gamma = 0;
@@ -105,7 +105,6 @@ public class SVMPredictor extends MLPredictor {
         for (int sv = 0; sv < SVNumber; ++sv) {
 
             double coef = supportVectors.get(sv).get(0);
-            // coefficienti dei supportvectors
             if (sv != 0) {
                 if (coef < 0) {
                     if (coef == -1) { query.append(" - ("); }

@@ -22,7 +22,7 @@ public abstract class MLTrainer {
         this.trainingFieldNamesList = trainingFieldNamesList;
         this.classificationField = classificationField;
     }
-    //public abstract boolean train(double[][] samples, double[] classType);
+
     public abstract boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter);
 
     protected void incrementVersion(){
@@ -30,7 +30,7 @@ public abstract class MLTrainer {
     }
     protected void setLastTrain(String trainingDateTime){
         this.lastTrain = trainingDateTime;
-    } //???????????????????????????????????????
+    }
 
     protected String getPredictorName(){
         return this.predictorName;

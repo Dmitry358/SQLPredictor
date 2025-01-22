@@ -22,10 +22,6 @@ public class DataBaseConnecter {
     }
 
     public double[][] getTrainingData(String tableName, String[] fieldsList, String classField){
-        //!!!! TEST SE CONNESSIONE A DB è ANDATA A BUON FINE
-        // !!! TEST CHE QUERY è ANDATA A BUON FINE
-        //!!!!!!!!!!!!!!!! TEST nomi di campi/tabella CON SINTASSI SBAGLIATA, O NN PRESENTI
-
         String query = "SELECT ";
         for(int i=0; i < fieldsList.length; i++) {
             query += fieldsList[i] + ", ";
@@ -51,16 +47,7 @@ public class DataBaseConnecter {
                     row.add(queryResult.getDouble(fieldsNameList.get(i)));
                 }
                 result.add(row);
-                /*
-                ArrayList<Double> result = new ArrayList<>();
-                for(int i=0; i < fields.length; i++) result.add(resultSet.getDouble(fields[i]));
-                result.add(resultSet.getDouble(classField));
-                data.add(result);
-                */
             }
-            //if (queryResult != null) { queryResult.close();}
-            //if (statement != null) { statement.close(); }
-            //if (connection != null) { connection.close(); }
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -84,5 +71,4 @@ public class DataBaseConnecter {
     public String getPassword(){
         return this.password;
     }
-
 }

@@ -15,7 +15,6 @@ import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.MLTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.SVMTrainer;
 
-//import java.io.;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
@@ -67,7 +66,6 @@ public class MLTrainerBuilder {
     private double paramP = 0;            // for EPSILON_SVR
     private int shrinking = 0;        // use the shrinking heuristics
     private int probability = 0;     // do probability estimates
-
     *///!!!!!!!! NON TOCCARE, DEVONO RESTARE !!!!!!!!!
 
 
@@ -113,12 +111,11 @@ public class MLTrainerBuilder {
         File descriptionFile = new File(descriptionFilePath);
         if (descriptionFile.exists() && trainerData.get("machineLearningModelType").equals("linear_regression")) {
             try {
-                FileReader reader = new FileReader(descriptionFilePath); // ??? FORSE SI PUO METTERE COME CONTROLLO ESISTENZA DEL FILE
+                FileReader reader = new FileReader(descriptionFilePath);
                 JsonElement jsonElement = JsonParser.parseReader(reader);
 
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
-                    // ??????? CONTROLLO NUMERO MINIMO CAMPI NECESSARI
                     for (String key : jsonObject.keySet()) {
                         // ------- ML-TRAINER -----------------------------------------
                         if (key.equals("predictor_name")) {
@@ -166,8 +163,6 @@ public class MLTrainerBuilder {
                                 xTxFromJson[i] = xTxFromJsonRow;
                             }
                             this.setXtX(xTxFromJson);
-
-                            //this.xTx = xTxFromJson;
                         }
                         else if (key.equals("xTy")) {
                             JsonArray xTyJson = jsonObject.get(key).getAsJsonArray();
@@ -182,23 +177,6 @@ public class MLTrainerBuilder {
                                 xTyFromJson[i] = xTyFromJsonRow;
                             }
                             this.setXtY(xTyFromJson);
-                            //this.xTy = xTyFromJson;
-                            /*
-                            if(xTxFromJson.length > 0) {
-                                if (xTxFromJson.length == this.transposeOfXTimesX.length && xTxFromJson[0].length == this.transposeOfXTimesX[0].length) {
-                                    for (int i = 0; i < xTxFromJson.length; ++i) {
-                                        for (int j = 0; j < xTxFromJson[0].length; ++j) {
-                                            this.transposeOfXTimesX[i][j] = xTxFromJson[i][j];
-                                        }
-                                    }
-                                } else {
-                                    System.out.println("Number of parameters read from description file does not match number of trainer parameters");
-                                }
-                            }
-                            else {
-                                System.out.println("The xTx parameter of description file does not contain any elements");
-                            }
-                            */
                         }
                         else if (key.equals("parametersLR")) {
                             JsonArray parametersJson = jsonObject.get(key).getAsJsonArray();
@@ -208,60 +186,7 @@ public class MLTrainerBuilder {
                                 parametersFromJson[i] = parametersJson.get(i).getAsDouble();
                             }
                             this.setParametersLR(parametersFromJson);
-                            //this.parametersLR = parametersFromJson;
                         }
-                        // ------- ABC-TRAINER  ??? FORSE NON SERVE ???? ---------------------------------------
-                        /*
-                        else if (key.equals("prediction_table_name")) {
-                            this.setPredictionTableName(jsonObject.get(key).getAsString());
-                            //this.predictionTableName = jsonObject.get(key).getAsString();
-                        }
-                        */
-                        // ------- SVM-TRAINER  --??? FORSE NON SERVE ???? ------------
-                        /*
-                        else if (key.equals("model_data")) {
-                            //for (String modelDataRow : jsonObject.keySet()) {
-                            JsonObject modelData = jsonObject.get(key).getAsJsonObject();
-                            for (String modelDataKey : modelData.keySet()) {
-                                if (modelDataKey.equals("svm_type")) { // ??? AS STRING?????
-                                    this.setSvmType(modelData.get(modelDataKey).getAsString());
-                                }
-                                else if (modelDataKey.equals("kernel_type")) {// ??? AS STRING?????
-                                    this.setKernelType(modelData.get(modelDataKey).getAsString());
-                                }
-                                else if (modelDataKey.equals("degree")) {
-                                    this.setDegree(Integer.parseInt(modelData.get(modelDataKey).getAsString()));
-                                }
-                                else if (modelDataKey.equals("gamma")) {
-                                    this.setGamma(Double.parseDouble(modelData.get(modelDataKey).getAsString()));
-                                }
-                                else if (modelDataKey.equals("coef0")) {
-                                    this.setCoef0(Double.parseDouble(modelData.get(modelDataKey).getAsString()));
-                                }
-                                else if (modelDataKey.equals("rho")) {
-                                    this.setRho(Double.parseDouble(modelData.get(modelDataKey).getAsString()));
-                                }
-                                else if (modelDataKey.equals("paramC")) {
-                                    this.setParamC(Double.parseDouble(modelData.get(modelDataKey).getAsString()));
-                                }
-                                else if (modelDataKey.equals("support_vectors")) {
-                                    JsonArray svJson = modelData.get(modelDataKey).getAsJsonArray();
-                                    double[][] svFromJson = new double[svJson.size()][];
-
-                                    for (int i = 0; i < svJson.size(); i++) {
-                                        JsonArray svJsonRow = svJson.get(i).getAsJsonArray();
-                                        double[] svFromJsonRow = new double[svJsonRow.size()];
-
-                                        for (int j = 0; j < svJsonRow.size(); j++) {
-                                            svFromJsonRow[j] = svJsonRow.get(j).getAsDouble();
-                                        }
-                                        svFromJson[i] = svFromJsonRow;
-                                    }
-                                    this.setXtX(svFromJson); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                }
-                            }
-                        }
-                        */
                     }
                 }
                 else {
@@ -269,7 +194,7 @@ public class MLTrainerBuilder {
                     return false;
                 }
             }
-            catch (FileNotFoundException e) { // SERVE??????????????????
+            catch (FileNotFoundException e) {
                 System.err.println("Description file of predictor \"" + predictorName + "\" is not found");
                 return false;
             }
@@ -282,7 +207,7 @@ public class MLTrainerBuilder {
                 return false;
             }
         }
-        else { // FILE DI DESCRIZIONE NON ESISTE O TIPO MODELLO == LINEAR_REGRESSION
+        else {
             if(!trainerData.containsKey("machineLearningModelType")) {
                 System.err.println("Unable to create trainer, the request does not contain predictor model type");
                 return false;
@@ -317,8 +242,6 @@ public class MLTrainerBuilder {
             }
 
             if(this.setMLTrainerData(trainerData, trainingDataTableName, dataTableFieldNamesList, classificationField)) {
-                // CONTROLLO PER ABC E SVM VLIDITA CLASSIFICATION FIELD (==1, NOT NULL, NOT MPTY, SENZA SPAZI DENTRO)
-                // CONTROLLO SE SONO SETTATI TUTTI CAMPI NECESSARI
                 if (trainerData.get("machineLearningModelType").equals("linear_regression")) {
                     return setLRTrainerData(dataTableFieldNamesList);
                 }
@@ -346,12 +269,6 @@ public class MLTrainerBuilder {
         File descriptionFile = new File(descriptionFilePath);
         try {
             descriptionFile.createNewFile();
-            /*
-            if (!descriptionFile.createNewFile()) {
-                System.err.println("Error creating description file");
-                return false;
-            }
-            */
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
@@ -372,33 +289,6 @@ public class MLTrainerBuilder {
         return true;
     }
     private boolean setLRTrainerData(String[] dataTableFieldNamesList){
-        /*
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
-        File descriptionFile = new File(descriptionFilePath);
-        try {
-            if (!descriptionFile.createNewFile()) {
-                System.err.println("Error creating description file");
-                return false;
-            }
-        }
-        catch (IOException e) {
-            // Per errore creazione description file
-            e.getMessage(); // !!!!!!!!!!!!!!!!!!!!!!!!!! DA DESCRIVERE MEGLIO ERRORE
-            return false;
-        }
-
-        this.setPredictorName(trainerData.get("predictorName"));
-        this.setPredictorModelType(trainerData.get("machineLearningModelType"));
-        this.setVersion(0);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.now();
-        String trainingDateTime = dateTime.format(formatter);
-        this.setLastTrain(trainingDateTime);
-        this.setTrainingExpiration(Integer.parseInt(trainerData.get("trainingExpiration")));
-        this.setTrainingDataTableName(trainingDataTableName);
-        this.setTrainingFieldNamesList(dataTableFieldNamesList);
-        */
-
         int parametersNumber = dataTableFieldNamesList.length + 1;
         this.setXtX(this.rectMatrix(parametersNumber,parametersNumber));
         this.setXtY(this.rectMatrix(parametersNumber,1));
@@ -409,20 +299,9 @@ public class MLTrainerBuilder {
         }
         this.setParametersLR(parametersLR);
 
-        return true; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        return true;
     }
     private boolean setSVMTrainerData(Map<String,String> trainerData){
-        /*
-        private String svmType = null;
-        private String kernelType = null;
-        private int polDegree = 0;  // for poly
-        private double gamma = 0;   // for poly/rbf/sigmoid
-        private double coef0 = 0;   // for poly/sigmoid
-        private double rho = 0;
-        //final private ArrayList<ArrayList<Double>> supportVectors;
-        private double paramC = 0;
-        */
-        // !!!!!AGGIUNGERE CONTROLLO SE SVMType NOT NULL, NOT EMPTY E SENZA SPAZI DENTRO
         if(!trainerData.containsKey("SVMType")) {
             System.err.println("Unable to create trainer, the request does not contain information about svm type");
             return false;
@@ -474,7 +353,6 @@ public class MLTrainerBuilder {
         if(trainerData.containsKey("paramC")){
             this.setParamC(Double.parseDouble(trainerData.get("paramC").trim()));
         }
-        // ???????? CONTROLLO SE SONO SETTATI TUTTI CAMPI NECESSARI PER ?? SVM_TYPE E KERNEL-TYPE
 
         return true;
     }
@@ -536,7 +414,6 @@ public class MLTrainerBuilder {
         JsonObject completeObject = new JsonObject();
         completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
         completeObject.add("model_type", new JsonPrimitive("abc"));
-        //completeObject.add("version", new JsonPrimitive(this.getVersion()));
         completeObject.add("version", new JsonPrimitive(1));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.now();
@@ -559,53 +436,11 @@ public class MLTrainerBuilder {
         catch (IOException e) {
             e.printStackTrace();
             return false;
-            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
 
         return  true;
     }
     private boolean createSVMDescriptionFile(){
-        /*
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("predictor_name", new JsonPrimitive(this.predictorName));
-        jsonObject.add("model_type", new JsonPrimitive("svm"));
-        jsonObject.add("version", new JsonPrimitive(this.version));
-        jsonObject.add("last_train", new JsonPrimitive(this.lastTrain));
-        jsonObject.add("training_expiration", new JsonPrimitive(this.trainingExpiration));
-        jsonObject.add("training_data_table_name", new JsonPrimitive(this.trainingDataTableName));
-        jsonObject.add("classification_field_name", new JsonPrimitive(this.classificationField));
-        JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.trainingFieldNamesList);
-        jsonObject.add("training_field_names_list", trainingFieldListJsonArray);
-
-        JsonObject modelData = new JsonObject();
-        modelData.add("svm_type", new JsonPrimitive(this.SVMType));
-        modelData.add("kernel_type", new JsonPrimitive(this.kernelType));
-        if (this.kernelType.equals("poly")) {
-            modelData.add("degree", new JsonPrimitive(this.polDegree));
-        }
-        if (this.kernelType.equals("poly") || this.kernelType.equals("rbf") || this.kernelType.equals("sigmoid")) {
-            modelData.add("gamma", new JsonPrimitive(this.gamma));
-        }
-        if (this.kernelType.equals("poly") || this.kernelType.equals("sigmoid")) {
-            modelData.add("coef0", new JsonPrimitive(this.coef0));
-        }
-        if (this.SVMType.equals("c_svc") || this.SVMType.equals("epsilon_svr") || this.SVMType.equals("nu_svr")) {
-            modelData.add("paramC", new JsonPrimitive(this.paramC));
-        }
-        jsonObject.add("model_data", modelData);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
-        try (FileWriter writer = new FileWriter(descriptionFilePath)) {
-            gson.toJson(jsonObject, writer);
-        }
-        catch (IOException e) {
-            System.err.println("Error writing description file, failed to update parameters: ");
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-        */
         String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + this.predictorName + ".model";
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + this.predictorName + ".json";
 
@@ -627,7 +462,6 @@ public class MLTrainerBuilder {
         JsonObject completeObject = new JsonObject();
         completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
         completeObject.add("model_type", new JsonPrimitive("svm"));
-        //completeObject.add("version", new JsonPrimitive(this.getVersion()));
         completeObject.add("version", new JsonPrimitive(1));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.now();
@@ -638,84 +472,7 @@ public class MLTrainerBuilder {
         completeObject.add("classification_field_name", new JsonPrimitive(this.classificationField));
         JsonArray trainingFieldListJsonArray = convertToJsonArrayFieldNamesList(this.trainingFieldNamesList);
         completeObject.add("training_field_names_list", trainingFieldListJsonArray);
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!! AGGIUNGERE ALTRI CAMPI !!!!!!!!!!!!!!!!!!!!!!!!!!!!
         JsonObject modelData = new JsonObject();
-        /*
-        try (BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFilePath))) {
-            String lineFromModelFile;
-            while ((lineFromModelFile = modelFileReader.readLine()) != null) {
-                String[] splittedLine = lineFromModelFile.split(" ");
-                if (splittedLine[0].equals("svm_type")) {
-                    modelData.add("svm_type", new JsonPrimitive(splittedLine[1]));
-                }
-                else if (splittedLine[0].equals("kernel_type")) {
-                    modelData.add("kernel_type", new JsonPrimitive(splittedLine[1]));
-                }
-                else if (splittedLine[0].equals("degree")) {
-                    modelData.add("degree", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
-                }
-                else if (splittedLine[0].equals("gamma")) {
-                    modelData.add("gamma", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
-                }
-                else if (splittedLine[0].equals("coef0")) {
-                    modelData.add("coef0", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
-                }
-                else if (splittedLine[0].equals("nr_class")) {
-                    modelData.add("nr_class", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
-                }
-                else if (splittedLine[0].equals("total_sv")) {
-                    modelData.add("total_sv", new JsonPrimitive(Integer.parseInt(splittedLine[1])));
-                }
-                else if (splittedLine[0].equals("rho")) { //!!!!!!!!!!!!!!!! PUO ESSERE FORMARO E-9
-                    modelData.add("rho", new JsonPrimitive(Double.parseDouble(splittedLine[1])));
-                    //modelData.add("rho", new JsonPrimitive(splittedLine[1]));
-                }
-                else if (splittedLine[0].equals("label")) {
-                    JsonArray jsonArray = new JsonArray();
-                    for (int i = 1; i < splittedLine.length; ++i) {
-                        jsonArray.add(Double.parseDouble(splittedLine[i]));
-                    }
-                    modelData.add("label", jsonArray);
-                }
-                else if (splittedLine[0].equals("nr_sv")) {
-                    JsonArray jsonArray = new JsonArray();
-                    for (int i = 1; i < splittedLine.length; ++i) {
-                        jsonArray.add(Integer.parseInt(splittedLine[i]));
-                    }
-                    modelData.add("nr_sv", jsonArray);
-                    // !!!!!!!!!!!!!!!! DA PORTARE FUORI
-                    modelData.add("paramC", new JsonPrimitive(this.paramC));
-                }
-                else if (splittedLine[0].equals("SV")) {
-                    JsonArray allVectors = new JsonArray();
-                    String vectorsLine;
-                    while ((vectorsLine = modelFileReader.readLine()) != null) {
-                        JsonArray jsonVector = new JsonArray();
-                        String[] splittedVectorsLine = vectorsLine.split(" ");
-                        jsonVector.add(Double.parseDouble(splittedVectorsLine[0]));
-                        for (int i = 1; i < splittedVectorsLine.length; ++i) {
-                            jsonVector.add(Double.parseDouble(splittedVectorsLine[i].split(":")[1]));
-                        }
-                        allVectors.add(jsonVector);
-                    }
-                    modelData.add("support_vectors",allVectors);
-                }
-
-            }
-            completeObject.add("model_data", modelData);
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            return false;
-            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
-        }
-        */
 
         try (FileWriter writer = new FileWriter(descriptionFilePath)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -724,7 +481,6 @@ public class MLTrainerBuilder {
         catch (IOException e) {
             e.printStackTrace();
             return false;
-            //!!!!!!!!!!!!!!! DA SVRIVERE MEGLIO (errore lettura .model o scrittura in .json)
         }
         return true;
     }
@@ -872,13 +628,6 @@ public class MLTrainerBuilder {
     }
 
     // -------------- SVM SETTERS ----------------
-    /*
-    public MLTrainerBuilder set(String ype){
-        this
-                .Type = Type;
-        return this;
-    }
-    */
     public MLTrainerBuilder setSvmType(String svmType){
         this.SVMType = svmType;
         return this;

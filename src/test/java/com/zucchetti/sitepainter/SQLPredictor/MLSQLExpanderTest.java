@@ -40,7 +40,7 @@ public class MLSQLExpanderTest {
     public void testGetFieldsListWithEmptyFieldInFieldsList(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Fields in the fields list cannot be empty"+nl;
 
@@ -114,7 +114,7 @@ public class MLSQLExpanderTest {
     public void testTranslateWithEmptyPredictorField(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Predictor field cannot be empty"+nl;
 
@@ -128,7 +128,7 @@ public class MLSQLExpanderTest {
     public void testTranslateWithEmptyFieldsList(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Request does not contain all required fields"+nl;
 
@@ -142,7 +142,7 @@ public class MLSQLExpanderTest {
     public void testTranslateWithEmptyPredictorFieldAndFieldsList(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Request does not contain all required fields"+nl;
 
@@ -156,11 +156,11 @@ public class MLSQLExpanderTest {
     public void testTranslateWithEmptyFieldInFieldsList(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Fields in the fields list cannot be empty"+nl;
 
-        String request = "<   svm_polynomial     >(    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),   ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   )";
+        String request = "<   z_svm_poly_for_testing     >(    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13),   ,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz   )";
 
         String resultQuery = expander.translate(request);
         assertNull(resultQuery, "Method does not return null");
@@ -170,7 +170,7 @@ public class MLSQLExpanderTest {
     public void testTranslateWithABCPredictorWhenFieldsListIsEmpty(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         MLSQLExpander expander = new MLSQLExpander();
         String expectedOutput = "Request does not contain all required fields"+nl;
 

@@ -28,158 +28,11 @@ public class LRTrainer extends MLTrainer {
 
 
     public LRTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, double[][] xTx, double[][] xTy, double[] parametersLR, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField) {
-    //public LRTrainer(String predictorName, String trainingModelType, int version, String lastTrain, int numX, int numY) {
         super(predictorName, "linear_regression", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
         this.transposeOfXTimesX = xTx;
         this.transposeOfXTimesY = xTy;
         this.identity = identityMatrix(xTx.length);
         this.parametersLR = parametersLR;
-
-        /*
-        String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
-        File descriptionFile = new File(descriptionFilePath);
-
-        if (descriptionFile.exists()) {
-            try {
-                FileReader reader = new FileReader(descriptionFilePath); // ???FRSE SI PUO METTERE COME CONTROLLO ESISTENZA DEL FILE
-                JsonElement jsonElement = JsonParser.parseReader(reader);
-
-                if (jsonElement.isJsonObject()) {
-                    JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-                    int f=0;
-                    for (String key : jsonObject.keySet()) {
-                        if(key.equals("predictor_name")){
-                            this.predictorName = jsonObject.get(key).getAsString(); ++f;
-                        }
-                        else if(key.equals("version")) {
-                            this.version = Integer.parseInt(jsonObject.get(key).getAsString()); ++f;
-                        }
-                        else if(key.equals("last_train")) {
-                            this.lastTrain = jsonObject.get(key).getAsString(); ++f;
-                        }
-                        else if(key.equals("parameters")) {
-                            JsonArray parametersJson = jsonObject.get(key).getAsJsonArray();
-                            double[] parametersFromJson = new double[parametersJson.size()];
-
-                            for (int i = 0; i < parametersJson.size(); i++) {
-                                parametersFromJson[i] = parametersJson.get(i).getAsDouble();
-                            }
-                            this.parametersLR = parametersFromJson; ++f;
-                        }
-                        else if(key.equals("xTx")) {
-                            JsonArray xTxJson = jsonObject.get(key).getAsJsonArray();
-                            double[][] xTxFromJson = new double[xTxJson.size()][];
-
-                            for (int i = 0; i < xTxJson.size(); i++) {
-                                JsonArray xTxJsonRow = xTxJson.get(i).getAsJsonArray();
-                                double[] xTxFromJsonRow = new double[xTxJsonRow.size()] ;
-
-                                for (int j = 0; j < xTxJsonRow.size(); j++) {
-                                    xTxFromJsonRow[j] = xTxJsonRow.get(j).getAsDouble();
-                                }
-                                xTxFromJson[i] = xTxFromJsonRow;
-                            }
-
-                            this.transposeOfXTimesX = xTxFromJson; ++f;
-                        }
-                        else if(key.equals("xTy")) {
-                            JsonArray xTyJson = jsonObject.get(key).getAsJsonArray();
-                            double[][] xTyFromJson = new double[xTyJson.size()][];
-
-                            for (int i = 0; i < xTyJson.size(); i++) {
-                                JsonArray xTyJsonRow = xTyJson.get(i).getAsJsonArray();
-                                double[] xTyFromJsonRow = new double[xTyJsonRow.size()] ;
-
-                                for (int j = 0; j < xTyJsonRow.size(); j++) {
-                                    xTyFromJsonRow[j] = xTyJsonRow.get(j).getAsDouble();
-                                }
-                                xTyFromJson[i] = xTyFromJsonRow;
-                            }
-
-                            this.transposeOfXTimesY = xTyFromJson; ++f;
-                            /*
-                            if(xTxFromJson.length > 0) {
-                                if (xTxFromJson.length == this.transposeOfXTimesX.length && xTxFromJson[0].length == this.transposeOfXTimesX[0].length) {
-                                    for (int i = 0; i < xTxFromJson.length; ++i) {
-                                        for (int j = 0; j < xTxFromJson[0].length; ++j) {
-                                            this.transposeOfXTimesX[i][j] = xTxFromJson[i][j];
-                                        }
-                                    }
-                                } else {
-                                    System.out.println("Number of parameters read from description file does not match number of trainer parameters");
-                                }
-                            }
-                            else {
-                                System.out.println("The xTx parameter of description file does not contain any elements");
-                            }
-                            //////////////////////
-                        }
-                    }
-                    if (f < 6){
-                        System.out.println("Description file does not contain all information needed to create object");
-                    }
-                }
-                else{
-                    System.out.println("Description file has wrong structure");
-                }
-            }
-            catch (FileNotFoundException e) {
-                System.out.println("Description file of predictor \"" + predictorName + "\" is not found");
-            }
-            catch (JsonIOException e) {
-                System.out.println("Error of processing description file");
-            }
-            catch (JsonSyntaxException e) {
-                System.out.println("Syntax of description file is incorrect");
-            }
-
-            this.identity = this.identityMatrix(numX);
-        }
-        else { //////////////// description file NON esiste //////////////////////
-            try {
-                if (descriptionFile.createNewFile()) {
-                    this.predictorName = predictorName;
-                    this.transposeOfXTimesX = this.rectMatrix(numX, numX);
-                    this.transposeOfXTimesY = this.rectMatrix(numX, numY);
-                    this.identity = this.identityMatrix(numX);
-                    this.parameters = this.calculateCoefficients();
-
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime dateTime = LocalDateTime.now();
-                    String formattedDateTime = dateTime.format(formatter);
-
-                    JsonArray parametersJsonArray = convertToJsonArrayParameters(this.parameters);
-                    JsonArray xTxJsonArray = convertToJsonArrayMatrices(this.transposeOfXTimesX);
-                    JsonArray xTyJsonArray = convertToJsonArrayMatrices(this.transposeOfXTimesY);
-
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.add("predictor_name", new JsonPrimitive(this.predictorName));
-                    jsonObject.add("model_type", new JsonPrimitive("linear_regression"));
-                    jsonObject.add("version", new JsonPrimitive(1));
-                    jsonObject.add("last_train", new JsonPrimitive(formattedDateTime));
-                    jsonObject.add("parameters", parametersJsonArray);
-                    jsonObject.add("xTx", xTxJsonArray);
-                    jsonObject.add("xTy", xTyJsonArray);
-
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    try (FileWriter writer = new FileWriter(descriptionFilePath)) {
-                        gson.toJson(jsonObject, writer);
-                    }
-                    catch (IOException e) {
-                        System.out.println("Error writing description file:");
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    System.out.println("The file already exists"); return; // MESSAGGIO CORRETTO???
-                }
-            }
-            catch (IOException e) {
-                System.out.println("An error occurred while creating the file: " + e.getMessage()); //!!!!!!!!!! return;
-            }
-        }
-        */
     }
 
     public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
@@ -320,7 +173,7 @@ public class LRTrainer extends MLTrainer {
         }
         return jsonArray;
     }
-    //!!!!!! COSA TORNARE SE NON HA
+
     private double[][] getXtXMatrixFromJson(JsonObject jsonObject){
         double[][] xTxMatrix;
 

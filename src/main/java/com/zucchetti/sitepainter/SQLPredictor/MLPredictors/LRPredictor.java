@@ -35,16 +35,6 @@ public class LRPredictor extends MLPredictor {
             else if (i == fieldsNum){
                 query.append(fieldsList.get(i-1)).append("*").append(parameters[i]).append(")");
             }
-            /*
-            else {
-                if (parameters[i]>=0){
-                    query.append(" + ").append(parameters[i]).append(")");
-                }
-                else {
-                    query.append(" ").append(parameters[i]).append(")");
-                }
-            }
-            */
         }
 
         return query.toString();

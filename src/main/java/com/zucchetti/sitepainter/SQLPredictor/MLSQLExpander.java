@@ -9,11 +9,11 @@ public class MLSQLExpander {
         request = request.substring(1, request.length() - 1);
         String[] result = request.split("\\s*>\\s*\\(\\s*");
         if(result.length < 2){
-            System.out.println("Request does not contain all required fields");
+            System.err.println("Request does not contain all required fields");
             return null;
         }
         if(result[0].trim().isEmpty()){
-            System.out.println("Predictor field cannot be empty");
+            System.err.println("Predictor field cannot be empty");
             return null;
         }
         String predictorName = result[0].trim();
@@ -32,10 +32,9 @@ public class MLSQLExpander {
 
         ArrayList<String> fieldsList = new ArrayList<String>();
 
-        // !!!!!!! DA RICONTROLLARE INDICE c
         for(int i=0; i < fields.length; i++){
             if(fields[i].trim().isEmpty()) {
-                System.out.println("Fields in the fields list cannot be empty");
+                System.err.println("Fields in the fields list cannot be empty");
                 return null;
             }
             if (fields[i].contains("(")){
