@@ -37,12 +37,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.5</version> <!-- o la versione più recente -->
         </dependency>
-        <!-- https://mvnrepository.com/artifact/tw.edu.ntu.csie/libsvm -->
-        <!--dependency>
+        <dependency>
             <groupId>tw.edu.ntu.csie</groupId>
             <artifactId>libsvm</artifactId>
             <version>3.35</version>
-        </dependency-->
+        </dependency>
         <!--dependency>
             <groupId>com.example</groupId>
             <artifactId>mylibrary</artifactId>

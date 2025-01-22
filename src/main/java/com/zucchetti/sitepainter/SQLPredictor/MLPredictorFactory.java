@@ -60,7 +60,7 @@ public class MLPredictorFactory {
             }
         }
         catch (FileNotFoundException e) {
-            System.out.println("Description file of predictor \"" + predictorName + "\" is not found");
+            System.err.println("Description file of predictor \"" + predictorName + "\" is not found");
             return null;
         }
         catch (JsonIOException e) {

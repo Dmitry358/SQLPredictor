@@ -337,7 +337,7 @@ public class SVMPredictorTest {
     public void testGetQueryWithNumberOfFieldsPassedLessThanRequired(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Request must contain 4 field names" + nl;
         String expectedQuery = null;
 
@@ -352,7 +352,7 @@ public class SVMPredictorTest {
     public void testGetQueryWithNumberOfFieldsPassedGreaterThanRequired(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Request must contain 4 field names" + nl;
         String expectedQuery = null;
 

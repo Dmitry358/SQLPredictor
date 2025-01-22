@@ -1,10 +1,7 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 
-import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.ExampleGenerator.ExampleGenerator;
+import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.DA_BUTTARE.ExampleGenerator;
 import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.QueryPredictor.QueryPredictor;
-import com.zucchetti.sitepainter.SQLPredictor.MLPredictors.LRPredictor;
-import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.ABCTrainer;
-import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;
 //import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.SVMTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.MLTrainer;
 import libsvm.svm;
@@ -22,15 +19,28 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
+
+///////////////// TESTING  //////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+///////////////// TESTING END //////////////////////////////////////////////////////////////////////////////////
+
         // !!!!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
         String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
         String username = "postgres";
         String password = "";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
 
-        //*///////////////////////////   ABC   ///////////////////////////////
+        /*///////////////////////////   ABC   ///////////////////////////////
         Map<String, String> trainerData = new HashMap<>();
-        trainerData.put("predictorName", "  A-ABC-ABC   ");
+        trainerData.put("predictorName", "  ABC_abc_trainer   ");
         trainerData.put("machineLearningModelType", "   abc  ");
         trainerData.put("trainingExpiration", "   8   ");
 
@@ -40,32 +50,32 @@ public class Main {
 
         String dataTableName = "   abc_trainer   ";
         String[] dataTableFieldNamesList = { "   id " };
-        String classificationField = "  yyy   ";
+        String classificationField = "  totale   ";
 
         MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
         MLTrainer ABCTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
 
         ABCTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
-        int b = 9;
+
         //*///////////////////////////   ABC END  ///////////////////////////////
 
         /*///////////////////////////   LR   ///////////////////////////////
-
         Map<String, String> trainerData = new HashMap<>();
-        String predictorName = "A_LR_INSURANCE25";
+        String predictorName = "LR_a_insurance";
         trainerData.put("predictorName", predictorName);
         trainerData.put("machineLearningModelType", "linear_regression");
         trainerData.put("trainingExpiration", "13");
+
         String dataTableName = "a_insurance";
         String[] dataTableFieldNamesList = { "  age  ", "  bmi  ", "  children  " };
         String classificationField = "  charges  ";
 
+        // ---- LR BUILD + TRAIN ----
         MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
         MLTrainer LRTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
-
         LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
-        //-------------- LR-PREDICTOR -----------------
 
+        // ---- LR-PREDICTOR ----
         String sampleTableName = "a_insurance_samples";
         String idFieldName = "id_s";
         String[] sampleFieldsList = { "  age_s  ", "  bmi_s  ", "  children_s  " };
@@ -82,25 +92,25 @@ public class Main {
         if (query != null) { System.out.println(query); }
         //*////////////////////////////   LR END   ///////////////////////////////
 
-        /*///////////////////////  SVM  /////////////////////////
+        //*///////////////////////  SVM  /////////////////////////
         //--- IMPOSTAZIONE PARAMETRI MODELLO
         Map<String, String> trainerData = new HashMap<>();
-        String predictorName = "A_SVM_INSURANCE25";
+        String predictorName = "SVM_INSURANCE25";
         trainerData.put("predictorName", predictorName);
         trainerData.put("machineLearningModelType", "   svm  ");
         trainerData.put("trainingExpiration", "   14   ");
         trainerData.put("SVMType", "  c_svc ");
-        //trainerData.put("kernelType", "  polynomial ");
-        trainerData.put("kernelType", "  rbf ");
         //trainerData.put("kernelType", "  linear ");
-        trainerData.put("paramC", "  100  ");
-        trainerData.put("gamma", "  0.005 ");
+        trainerData.put("kernelType", "  polynomial ");
+        //trainerData.put("kernelType", "  rbf ");
+        trainerData.put("paramC", "  1  ");
+        trainerData.put("gamma", "  0.5 ");
         trainerData.put("degree", " 2 ");
-        trainerData.put("coef0", " 0.7  ");
+        trainerData.put("coef0", " 0.000000001  ");
 
         //--- DATI DI TABELLA PER FARE TRAINING
         String dataTableName = "   a_insurance25   ";
-        String[] dataTableFieldNamesList = { "  age " , " bmi   "};
+        String[] dataTableFieldNamesList = { " age " , " bmi ", "  children  "};
         String classificationField = "  smoker   ";
 
         //--- TRAINING MODELLO
@@ -111,7 +121,7 @@ public class Main {
         //--- SVM-PREDICTOR
         String sampleTableName = "a_insurance_samples";
         String idFieldName = "id_s";
-        String[] sampleFieldsList = { "  age_s " , "  bmi_s   "};
+        String[] sampleFieldsList = { "  age_s " , "  bmi_s  ", "  children_s  "};
 
         String request = "<   " + predictorName + "  >(    ";
         for (int f =0; f < sampleFieldsList.length; ++f){
@@ -141,10 +151,10 @@ public class Main {
             if(queryPredictionResult[0][0] != classFieldValue) {
                 System.err.print(" | Q = " + queryPredictionResult[0][0] + " S = " + classFieldValue); ++queryError;
             }
-            else System.out.print(" | Q = " + queryPredictionResult[0][0] + " S = " + classFieldValue);
+            else { System.out.print(" | Q = " + queryPredictionResult[0][0] + " S = " + classFieldValue); }
 
-            if (queryPredictionResult[0][0] != libsvmPrediction) { System.err.println(" | false"); ++falseNum;}
-            else  System.out.println(" | true");
+            if (queryPredictionResult[0][0] != libsvmPrediction) { System.out.println(" | "+"\u001B[31m"+"false"+"\u001B[0m"); ++falseNum;}
+            else  { System.out.println(" | true"); }
         }
         System.out.println("False number = " + falseNum);
         System.out.println("Libsvm error = " + libError);
@@ -277,9 +287,7 @@ public class Main {
         double[][] extractedData = new double[examplesNum][featuresNum];
 
         for (int i=0; i < examplesNum; ++i){
-            for (int j=0; j < featuresNum; ++j){
-                extractedData[i][j] = queryResult[i][j];
-            }
+            System.arraycopy(queryResult[i], 0, extractedData[i], 0, featuresNum);
         }
         return extractedData;
     }
@@ -294,143 +302,75 @@ public class Main {
         }
         return extractedValues;
     }
-
-
-
-
-    /////////////////////////////////////// CODICE VECCHIO /////////////////////////////////////////////
-        /*--------- SVM-TRAINER (VECCHIO) -----------------
-        private static int predictionLIBSVM(String modelName, double[] data){
-            // !!!!! controllo se data contiene giusto numero elementi per modello
-
-            String modelFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/svm_models/" + modelName + ".model";
-            int numFeatures = data.length;
-
-            svm_node[] testData = new svm_node[numFeatures];
-            int prediction = 0;
-            try {
-                svm_model model = svm.svm_load_model(modelFilePath);
-
-                for(int i=0; i < numFeatures; i++) {
-                    testData[i] = new svm_node();
-                    testData[i].index = i+1;
-                    testData[i].value = data[i];
-                }
-
-                prediction = (int) svm.svm_predict(model, testData);
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }
-            return prediction;
-        }
-        String tableName = "pazienti";
-        String[] fieldNames = {"xxx", "yyy"};
-        String fieldClassName = "ccc";
-        String lastTrain = "sss";
-        double rho = -0.26667; // FORSE NON SERVE
-        int version = 2;
-
-        double coefX = 1;
-        double coefY = 1;
-        String svmType = "c_svc";
-        //String kernelType = "polynomial";
-        String kernelType = "rbf";
-        int polDegree = 2;
-        double gamma = 0.5;
-        double coef0 = 0.5;
-        double paramC = 1;
-        // AGGIORNAMENTO BD CON DATI DA ORANGE ( NON SERVE PER PROGETTO)
-        updateDBWithNewExamplesFromOrange(tableName, fieldNames, fieldClassName, coefX, coefY);
-        double[][] queryResult = getTrainingData(tableName, fieldNames, fieldClassName);
-
-        // TRAINING MODELLO
-        SVMTrainer svm_t = new SVMTrainer(tableName, version, lastTrain, svmType, kernelType, polDegree, gamma, coef0, rho, paramC);
-        svm_t.train(getDataFromQueryResult(queryResult), getValuesFromQueryResult(queryResult));
-
-        // GENERAZIONE KERNEL QUERY
-        String request = "<   pazienti  >( xxx,  yyy  )";
-        MLSQLExpander expander = new MLSQLExpander();
-        String predictorQuery = expander.translate(request);
-
-        // PREDIZIONE TRAMITE QUERY
-        QueryPredictor qp = new QueryPredictor(dataBaseURL,username, password);
-        String exampleTableName = tableName +"_examples";
-
-        double[] d_1 = {  0.28  , 0.49  };
-        double[] d_2 = {  0.32  , 0.37  };
-        double[] d_3 = {  0.37  , 0.33  };
-        double[] d_4 = {  0.45  , 0.27  };
-
-        for (int i =1; i<5; ++i) {
-            if (i==1) System.out.print("L = " + predictionLIBSVM(tableName, d_1) + " ");
-            if (i==2) System.out.print("L = " + predictionLIBSVM(tableName, d_2) + " ");
-            if (i==3) System.out.print("L = " + predictionLIBSVM(tableName, d_3) + " ");
-            if (i==4) System.out.print("L = " + predictionLIBSVM(tableName, d_4) + " ");
-
-            int exampleId = i;
-            int[][] queryPredictionResult = qp.predict(exampleTableName, exampleId, predictorQuery);
-            System.out.println("Q = " + queryPredictionResult[0][0]);
-        }
-        *///------------- END SVM-TRAINER (VECCHIO) -----------------
+    private static void createABCTrainer(){
         /*
-        String request = null;
-        //request = "<     diabete_svm  >(    t.insurance_samples.csv+77, t.tttt, t.km1 + left(t.nome1_1,11) + left(t.nome1_2,12) + left(t.nome1_3,13), t.bbb, tccc +44,  t.km2 +  left(t.nome2_1,21) +   left(t.nome2_2,22) , t.zzz  )";
+        DataBaseConnecter dbConnecter = new DataBaseConnecter("jdbc:postgresql://localhost:5432/proba_db", "postgres", "password");
 
-        MLSQLExpander expander = new MLSQLExpander();
-        String query = expander.translate(request);
-        if (query != null) { System.out.println(query); }
-        //*///------------- END ELENCO REQUESTS -----------------------
-        /*/// ---------- BUILDER ABC (VECCHIO) ------------------------------------
-        String predictorModelType = "abc";
-        String dataTableName = "abc_data-table";
-        String[] dataTableFieldNamesList = {"abc-f1","abc-f2"};
-        String classificationField = "abc-class-field";
-        //*///------------- END BUILDER ABC (VECCHIO) -----------------
-        /*///--------- ABC-TRAINER (VECCHIO) -----------------
-        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
-        String predictorName = "abc_predictor";
-        String dataTableName = "pazienti";
-        String idField = "id";
-        String classificationField = "yyy";
-        ABCTrainer abc = new ABCTrainer(predictorName);
-        abc.train(dataTableName, idField, classificationField, dbc);
-        //*///------------- END ABC-TRAINER (VECCHIO) -----------------
-        /*//------------- TRAINING LR-TRAINER (VECCHIO) -----------------
-        DataBaseConnecter dbc = new DataBaseConnecter(dataBaseURL, username, password);
-        double[][] queryResult = dbc.getTrainingData(dataTableName, dataTableFieldNamesList, classificationField);
+        String csvFileName = "abc_trainer";
+        String DBTableName = csvFileName;
 
-        int samplesNum = queryResult.length;
-        int fieldsNum = dataTableFieldNamesList.length + 1;
-        int usedRowNum = 0;
-        double[] moc = new double[1];
 
-        int set1 = 3;
-        double[][] ts1 = new double[set1][fieldsNum];
-        for (int i=0; i < set1; ++i){
-            for (int j=0; j < fieldsNum; ++j){
-                ts1[i][j] = queryResult[i+usedRowNum][j];
+        String inputFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/AAA_FILES_TECNICI/ExampleGenerator/csv/" + csvFileName + ".csv";
+        String createTableQuery = "DROP TABLE IF EXISTS " + DBTableName + ";\n" +
+                "CREATE TABLE " + DBTableName + " (\n" +
+                " id BIGSERIAL PRIMARY KEY,\n" +
+                " totale DECIMAL(6, 1) NOT NULL );" ;
+
+        String lineInput;
+        String insertDataQuery = "INSERT INTO " + DBTableName + " (";
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
+            int r = 1;
+            while ((lineInput = br.readLine()) != null) {
+                String[] valori = lineInput.split(",");
+                if(r > 1){
+                    insertDataQuery += "(";
+                    for(int f=0; f < valori.length; ++f){
+                        if(f < valori.length-1){
+                            if(f==1 || f==4 ||f==5) {
+                                if(f==4 && valori[f].equals("no")) insertDataQuery += "3,";
+                                else if(f==4 && valori[f].equals("yes")) insertDataQuery += "8,";
+                                else insertDataQuery += "'" + valori[f] + "',";
+                            }
+                            else insertDataQuery += valori[f] + ",";
+                        }
+                        else {
+                            insertDataQuery += valori[f] + "),\n" ;
+                        }
+                    }
+                }
+                else{
+                    for(int f=0; f < valori.length; ++f){
+                        if(f < valori.length-1){
+                            insertDataQuery += valori[f] + ",";
+                        }
+                        else {
+                            insertDataQuery += valori[f] + ") VALUES \n" ;
+                        }
+                    }
+                }
+                r++;
+            }
+            br.close();
+            insertDataQuery = insertDataQuery.substring(0, insertDataQuery.length() - 2) + ";";
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Connection connection = DriverManager.getConnection(dbConnecter.getDataBaseURL(), dbConnecter.getUsername(), dbConnecter.getPassword());
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate(createTableQuery);
+            }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertDataQuery)) {
+                int rowsAffected = preparedStatement.executeUpdate();
             }
         }
-        usedRowNum += set1;
-        int set2 = 1;
-        double[][] ts2= new double[set2][fieldsNum];;
-        for (int i=0; i < set2; ++i){
-            for (int j=0; j < fieldsNum; ++j){
-                ts2[i][j] = queryResult[i+usedRowNum][j];
-            }
+        catch (SQLException e){
+            e.printStackTrace();
         }
-        usedRowNum += set2;
-        int set3 = 2;
-        double[][] ts3= new double[set3][fieldsNum];;
-        for (int i=0; i < set3; ++i){
-            for (int j=0; j < fieldsNum; ++j){
-                ts3[i][j] = queryResult[i+usedRowNum][j];
-            }
-        }
-        LRTrainerTest.train(ts1, moc);
-        int a = 8;
-        LRTrainerTest.train(ts2, moc);
-        LRTrainerTest.train(ts3, moc);
-        //*///------------- END TRAINING LR-TRAINER (VECCHIO) ---------
+        */
+    }
+
 }

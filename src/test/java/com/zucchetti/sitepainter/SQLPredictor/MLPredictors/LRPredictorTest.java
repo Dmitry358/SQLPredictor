@@ -43,8 +43,8 @@ public class LRPredictorTest {
     public void testGetQueryWithNumberOfFieldsPassedLessThanRequired(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
-        String expectedOutput = "Request must contain 3 field names" + nl;
+        System.setErr(new PrintStream(outputResult));
+        String expectedOutput = "Request must contain 3 field names" +  nl;
         String expectedQuery = null;
 
         ArrayList<String> fieldsList = new ArrayList<String>();
@@ -58,7 +58,7 @@ public class LRPredictorTest {
     public void testGetQueryWithNumberOfFieldsPassedGreaterThanRequired(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Request must contain 3 field names" + nl;
         String expectedQuery = null;
 
@@ -77,8 +77,9 @@ public class LRPredictorTest {
 
         String expectedQuery = "(";
         for (int i=0; i < parameters.length; ++i){
-            if(i < parameters.length-1) { expectedQuery += fieldsList.get(i) + "*" + parameters[i] + " + "; }
-            else { expectedQuery += parameters[i] + ")"; }
+            if(i==0){ expectedQuery += parameters[i] + " + "; }
+            else if(i < parameters.length-1) { expectedQuery += fieldsList.get(i-1) + "*" + parameters[i] + " + "; }
+            else { expectedQuery += fieldsList.get(i-1) + "*" + parameters[i] + ")"; }
         }
 
         assertEquals(expectedQuery, predictor.getQuery(fieldsList));

@@ -48,7 +48,7 @@ public class MLPredictorFactoryTest {
         parameters.add(2.23);
         parameters.add(3.0);
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("predictor_name", "auto_lr");
+        jsonObject.addProperty("predictor_name", "z_lr_for_testing");
         jsonObject.addProperty("version", 5);
         jsonObject.addProperty("last_train", "2023-10-1");
         jsonObject.add("parameters", parameters);
@@ -72,7 +72,7 @@ public class MLPredictorFactoryTest {
     public void testGetLRPredictorWithInsufficientNumberOfCharacteristicsInDescriptionFile(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Description file does not contain all information needed to create object" + nl;
 
         JsonArray parameters = new JsonArray();
@@ -211,7 +211,7 @@ public class MLPredictorFactoryTest {
     public void testGetABCPredictorWithInsufficientNumberOfCharacteristicsInDescriptionFile(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Description file does not contain all information needed to create object" + nl;
 
         JsonObject jsonObject = new JsonObject();
@@ -298,7 +298,7 @@ public class MLPredictorFactoryTest {
 
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Description file does not contain all information needed to create object" + nl;
 
         MLPredictorFactory factory = new MLPredictorFactory();
@@ -380,7 +380,7 @@ public class MLPredictorFactoryTest {
 
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Description file does not contain all information needed to create object" + nl;
 
         MLPredictorFactory factory = new MLPredictorFactory();
@@ -462,7 +462,7 @@ public class MLPredictorFactoryTest {
 
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Description file does not contain all information needed to create object" + nl;
 
         MLPredictorFactory factory = new MLPredictorFactory();
@@ -482,25 +482,25 @@ public class MLPredictorFactoryTest {
     }
     @Test
     public void testGetPredictorWithCorrectInputWhatReturnsLRPredictor(){
-        String predictorNmae = "lr_auto";
+        String predictorName = "z_lr_for_testing";
         MLPredictorFactory factory = new MLPredictorFactory();
-        MLPredictor resultPredictor = factory.getPredictor(predictorNmae);
+        MLPredictor resultPredictor = factory.getPredictor(predictorName);
 
         assertNotNull(resultPredictor, "Method returns null");
         assertTrue(resultPredictor.getClass() == LRPredictor.class, "Dynamic type of returned object is different from LRPredictor");
     }
     @Test
     public void testGetPredictorWithCorrectInputWhatReturnsABCPredictor(){
-        String predictorNmae = "abc_good";
+        String predictorName = "z_abc_for_testing";
         MLPredictorFactory factory = new MLPredictorFactory();
-        MLPredictor resultPredictor = factory.getPredictor(predictorNmae);
+        MLPredictor resultPredictor = factory.getPredictor(predictorName);
 
         assertNotNull(resultPredictor, "Method returns null");
         assertTrue(resultPredictor.getClass() == ABCPredictor.class, "Dynamic type of returned object is different from LRPredictor");
     }
     @Test
     public void testGetPredictorWithCorrectInputWhatReturnsSVMPredictorLinearKernel(){
-        String predictorName = "svm_linear";
+        String predictorName = "z_svm_linear_for_testing";
         MLPredictorFactory factory = new MLPredictorFactory();
         MLPredictor resultPredictor = factory.getPredictor(predictorName);
 
@@ -509,7 +509,7 @@ public class MLPredictorFactoryTest {
     }
     @Test
     public void testGetPredictorWithCorrectInputWhatReturnsSVMPredictorPolynomialKernel(){
-        String predictorNmae = "svm_polynomial";
+        String predictorNmae = "z_svm_poly_for_testing";
         MLPredictorFactory factory = new MLPredictorFactory();
         MLPredictor resultPredictor = factory.getPredictor(predictorNmae);
 
@@ -518,7 +518,7 @@ public class MLPredictorFactoryTest {
     }
     @Test
     public void testGetPredictorWithCorrectInputWhatReturnsSVMPredictorRBFKernel(){
-        String predictorNmae = "svm_rbf";
+        String predictorNmae = "z_svm_rbf_for_testing";
         MLPredictorFactory factory = new MLPredictorFactory();
         MLPredictor resultPredictor = factory.getPredictor(predictorNmae);
 
@@ -529,7 +529,7 @@ public class MLPredictorFactoryTest {
     public void testGetPredictorWithNonExistentPredictorName(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String predictorName = "lr_aut";
         String expectedOutput = "Description file of predictor \"" + predictorName + "\" is not found" + nl;
 

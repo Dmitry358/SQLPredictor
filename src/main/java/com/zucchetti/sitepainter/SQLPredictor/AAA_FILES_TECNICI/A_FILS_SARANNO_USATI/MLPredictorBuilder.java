@@ -1,4 +1,4 @@
-package com.zucchetti.sitepainter.SQLPredictor;
+package com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.A_FILS_SARANNO_USATI;
 
 public class MLPredictorBuilder {
     public int svmType;
