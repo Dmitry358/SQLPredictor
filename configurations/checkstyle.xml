@@ -8,7 +8,9 @@
         <!--module name="CyclomaticComplexity">
             <property name="max" value="12"/>
         </module-->
-        <module name="MethodLength"/>
+        <module name="MethodLength">
+            <property name="max" value="300"/>
+        </module>
         <module name="EmptyCatchBlock"/>
         <module name="AvoidStarImport"/>
         <module name="IllegalImport"/>

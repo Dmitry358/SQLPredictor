@@ -211,7 +211,11 @@ public class MLPredictorFactory {
                 }
             }
         }
-        if ((linKer < 7 && modelParameters.get("kernel_type").equals("linear")) || (polKer < 10 && modelParameters.get("kernel_type").equals("polynomial")) || (rbfKer < 8 && modelParameters.get("kernel_type").equals("rbf"))) {
+        if ((linKer < 7 && modelParameters.get("kernel_type").equals("linear"))) {
+            System.err.println("Description file does not contain all information needed to create object");
+            return null;
+        }
+        if ((polKer < 10 && modelParameters.get("kernel_type").equals("polynomial")) || (rbfKer < 8 && modelParameters.get("kernel_type").equals("rbf"))) {
             System.err.println("Description file does not contain all information needed to create object");
             return null;
         }

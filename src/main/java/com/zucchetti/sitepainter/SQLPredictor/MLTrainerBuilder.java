@@ -1,12 +1,27 @@
 package com.zucchetti.sitepainter.SQLPredictor;
 
-import com.google.gson.*;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.ABCTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.LRTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.MLTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.SVMTrainer;
 
-import java.io.*;
+//import java.io.;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileWriter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -82,7 +97,8 @@ public class MLTrainerBuilder {
         return null;
     }
 
-    private boolean setTrainerData(Map<String,String> trainerData, String trainingDataTableName, String[] dataTableFieldNamesList, String classificationField){
+    private boolean setTrainerData(Map<String,String> trainerData, String trainingDataTableName,
+                                   String[] dataTableFieldNamesList, String classificationField){
         if(!trainerData.containsKey("predictorName")) {
             System.err.println("Unable to create trainer, the request does not contain predictor name");
             return false;
@@ -519,7 +535,7 @@ public class MLTrainerBuilder {
 
         JsonObject completeObject = new JsonObject();
         completeObject.add("predictor_name", new JsonPrimitive(this.predictorName));
-        completeObject.add("model_type", new JsonPrimitive("svm"));
+        completeObject.add("model_type", new JsonPrimitive("abc"));
         //completeObject.add("version", new JsonPrimitive(this.getVersion()));
         completeObject.add("version", new JsonPrimitive(1));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");

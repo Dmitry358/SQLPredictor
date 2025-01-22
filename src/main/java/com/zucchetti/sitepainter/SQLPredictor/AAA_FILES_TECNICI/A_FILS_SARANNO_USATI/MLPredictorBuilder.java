@@ -3,19 +3,19 @@ package com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.A_FILS_SARANNO_
 public class MLPredictorBuilder {
     public int svmType;
     public int kernelType;
-    public int degree;	  // for poly
+    public int degree;    // for poly
     public double gamma;  // for poly/rbf/sigmoid
     public double coef0;  // for poly/sigmoid
 
-    public double cacheSize;   // in MB
-    public double eps;	        // stopping criteria
-    public double paramC;	        // for C_SVC, EPSILON_SVR and NU_SVR
-    public int nrWeight;		// for C_SVC
-    public int[] weightLabel;	// for C_SVC
-    public double[] weight;		// for C_SVC
-    public double paramNu;	        // for NU_SVC, ONE_CLASS, and NU_SVR
-    public double paramP;	        // for EPSILON_SVR
-    public int shrinking;	    // use the shrinking heuristics
+    public double cacheSize;    // in MB
+    public double eps;          // stopping criteria
+    public double paramC;       // for C_SVC, EPSILON_SVR and NU_SVR
+    public int nrWeight;        // for C_SVC
+    public int[] weightLabel;   // for C_SVC
+    public double[] weight;     // for C_SVC
+    public double paramNu;      // for NU_SVC, ONE_CLASS, and NU_SVR
+    public double paramP;       // for EPSILON_SVR
+    public int shrinking;       // use the shrinking heuristics
     public int probability;     // do probability estimates
 
     public MLPredictorBuilder setSvmType(int svmType){

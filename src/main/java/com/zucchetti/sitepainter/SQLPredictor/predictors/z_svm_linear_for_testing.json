@@ -1,5 +1,5 @@
 {
-  "predictor_name": "A_SVM_INSURANCE25",
+  "predictor_name": "z_svm_linear_for_testing",
   "model_type": "svm",
   "version": 1,
   "last_train": "2025-01-21  22:18:33",

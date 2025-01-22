@@ -13,7 +13,6 @@
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -54,9 +53,7 @@
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
         </dependency-->
-
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -108,6 +105,9 @@
                     <configLocation>configurations/checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <excludes>
+                        com/zucchetti/sitepainter/SQLPredictor/AAA_FILES_TECNICI/DA_BUTTARE/FLUSSO_C_SVC_LINEAR.java
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

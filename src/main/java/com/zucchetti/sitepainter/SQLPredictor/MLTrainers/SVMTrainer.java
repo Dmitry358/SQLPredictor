@@ -1,14 +1,20 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
-import java.io.*;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.google.gson.*;
+
 import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
-import libsvm.*;
+import libsvm.svm_problem;
+import libsvm.svm_node;
+import libsvm.svm_parameter;
+import libsvm.svm_model;
+import libsvm.svm;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 

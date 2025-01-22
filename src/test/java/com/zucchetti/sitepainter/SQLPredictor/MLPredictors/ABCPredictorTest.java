@@ -27,7 +27,7 @@ public class ABCPredictorTest {
     public void testGetQueryWithEmptyFieldsList(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Request contains incorrect number of fields" + nl;
         String expectedQuery = null;
 
@@ -39,7 +39,7 @@ public class ABCPredictorTest {
     public void testGetQueryWithNumberOfFieldsPassedGreaterThanRequired(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Request contains incorrect number of fields" + nl;
         String expectedQuery = null;
 

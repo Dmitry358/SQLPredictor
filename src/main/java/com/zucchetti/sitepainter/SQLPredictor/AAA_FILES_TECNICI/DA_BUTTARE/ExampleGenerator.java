@@ -123,8 +123,8 @@ public class ExampleGenerator {
                 "    id BIGSERIAL PRIMARY KEY,\n";
         for(int i=0; i < fieldNames.length; ++i){
             createExamplesTableQuery += fieldNames[i] + " DECIMAL(10, 2) NOT NULL";
-            if(i < fieldNames.length - 1) createExamplesTableQuery += ",\n";
-            else createExamplesTableQuery += "\n);\n\n";
+            if(i < fieldNames.length - 1) { createExamplesTableQuery += ",\n";}
+            else {createExamplesTableQuery += "\n);\n\n";}
         }
 
         return createExamplesTableQuery;
@@ -136,8 +136,8 @@ public class ExampleGenerator {
         String insertExanplesValuesQuery = "INSERT INTO " + exampleTableName +" (";
         for (int i=0; i < fieldNames.length; ++i){
             insertExanplesValuesQuery += fieldNames[i];
-            if(i < fieldNames.length - 1) insertExanplesValuesQuery += ", ";
-            else insertExanplesValuesQuery += ") VALUES\n";
+            if(i < fieldNames.length - 1) {insertExanplesValuesQuery += ", ";}
+            else {insertExanplesValuesQuery += ") VALUES\n";}
         }
 
         insertExanplesValuesQuery += "(0.28, 0.49),"+

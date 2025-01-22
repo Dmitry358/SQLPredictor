@@ -7,7 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+
+
 
 
 public class CSVProcessor {
@@ -58,11 +66,11 @@ public class CSVProcessor {
                     for(int f=0; f < valori.length; ++f){
                         if(f < valori.length-1){
                             if(f==1 || f==4 ||f==5) {
-                                if(f==4 && valori[f].equals("no")) insertDataQuery += "3,";
-                                else if(f==4 && valori[f].equals("yes")) insertDataQuery += "8,";
-                                else insertDataQuery += "'" + valori[f] + "',";
+                                if(f==4 && valori[f].equals("no")) {insertDataQuery += "3,";}
+                                else if(f==4 && valori[f].equals("yes")) {insertDataQuery += "8,";}
+                                else {insertDataQuery += "'" + valori[f] + "',";}
                             }
-                            else insertDataQuery += valori[f] + ",";
+                            else {insertDataQuery += valori[f] + ",";}
                         }
                         else {
                             insertDataQuery += valori[f] + "),\n" ;

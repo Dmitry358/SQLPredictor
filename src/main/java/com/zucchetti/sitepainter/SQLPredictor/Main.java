@@ -8,7 +8,13 @@ import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 
-import java.sql.*;
+//import java.sql.*;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.DriverManager;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +31,7 @@ public class Main {
         String password = "";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
 
-        //*///////////////////////////   ABC   ///////////////////////////////
+        /*///////////////////////////   ABC   ///////////////////////////////
         Map<String, String> trainerData = new HashMap<>();
         trainerData.put("predictorName", "  ABC_abc_trainer   ");
         trainerData.put("machineLearningModelType", "   abc  ");
@@ -155,8 +161,8 @@ public class Main {
         predictorName = predictorName.trim();
         String extractSampleDataQuery = "SELECT ";
         for (int f=0; f < sampleFieldsList.length; ++f){
-            if(f < sampleFieldsList.length - 1) extractSampleDataQuery += sampleFieldsList[f] + ", ";
-            else extractSampleDataQuery += sampleFieldsList[f] + "\n";
+            if(f < sampleFieldsList.length - 1) { extractSampleDataQuery += sampleFieldsList[f] + ", "; }
+            else { extractSampleDataQuery += sampleFieldsList[f] + "\n"; }
         }
         extractSampleDataQuery += "FROM " + sampleTableName +" \n";
         extractSampleDataQuery += "WHERE " + idFieldName + " = " + sampleId + ";";

@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MLPredictorFactoryTest {
-
     /*
     @Test
     public void testCreazionePersona() throws NoSuchFieldException, IllegalAccessException {
@@ -190,7 +189,7 @@ public class MLPredictorFactoryTest {
         jsonObject.addProperty("predictor_name", "abc_good");
         jsonObject.addProperty("version", 2);
         jsonObject.addProperty("last_train", "2023-10-11");
-        jsonObject.addProperty("table_name", "good_client");
+        jsonObject.addProperty("prediction_table_name", "z_abc_for_testing");
 
 
         MLPredictorFactory factory = new MLPredictorFactory();
