@@ -2,13 +2,11 @@ package com.zucchetti.sitepainter.SQLPredictor;
 
 import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.DA_BUTTARE.ExampleGenerator;
 import com.zucchetti.sitepainter.SQLPredictor.AAA_FILES_TECNICI.QueryPredictor.QueryPredictor;
-//import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.SVMTrainer;
 import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.MLTrainer;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 
-//import java.sql.*;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
