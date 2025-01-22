@@ -16,21 +16,8 @@ import java.util.HashMap;
 import java.io.IOException;
 
 
-
 public class Main {
     public static void main(String[] args) {
-
-///////////////// TESTING  //////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-///////////////// TESTING END //////////////////////////////////////////////////////////////////////////////////
 
         // !!!!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
         String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
@@ -92,7 +79,7 @@ public class Main {
         if (query != null) { System.out.println(query); }
         //*////////////////////////////   LR END   ///////////////////////////////
 
-        //*///////////////////////  SVM  /////////////////////////
+        /*///////////////////////  SVM  /////////////////////////
         //--- IMPOSTAZIONE PARAMETRI MODELLO
         Map<String, String> trainerData = new HashMap<>();
         String predictorName = "SVM_INSURANCE25";
@@ -160,7 +147,6 @@ public class Main {
         System.out.println("Libsvm error = " + libError);
         System.out.println("Query error = " + queryError);
         //*//////////////////////////   SVM END   ///////////////////////////////
-
     }
 
     //  ------------------    METODI PER USO INTERNO     ------------------
@@ -271,7 +257,6 @@ public class Main {
         return resultQuery[0][0];
     }
 
-
     private static void updateDBWithNewExamplesFromOrange(String trainingDataTableName, String[] fieldNames, String fieldClassName, double coefX, double coefY){
         ExampleGenerator updateDB = new ExampleGenerator();
         updateDB.updateDatabase(trainingDataTableName, fieldNames, fieldClassName, coefX, coefY);
@@ -372,5 +357,4 @@ public class Main {
         }
         */
     }
-
 }

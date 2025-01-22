@@ -1,6 +1,6 @@
 {
   "predictor_name": "z_abc_for_testing",
-  "model_type": "svm",
+  "model_type": "abc",
   "version": 1,
   "last_train": "2025-01-21  20:30:59",
   "training_expiration": 8,

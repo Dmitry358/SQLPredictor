@@ -72,7 +72,7 @@ public class MLPredictorFactory {
             return null;
         }
     }
-    //!!!!!!!!!!!!!!!!!!!! DA AGGIURNARE RISPETTO NUOVA STRUTTURA
+
     private MLPredictor getLRPredictor(JsonObject jsonObject){
         String predictorName = "";
         int version = 0;

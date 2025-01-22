@@ -47,11 +47,12 @@ public class MLPredictorFactoryTest {
         parameters.add(1.46);
         parameters.add(2.23);
         parameters.add(3.0);
+        parameters.add(6.0);
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("predictor_name", "z_lr_for_testing");
         jsonObject.addProperty("version", 5);
         jsonObject.addProperty("last_train", "2023-10-1");
-        jsonObject.add("parameters", parameters);
+        jsonObject.add("parametersLR", parameters);
 
         MLPredictorFactory factory = new MLPredictorFactory();
         try {
@@ -599,7 +600,6 @@ public class MLPredictorFactoryTest {
         assertNull(resultPredictor, "Method does not return null");
         assertEquals(expectedOutput, outputResult.toString(), "Method output is incorrect");
     }
-
 }
 
 
