@@ -25,7 +25,7 @@ public class Main {
         String password = "";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
 
-        /*///////////////////////////   ABC   ///////////////////////////////
+        //*///////////////////////////   ABC   ///////////////////////////////
         Map<String, String> trainerData = new HashMap<>();
         trainerData.put("predictorName", "  ABC_abc_trainer   ");
         trainerData.put("machineLearningModelType", "   abc  ");
