@@ -35,7 +35,6 @@ public class MLPredictorFactory {
                     predictorModelType = jsonObject.get("model_type").getAsString();
                 }
 
-                //CLASSFORNAME, REFLECTION
                 if (predictorModelType != null) {
                     switch (predictorModelType) {
                         case "linear_regression":
@@ -45,17 +44,17 @@ public class MLPredictorFactory {
                         case "svm":
                             return this.getSVMPredictor(jsonObject);
                         default:
-                            System.out.println("Description file contain unmanageable model type");
+                            System.err.println("Description file contain unmanageable model type");
                             return null;
                     }
                 }
                 else {
-                    System.out.println("Description file does not contain information on model type");
+                    System.err.println("Description file does not contain information on model type");
                     return null;
                 }
             }
             else{
-                System.out.println("Description file has wrong structure");
+                System.err.println("Description file has wrong structure");
                 return null;
             }
         }
@@ -120,7 +119,7 @@ public class MLPredictorFactory {
         String predictorName = "";
         int version = 0;
         String lastTrain = "";
-        String tableNane = "";
+        String predictionTableName = "";
 
         int f=0;
         for (String key : jsonObject.keySet()) {
@@ -133,15 +132,15 @@ public class MLPredictorFactory {
             else if(key.equals("last_train")){
                 lastTrain = jsonObject.get(key).getAsString(); ++f;
             }
-            else if(key.equals("table_name")) {
-                tableNane = jsonObject.get(key).getAsString(); ++f;
+            else if(key.equals("prediction_table_name")) {
+                predictionTableName = jsonObject.get(key).getAsString(); ++f;
             }
         }
         if (f < 4){
             System.err.println("Description file does not contain all information needed to create object");
             return null;
         }
-        return new ABCPredictor(predictorName, version, lastTrain, tableNane);
+        return new ABCPredictor(predictorName, version, lastTrain, predictionTableName);
     }
 
     private MLPredictor getSVMPredictor(JsonObject jsonObject) {
