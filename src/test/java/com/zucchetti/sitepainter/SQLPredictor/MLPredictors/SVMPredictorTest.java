@@ -296,7 +296,7 @@ public class SVMPredictorTest {
     public void testGetQueryWhenDescriptionFileNotContainAnyVector(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
 
         Map<String,String> modelParameters = new HashMap<String, String>() {{
             put("svm_type","c_svc");
@@ -324,7 +324,7 @@ public class SVMPredictorTest {
     public void testGetQueryWithEmptyFieldsList(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Fields list must not be empty" + nl;
         String expectedQuery = null;
 
@@ -367,7 +367,7 @@ public class SVMPredictorTest {
     public void testGetQueryWhenDescriptionFileContainUnmanageableKernelType(){
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
 
         ArrayList<ArrayList<Double>> supportVectors = new ArrayList<>(Arrays.asList(
                 new ArrayList<>(Arrays.asList(0.007, 0.21751, 0.49433, 1.333, 1.4444)),

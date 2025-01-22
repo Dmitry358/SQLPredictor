@@ -67,7 +67,7 @@ public class LRTrainer extends MLTrainer {
         try{
             if (!descriptionFile.exists()){
                 if (!descriptionFile.createNewFile()) {
-                    System.out.println("Description file does not exist and could not be created");
+                    System.err.println("Description file does not exist and could not be created");
                     return false;
                 }
             }
@@ -100,7 +100,7 @@ public class LRTrainer extends MLTrainer {
                 gson.toJson(jsonObject, writer);
             }
             catch (IOException e) {
-                System.out.println("Error writing description file, failed to update parameters: ");
+                System.err.println("Error writing description file, failed to update parameters: ");
                 e.printStackTrace();
                 return false;
             }
@@ -129,7 +129,7 @@ public class LRTrainer extends MLTrainer {
                 return jsonElement.getAsJsonObject();
             }
             else{
-                System.out.println("Description file has incorrect structure, reading failed");
+                System.err.println("Description file has incorrect structure, reading failed");
                 return null;
             }
         }
@@ -138,11 +138,11 @@ public class LRTrainer extends MLTrainer {
             return null;
         }
         catch (JsonIOException e) {
-            System.out.println("Error of processing description file");
+            System.err.println("Error of processing description file");
             return null;
         }
         catch (JsonSyntaxException e) {
-            System.out.println("Syntax of description file is incorrect");
+            System.err.println("Syntax of description file is incorrect");
             return null;
         } //???? SERVE ????
     }
@@ -190,8 +190,8 @@ public class LRTrainer extends MLTrainer {
             }
         }
         else {
-            System.out.println("Description file does not contain xTx field");
-            return null; //???????????
+            System.err.println("Description file does not contain xTx field");
+            return null;
         }
         double[][] matrix =xTxMatrix;
         for (int i = 0; i < matrix.length; i++) {
@@ -218,8 +218,8 @@ public class LRTrainer extends MLTrainer {
             }
         }
         else {
-            System.out.println("Description file does not contain xTy field");
-            return null; //???????????
+            System.err.println("Description file does not contain xTy field");
+            return null;
         }
         double[][] matrix =xTyMatrix;
         for (int i = 0; i < matrix.length; i++) {
@@ -238,17 +238,12 @@ public class LRTrainer extends MLTrainer {
         double[] dataVector = new double[dataLenght];
         dataVector[0] = 1;
         System.arraycopy(sampleData,0, dataVector,1, sampleData.length);
-        /*
-        for (int i = 0; i < sampleData.length; ++i) {
-            dataVector[i + 1] = sampleData[i];
-        }
-        //*/
         double[] valueVector = new double[1];
         valueVector[0] = sampleValue;
         this.addObservation(dataVector, valueVector);
     }
 
-    private double[] calculateCoefficients() {// !!!!!!!! SCRIVRE NEL JSON
+    private double[] calculateCoefficients() {
         double[][] xTx = this.transposeOfXTimesX;
         double[][] xTy = this.transposeOfXTimesY;
         double[][] inv = this.inverse(xTx, this.identity);

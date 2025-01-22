@@ -82,7 +82,7 @@ public class SVMTrainer extends MLTrainer{
             case "nu_svr":
                 param.svm_type = svm_parameter.NU_SVR; break;
             default:
-                System.out.println("Valore tipo SVM non valido");
+                System.err.println("Valore tipo SVM non valido");
                 return false;
         }
         switch (this.kernelType){
@@ -103,7 +103,7 @@ public class SVMTrainer extends MLTrainer{
             case "precomputed":
                 param.kernel_type = svm_parameter.PRECOMPUTED; break;
             default:
-                System.out.println("Valore tipo kernel non valido");
+                System.err.println("Valore tipo kernel non valido");
                 return false;
         }
 

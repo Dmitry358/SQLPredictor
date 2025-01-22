@@ -24,10 +24,9 @@ public class LRPredictorTest {
     }
     @Test
     public void testGetQueryWithEmptyFieldsList(){
-        //PrintStream originalOut = System.out;
         ByteArrayOutputStream outputResult = new ByteArrayOutputStream();
         String nl = System.lineSeparator();
-        System.setOut(new PrintStream(outputResult));
+        System.setErr(new PrintStream(outputResult));
         String expectedOutput = "Fields list must not be empty" + nl;
         String expectedQuery = null;
 

@@ -509,7 +509,7 @@ public class MLTrainerBuilder {
             gson.toJson(jsonObject, writer);
         }
         catch (IOException e) {
-            System.out.println("Error writing description file, failed to update parameters: ");
+            System.err.println("Error writing description file, failed to update parameters: ");
             e.printStackTrace();
             return false;
         }

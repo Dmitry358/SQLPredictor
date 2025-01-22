@@ -35,7 +35,7 @@ public class ModelFileReader {
             buffer.close();
         }
         catch (Exception exception){
-            System.out.println(exception);
+            System.err.println(exception);
         }
 
         return query;
@@ -92,7 +92,7 @@ public class ModelFileReader {
             buffer.close();
         }
         catch (Exception exception){
-            System.out.println(exception);
+            System.err.println(exception);
         }
 
         return query;
@@ -169,7 +169,7 @@ public class ModelFileReader {
             buffer.close();
         }
         catch (Exception exception){
-            System.out.println(exception);
+            System.err.println(exception);
         }
 
         return query;
@@ -230,7 +230,7 @@ public class ModelFileReader {
             buffer.close();
         }
         catch (Exception exception){
-            System.out.println(exception);
+            System.err.println(exception);
         }
 
         return query;

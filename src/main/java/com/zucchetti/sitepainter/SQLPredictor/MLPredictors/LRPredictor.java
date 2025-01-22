@@ -15,7 +15,7 @@ public class LRPredictor extends MLPredictor {
         int fieldsNum = fieldsList.size();
 
         if(fieldsNum < 1){
-            System.out.println("Fields list must not be empty");
+            System.err.println("Fields list must not be empty");
             return null;
         }
         if(fieldsNum != (parameters.length - 1)){

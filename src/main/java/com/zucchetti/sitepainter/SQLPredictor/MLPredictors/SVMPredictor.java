@@ -32,11 +32,11 @@ public class SVMPredictor extends MLPredictor {
     public String getQuery(ArrayList<String> fieldsList){
         int fieldsNum = fieldsList.size();
         if (supportVectors.size() < 1){
-            System.out.println("Description file does not contain any vector");
+            System.err.println("Description file does not contain any vector");
             return null;
         }
         if (fieldsNum < 1){
-            System.out.println("Fields list must not be empty");
+            System.err.println("Fields list must not be empty");
             return null;
         }
         if(fieldsNum != (supportVectors.get(0).size() - 1)){
@@ -54,7 +54,7 @@ public class SVMPredictor extends MLPredictor {
             case "rbf":
                 query = getRBFKernelQuery(fieldsList); break;
             default:
-                System.out.println("Description file contain unmanageable kernel type");
+                System.err.println("Description file contain unmanageable kernel type");
         }
 
         return query;
