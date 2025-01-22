@@ -14,7 +14,7 @@ public class ABCPredictor extends MLPredictor {
 
     public String getQuery(ArrayList<String> fieldsList){
         if (fieldsList.size() != 1){
-            System.out.println("Request contains incorrect number of fields");
+            System.err.println("Request contains incorrect number of fields");
             return null;
         }
 
