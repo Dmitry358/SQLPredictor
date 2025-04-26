@@ -24,16 +24,17 @@ public class Main {
     public static void main(String[] args) {
 
         // !!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
-        String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
+        //String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
+        String dataBaseURL = "jdbc:postgresql://localhost:5432/sqlpredictor_db";
         String username = "postgres";
-        String password = "";
+        String password = "a";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
 
-        /*///////////////////////////   ABC   ///////////////////////////////
+        //*///////////////////////////   ABC   ///////////////////////////////
         Map<String, String> trainerData = new HashMap<>();
         trainerData.put("predictorName", "  ABC_abc_trainer   ");
         trainerData.put("machineLearningModelType", "   abc  ");
-        trainerData.put("trainingExpiration", "   8   ");
+        trainerData.put("trainingExpiration", "   18   ");
 
         trainerData.put("predictionTableName", "  abc_predictor ");
         trainerData.put("boundA", "  0.8 ");

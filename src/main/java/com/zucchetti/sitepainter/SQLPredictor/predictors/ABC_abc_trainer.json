@@ -1,0 +1,15 @@
+{
+  "predictor_name": "ABC_abc_trainer",
+  "model_type": "abc",
+  "version": 1,
+  "last_train": "2025-04-27  00:09:50",
+  "training_expiration": 18,
+  "training_data_table_name": "abc_trainer",
+  "classification_field_name": "totale",
+  "training_field_names_list": [
+    "id"
+  ],
+  "bound_A": 0.8,
+  "bound_B": 0.95,
+  "prediction_table_name": "abc_predictor"
+}
