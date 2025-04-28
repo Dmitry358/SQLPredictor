@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-
+        /// //////
         // !!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
         //String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
         String dataBaseURL = "jdbc:postgresql://localhost:5432/sqlpredictor_db";
