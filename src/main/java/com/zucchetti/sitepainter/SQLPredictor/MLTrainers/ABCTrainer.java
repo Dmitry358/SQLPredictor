@@ -18,7 +18,7 @@ public class ABCTrainer extends MLTrainer {
     }
 
     public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnecter){
-        // ??? CONTROLLO SE dataTableFieldNamesList ha lunghezza > 0
+        // ??? CONTROLLO SE dataTableFieldNamesList ha lunghezza > 0 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String idField = dataTableFieldNamesList[0];
 
         String trainQuery = "DROP TABLE IF EXISTS " + this.predictionTableName + ";\n" +
