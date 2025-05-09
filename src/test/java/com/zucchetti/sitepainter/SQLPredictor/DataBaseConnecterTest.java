@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.anyString;
 
-
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,13 +18,12 @@ class DataBaseConnecterTest {
 
     @Test
     void testGetTrainingDataWithMockito() throws Exception {
-        // Mock Connection, Statement, ResultSet, and MetaData
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
         ResultSet mockResultSet = mock(ResultSet.class);
         ResultSetMetaData mockMetaData = mock(ResultSetMetaData.class);
 
-        // Mock comportamento
+
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockStatement.executeQuery(anyString())).thenReturn(mockResultSet);
         when(mockResultSet.getMetaData()).thenReturn(mockMetaData);
@@ -34,7 +32,6 @@ class DataBaseConnecterTest {
         when(mockMetaData.getColumnName(2)).thenReturn("feature2");
         when(mockMetaData.getColumnName(3)).thenReturn("class");
 
-        // Simula due righe
         when(mockResultSet.next()).thenReturn(true, true, false);
         when(mockResultSet.getDouble("feature1")).thenReturn(1.0, 3.0);
         when(mockResultSet.getDouble("feature2")).thenReturn(2.0, 4.0);
@@ -115,8 +112,4 @@ class DataBaseConnecterTest {
 
         assertEquals(resultPassword, expectedPassword);
     }
-
-
-
-
 }
