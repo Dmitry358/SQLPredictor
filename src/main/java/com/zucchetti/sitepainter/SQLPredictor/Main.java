@@ -13,23 +13,27 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.DriverManager;
 import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.io.IOException;
+
+import java.util.*;
 
 
 public class Main {
     public static void main(String[] args) {
         // !!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
-        //String dataBaseURL = "jdbc:postgresql://localhost:5432/proba_db";
         String dataBaseURL = "jdbc:postgresql://localhost:5432/sqlpredictor_db";
         String username = "postgres";
         String password = "a";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
+        String[] fields ={};
+        double[][] result = dbConnecter.getTrainingData("table1",fields, "age");
 
-        //*///////////////////////////   ABC   ///////////////////////////////
+        System.out.println("Contenuto del database (codificato):");
+        for (double[] row : result) {
+            System.out.println(Arrays.toString(row));
+        }
+
+        /*///////////////////////////   ABC   ///////////////////////////////
         Map<String, String> trainerData = new HashMap<>();
         trainerData.put("predictorName", "  ABC_abc_trainer   ");
         trainerData.put("machineLearningModelType", "   abc  ");

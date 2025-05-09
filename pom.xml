@@ -39,26 +39,13 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.5</version> <!-- o la versione più recente -->
+            <version>42.2.5</version>
         </dependency>
         <dependency>
             <groupId>tw.edu.ntu.csie</groupId>
             <artifactId>libsvm</artifactId>
             <version>3.35</version>
         </dependency>
-
-        <!--dependency>
-            <groupId>com.example</groupId>
-            <artifactId>mylibrary</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/mylibrary.jar</systemPath>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
-        </dependency-->
     </dependencies>
     <build>
         <plugins>
@@ -123,13 +110,6 @@
                             <goal>checkstyle</goal>
                         </goals>
                     </execution>
-                    <!--execution>
-                        <id>checkstyle-aggregate</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>checkstyle-aggregate</goal>
-                        </goals>
-                    </execution-->
                 </executions>
             </plugin>
         </plugins>

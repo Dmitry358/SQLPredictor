@@ -15,14 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DataBaseConnecterTest {
-
+// errore tipo di dato nella tabella not double
     @Test
     void testGetTrainingDataWithMockito() throws Exception {
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
         ResultSet mockResultSet = mock(ResultSet.class);
         ResultSetMetaData mockMetaData = mock(ResultSetMetaData.class);
-
 
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockStatement.executeQuery(anyString())).thenReturn(mockResultSet);
@@ -38,7 +37,7 @@ class DataBaseConnecterTest {
         when(mockResultSet.getDouble("class")).thenReturn(0.0, 1.0);
 
         DataBaseConnecter db = new DataBaseConnecter("url", "user", "pass");
-        db.setTestConnection(mockConnection);
+        //db.setTestConnection(mockConnection);
 
         String[] fields = {"feature1", "feature2"};
         String classField = "class";
