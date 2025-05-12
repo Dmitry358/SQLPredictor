@@ -25,7 +25,7 @@ public class Main {
         String username = "postgres";
         String password = "a";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
-        String[] fields ={};
+        String[] fields ={"id"};
         double[][] result = dbConnecter.getTrainingData("table1",fields, "age");
 
         System.out.println("Contenuto del database (codificato):");

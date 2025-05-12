@@ -15,7 +15,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DataBaseConnecterTest {
-// errore tipo di dato nella tabella not double
+    // errore tipo di dato nella tabella not double
+    // url, nome utente, pwd errati
+    // nome db??, tabella, campi inesistente
+
+    /*
+    @Test
+    public void testGetTrainingData_withoutRealDB() throws Exception {
+        // Mocks
+        Connection mockConnection = mock(Connection.class);
+        Statement mockStatement = mock(Statement.class);
+        ResultSet mockResultSet = mock(ResultSet.class);
+        ResultSetMetaData mockMetaData = mock(ResultSetMetaData.class);
+
+        // Mock behavior
+        when(mockConnection.createStatement()).thenReturn(mockStatement);
+        when(mockStatement.executeQuery(anyString())).thenReturn(mockResultSet);
+        when(mockResultSet.getMetaData()).thenReturn(mockMetaData);
+
+        when(mockMetaData.getColumnCount()).thenReturn(2);
+        when(mockMetaData.getColumnName(1)).thenReturn("field1");
+        when(mockMetaData.getColumnName(2)).thenReturn("class");
+
+        when(mockResultSet.next()).thenReturn(true, false);
+        when(mockResultSet.getDouble("field1")).thenReturn(1.5);
+        when(mockResultSet.getDouble("class")).thenReturn(0.0);
+
+        // Mock static DriverManager
+        try (MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
+            mockedDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString()))
+                    .thenReturn(mockConnection);
+
+            DataBaseConnecter connector = new DataBaseConnecter("url", "user", "pass");
+            double[][] result = connector.getTrainingData("table", new String[]{"field1"}, "class");
+
+            assertEquals(1, result.length);
+            assertEquals(2, result[0].length);
+            assertEquals(1.5, result[0][0]);
+            assertEquals(0.0, result[0][1]);
+        }
+    }
+    */
+
     @Test
     void testGetTrainingDataWithMockito() throws Exception {
         Connection mockConnection = mock(Connection.class);
