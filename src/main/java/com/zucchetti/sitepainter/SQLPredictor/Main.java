@@ -15,7 +15,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSetMetaData;
 import java.io.IOException;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
@@ -25,8 +27,10 @@ public class Main {
         String username = "postgres";
         String password = "a";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
-        String[] fields ={"id"};
-        double[][] result = dbConnecter.getTrainingData("table1",fields, "age");
+        String tabelName = "persons";
+        String[] fields = {"weight", "height"};
+        String classField = "age";
+        double[][] result = dbConnecter.getTrainingData(tabelName, fields, classField);
 
         System.out.println("Contenuto del database (codificato):");
         for (double[] row : result) {

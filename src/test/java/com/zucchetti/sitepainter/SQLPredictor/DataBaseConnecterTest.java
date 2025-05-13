@@ -4,115 +4,102 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.anyString;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
 import java.lang.reflect.Field;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
 
 class DataBaseConnecterTest {
     // errore tipo di dato nella tabella not double
     // url, nome utente, pwd errati
     // nome db??, tabella, campi inesistente
 
-    /*
     @Test
-    public void testGetTrainingData_withoutRealDB() throws Exception {
-        // Mocks
+    public void testGetTrainingDataWithCorrectInput() {
+        double[][] expected = {
+          {75.5, 180.2, 30.0}
+        };
+
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
-        ResultSet mockResultSet = mock(ResultSet.class);
-        ResultSetMetaData mockMetaData = mock(ResultSetMetaData.class);
+        ResultSet mockQueryResult = mock(ResultSet.class);
+        ResultSetMetaData mockQueryResultMetaData = mock(ResultSetMetaData.class);
 
-        // Mock behavior
-        when(mockConnection.createStatement()).thenReturn(mockStatement);
-        when(mockStatement.executeQuery(anyString())).thenReturn(mockResultSet);
-        when(mockResultSet.getMetaData()).thenReturn(mockMetaData);
+        try {
+            MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
+            mockDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString())).thenReturn(mockConnection);
+            when(mockConnection.createStatement()).thenReturn(mockStatement);
+            when(mockStatement.executeQuery(anyString())).thenReturn(mockQueryResult);
+            when(mockQueryResult.getMetaData()).thenReturn(mockQueryResultMetaData);
 
-        when(mockMetaData.getColumnCount()).thenReturn(2);
-        when(mockMetaData.getColumnName(1)).thenReturn("field1");
-        when(mockMetaData.getColumnName(2)).thenReturn("class");
+            when(mockQueryResultMetaData.getColumnCount()).thenReturn(3);
+            when(mockQueryResultMetaData.getColumnName(1)).thenReturn("weight");
+            when(mockQueryResultMetaData.getColumnName(2)).thenReturn("height");
+            when(mockQueryResultMetaData.getColumnName(3)).thenReturn("age");
 
-        when(mockResultSet.next()).thenReturn(true, false);
-        when(mockResultSet.getDouble("field1")).thenReturn(1.5);
-        when(mockResultSet.getDouble("class")).thenReturn(0.0);
+            when(mockQueryResult.next()).thenReturn(true, false);
+            for (int i = 0; i < expected.length; i++) {
+                final int index = i; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                when(mockQueryResult.getDouble("weight")).thenReturn(expected[index][0]);
+                when(mockQueryResult.getDouble("height")).thenReturn(expected[index][1]);
+                when(mockQueryResult.getDouble("age")).thenReturn(expected[index][2]);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        // Mock static DriverManager
-        try (MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
-            mockedDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString()))
-                    .thenReturn(mockConnection);
+        DataBaseConnecter dbConnecter = new DataBaseConnecter("dataBaseURL", "username", "password");
 
-            DataBaseConnecter connector = new DataBaseConnecter("url", "user", "pass");
-            double[][] result = connector.getTrainingData("table", new String[]{"field1"}, "class");
+        double[][] actual = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
 
-            assertEquals(1, result.length);
-            assertEquals(2, result[0].length);
-            assertEquals(1.5, result[0][0]);
-            assertEquals(0.0, result[0][1]);
+        assertEquals(expected.length, actual.length);
+        for (int i = 0; i < expected.length; i++) {
+            assertArrayEquals(expected[i], actual[i]);
         }
     }
-    */
 
     @Test
-    void testGetTrainingDataWithMockito() throws Exception {
+    public void testGetTrainingDataWithNonExistentFieldName() {
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
-        ResultSet mockResultSet = mock(ResultSet.class);
-        ResultSetMetaData mockMetaData = mock(ResultSetMetaData.class);
+        ResultSet mockQueryResult = mock(ResultSet.class);
+        ResultSetMetaData mockQueryResultMetaData = mock(ResultSetMetaData.class);
 
-        when(mockConnection.createStatement()).thenReturn(mockStatement);
-        when(mockStatement.executeQuery(anyString())).thenReturn(mockResultSet);
-        when(mockResultSet.getMetaData()).thenReturn(mockMetaData);
-        when(mockMetaData.getColumnCount()).thenReturn(3);
-        when(mockMetaData.getColumnName(1)).thenReturn("feature1");
-        when(mockMetaData.getColumnName(2)).thenReturn("feature2");
-        when(mockMetaData.getColumnName(3)).thenReturn("class");
+        try {
+            MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
+            mockDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString())).thenReturn(mockConnection);
+            when(mockConnection.createStatement()).thenReturn(mockStatement);
+            when(mockStatement.executeQuery(anyString())).thenThrow(new SQLException("Table does not exist"));
+            /*
+            when(mockQueryResult.getMetaData()).thenThrow(new SQLException("Table does not exist"));
+            when(mockQueryResult.getMetaData()).thenReturn(mockQueryResultMetaData);
+            */
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        when(mockResultSet.next()).thenReturn(true, true, false);
-        when(mockResultSet.getDouble("feature1")).thenReturn(1.0, 3.0);
-        when(mockResultSet.getDouble("feature2")).thenReturn(2.0, 4.0);
-        when(mockResultSet.getDouble("class")).thenReturn(0.0, 1.0);
+        DataBaseConnecter dbConnecter = new DataBaseConnecter("dataBaseURL", "username", "password");
 
-        DataBaseConnecter db = new DataBaseConnecter("url", "user", "pass");
-        //db.setTestConnection(mockConnection);
-
-        String[] fields = {"feature1", "feature2"};
-        String classField = "class";
-
-        double[][] result = db.getTrainingData("my_table", fields, classField);
-
-        assertNotNull(result);
-        assertEquals(2, result.length);
-        assertEquals(3, result[0].length);
-        assertEquals(1.0, result[0][0]);
-        assertEquals(4.0, result[1][1]);
-        assertEquals(1.0, result[1][2]);
+        double[][] actual = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
+        assertNotNull(actual);
     }
 
-    @Test
-    void testConstructorWithCorrectValues() throws Exception {
-        DataBaseConnecter connector = new DataBaseConnecter(
-                "jdbc:mysql://localhost:3306/mydb",
-                "admin",
-                "pwd"
-        );
 
-        Field urlField = DataBaseConnecter.class.getDeclaredField("dataBaseURL");
-        Field userField = DataBaseConnecter.class.getDeclaredField("username");
-        Field passField = DataBaseConnecter.class.getDeclaredField("password");
-
-        urlField.setAccessible(true);
-        userField.setAccessible(true);
-        passField.setAccessible(true);
-
-        assertEquals("jdbc:mysql://localhost:3306/mydb", urlField.get(connector));
-        assertEquals("admin", userField.get(connector));
-        assertEquals("pwd", passField.get(connector));
-    }
     @Test
     void testGetDataBaseURL(){
         DataBaseConnecter connector = new DataBaseConnecter(
