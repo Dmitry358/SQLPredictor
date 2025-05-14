@@ -27,7 +27,7 @@ public class Main {
         String username = "postgres";
         String password = "a";
         DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
-        String tabelName = "persons";
+        String tabelName = "person";
         String[] fields = {"weight", "height"};
         String classField = "age";
         double[][] result = dbConnecter.getTrainingData(tabelName, fields, classField);

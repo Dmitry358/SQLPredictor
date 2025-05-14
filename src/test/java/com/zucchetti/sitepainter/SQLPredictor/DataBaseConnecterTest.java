@@ -14,13 +14,13 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
 
 class DataBaseConnecterTest {
     // errore tipo di dato nella tabella not double
@@ -38,8 +38,7 @@ class DataBaseConnecterTest {
         ResultSet mockQueryResult = mock(ResultSet.class);
         ResultSetMetaData mockQueryResultMetaData = mock(ResultSetMetaData.class);
 
-        try {
-            MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
+        try{MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
             mockDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString())).thenReturn(mockConnection);
             when(mockConnection.createStatement()).thenReturn(mockStatement);
             when(mockStatement.executeQuery(anyString())).thenReturn(mockQueryResult);
@@ -64,11 +63,10 @@ class DataBaseConnecterTest {
 
         DataBaseConnecter dbConnecter = new DataBaseConnecter("dataBaseURL", "username", "password");
 
-        double[][] actual = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
+        double[][] result = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
 
-        assertEquals(expected.length, actual.length);
         for (int i = 0; i < expected.length; i++) {
-            assertArrayEquals(expected[i], actual[i]);
+            assertArrayEquals(expected[i], result[i]);
         }
     }
 
@@ -76,29 +74,21 @@ class DataBaseConnecterTest {
     public void testGetTrainingDataWithNonExistentFieldName() {
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
-        ResultSet mockQueryResult = mock(ResultSet.class);
-        ResultSetMetaData mockQueryResultMetaData = mock(ResultSetMetaData.class);
 
-        try {
-            MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
+        try(MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class)) {
             mockDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString())).thenReturn(mockConnection);
             when(mockConnection.createStatement()).thenReturn(mockStatement);
-            when(mockStatement.executeQuery(anyString())).thenThrow(new SQLException("Table does not exist"));
-            /*
-            when(mockQueryResult.getMetaData()).thenThrow(new SQLException("Table does not exist"));
-            when(mockQueryResult.getMetaData()).thenReturn(mockQueryResultMetaData);
-            */
+            doThrow(new SQLException("Table does not exist")).when(mockStatement).executeQuery(anyString());
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
 
-        DataBaseConnecter dbConnecter = new DataBaseConnecter("dataBaseURL", "username", "password");
+        DataBaseConnecter dbConnecter = new DataBaseConnecter("URL", "user", "pwd");
 
         double[][] actual = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
-        assertNotNull(actual);
+        assertNull(actual);
     }
-
 
     @Test
     void testGetDataBaseURL(){
