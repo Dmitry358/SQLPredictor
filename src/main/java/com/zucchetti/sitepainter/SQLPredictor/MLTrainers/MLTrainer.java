@@ -51,7 +51,6 @@ public abstract class MLTrainer {
     protected String[] getTrainingFieldNamesList(){
         return this.trainingFieldNamesList;
     }
-    protected String getClassificationField(){ return this.classificationField;}
-
+    protected String getClassificationField(){ return this.classificationField; }
 }
 
