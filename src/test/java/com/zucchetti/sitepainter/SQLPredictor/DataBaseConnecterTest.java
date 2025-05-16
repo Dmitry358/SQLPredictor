@@ -38,7 +38,8 @@ class DataBaseConnecterTest {
         ResultSet mockQueryResult = mock(ResultSet.class);
         ResultSetMetaData mockQueryResultMetaData = mock(ResultSetMetaData.class);
 
-        try{MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
+        try{
+            MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class);
             mockDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString())).thenReturn(mockConnection);
             when(mockConnection.createStatement()).thenReturn(mockStatement);
             when(mockStatement.executeQuery(anyString())).thenReturn(mockQueryResult);
@@ -62,7 +63,6 @@ class DataBaseConnecterTest {
         }
 
         DataBaseConnecter dbConnecter = new DataBaseConnecter("dataBaseURL", "username", "password");
-
         double[][] result = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
 
         for (int i = 0; i < expected.length; i++) {
@@ -74,6 +74,10 @@ class DataBaseConnecterTest {
     public void testGetTrainingDataWithNonExistentFieldName() {
         Connection mockConnection = mock(Connection.class);
         Statement mockStatement = mock(Statement.class);
+        /*
+        ResultSet mockQueryResult = mock(ResultSet.class);
+        ResultSetMetaData mockQueryResultMetaData = mock(ResultSetMetaData.class);
+        //*/
 
         try(MockedStatic<DriverManager> mockDriverManager = mockStatic(DriverManager.class)) {
             mockDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString())).thenReturn(mockConnection);
@@ -84,11 +88,12 @@ class DataBaseConnecterTest {
             e.printStackTrace();
         }
 
-        DataBaseConnecter dbConnecter = new DataBaseConnecter("URL", "user", "pwd");
-
-        double[][] actual = dbConnecter.getTrainingData("persons", new String[] {"weight", "height"}, "age");
+        DataBaseConnecter dbConnecter = new DataBaseConnecter("URL", "userName", "pwd");
+        double[][] actual = dbConnecter.getTrainingData("personsAAA", new String[] {"weight", "height"}, "age");
         assertNull(actual);
+        //mockConnection.close();
     }
+
 
     @Test
     void testGetDataBaseURL(){
