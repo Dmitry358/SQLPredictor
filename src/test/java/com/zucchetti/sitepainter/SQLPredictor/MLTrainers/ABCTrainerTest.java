@@ -23,10 +23,82 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ABCTrainerTest {
+  @Test
+  public void testTrainMethodWithNONExistentDataBaseURL(){
+    //String dataBaseURL = "jdbc:h2:mem:test_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+    String dataBaseURL = "jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
+    String username = "";
+    String password = "";
+
+    String dataTableName = "abc_trainer";
+    String[] dataTableFieldNamesList = {"   id "};
+    String classificationFieldName = "  totale";
+    String predictorName = "ABC_predictor";
+    int version = 5;
+    String lastTrain = "2025-02-05";
+    int trainingExpiration = 12;
+    String predictionTableName = "abc_predictor";
+    double boundA = 0.7;
+    double boundB = 0.85;
+
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+
+    try {
+      Connection conn = DriverManager.getConnection(dataBaseURL, username, password);
+      Statement stmt = conn.createStatement();
+
+      String createTable = "DROP TABLE IF EXISTS " + dataTableName + ";"+
+        "CREATE TABLE " + dataTableName + " (" +
+        "id INT PRIMARY KEY," +
+        "totale DOUBLE);";
+      stmt.execute(createTable);
+      String insertValues = "INSERT INTO " + dataTableName + " (id, totale) VALUES " +
+        "(1, 7), " +
+        "(2, 13) "/*, " +
+        "(3, 2), " +
+        "(4, 19), " +
+        "(5, 5), " +
+        "(6, 11), " +
+        "(7, 8), " +
+        "(8, 4), " +
+        "(9, 16), " +
+        "(10, 3), " +
+        "(11, 1), " +
+        "(12, 12), " +
+        "(13, 17), " +
+        "(14, 6), " +
+        "(15, 10), " +
+        "(16, 14), " +
+        "(17, 18), " +
+        "(18, 9), " +
+        "(19, 15), " +
+        "(20, 20);"*/;
+      stmt.execute(insertValues);
+
+      DataBaseConnecter dbConnecter = new DataBaseConnecter("AAAAAAA", username, password);
+
+      //stmt.execute("DROP TABLE IF EXISTS " + predictionTableName);
+      MLTrainer abcTrainer = new ABCTrainer(predictorName, version, lastTrain, trainingExpiration, dataTableName, dataTableFieldNamesList, classificationFieldName, predictionTableName, boundA, boundB);
+      boolean isTrained = abcTrainer.train(dataTableName, dataTableFieldNamesList, classificationFieldName, dbConnecter);
+      System.setErr(System.err);
+
+      String log = errContent.toString();
+      System.out.println("uuuuuuuuuuuuuuuu"+log);
+      assertFalse(isTrained);
+      //rs.close();
+      stmt.close();
+      conn.close();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   @Test
-  public void testTrainMethodWithNONExistentDataTableName(){
-    String dataBaseURL = "jdbc:h2:mem:test_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+  public void testTrainMethodWithNonExistentDataTableName(){
+    //String dataBaseURL = "jdbc:h2:mem:test_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+    String dataBaseURL = "jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
     String username = "";
     String password = "";
 
@@ -38,9 +110,9 @@ public class ABCTrainerTest {
       Statement stmt = conn.createStatement();
 
       String createTable = "DROP TABLE IF EXISTS " + dataTableName + ";"+
-        "CREATE TABLE " + dataTableName + " (" +
-            " id INT PRIMARY KEY," +
-            "totale DOUBLE);";
+                           "CREATE TABLE " + dataTableName + " (" +
+                           "id INT PRIMARY KEY," +
+                           "totale DOUBLE);";
       stmt.execute(createTable);
       String insertValues = "INSERT INTO " + dataTableName + " (id, totale) VALUES " +
         "(1, 7), " +
@@ -97,7 +169,8 @@ public class ABCTrainerTest {
 
   @Test
   public void testTrainMethodWithCorrectInput(){
-    String dataBaseURL = "jdbc:h2:mem:test_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+    //String dataBaseURL = "jdbc:h2:mem:test_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1";
+    String dataBaseURL = "jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
     String username = "";
     String password = "";
 
@@ -201,7 +274,6 @@ public class ABCTrainerTest {
       e.printStackTrace();
     }
   }
-
   @Test
   public void testABCTrainerConstructorWithCorrectInput() {
     String predictorName = "predictorX";

@@ -68,11 +68,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M9</version>
                 <configuration>
-                    <!--argLine>
-                        -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar
-                    </argLine-->
                     <argLine>${argLine} -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar</argLine>
-
+                    <!--forkCount>0</forkCount-->
                 </configuration>
             </plugin>
             <plugin>
