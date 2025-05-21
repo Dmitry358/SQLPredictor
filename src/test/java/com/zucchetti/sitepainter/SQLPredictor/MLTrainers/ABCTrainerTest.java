@@ -1,11 +1,7 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
 import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
-import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.ABCTrainer;
-import com.zucchetti.sitepainter.SQLPredictor.MLTrainers.MLTrainer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +15,11 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ABCTrainerTest {
@@ -84,8 +84,7 @@ public class ABCTrainerTest {
       System.setErr(System.err);
 
       String log = errContent.toString();
-      System.out.println("uuuuuuuuuuuuuuuu"+log);
-      assertFalse(isTrained);
+      assertFalse(!isTrained);
       //rs.close();
       stmt.close();
       conn.close();
@@ -156,8 +155,7 @@ public class ABCTrainerTest {
       System.setErr(System.err);
 
       String log = errContent.toString();
-      System.out.println("uuuuuuuuuuuuuuuu"+log);
-      assertFalse(isTrained);
+      assertFalse(!isTrained);
       //rs.close();
       stmt.close();
       conn.close();
@@ -293,7 +291,7 @@ public class ABCTrainerTest {
       predictionTableName, boundA, boundB
     );
 
-    try {
+    try{
       assertEquals(predictorName, getField(trainer, "predictorName", MLTrainer.class));
       assertEquals("abc", getField(trainer, "trainingModelType", MLTrainer.class));
       assertEquals(version, getField(trainer, "version", MLTrainer.class));
@@ -305,7 +303,8 @@ public class ABCTrainerTest {
       assertEquals(predictionTableName, getField(trainer, "predictionTableName", ABCTrainer.class));
       assertEquals(0.0, getField(trainer, "boundA", ABCTrainer.class));
       assertEquals(0.0, getField(trainer, "boundB", ABCTrainer.class));
-    } catch (NoSuchFieldException | IllegalAccessException e) {
+    }
+    catch (NoSuchFieldException | IllegalAccessException e) {
       fail("Error while accessing fields using reflection: " + e.getMessage());
     }
   }

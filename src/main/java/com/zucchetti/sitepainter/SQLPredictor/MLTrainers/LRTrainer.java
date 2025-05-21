@@ -31,29 +31,35 @@ public class LRTrainer extends MLTrainer {
         super(predictorName, "linear_regression", version, lastTrain, trainingExpiration, trainingDataTableName, trainingFieldNamesList, classificationField);
         this.transposeOfXTimesX = xTx;
         this.transposeOfXTimesY = xTy;
-        this.identity = identityMatrix(xTx.length);
+        if(xTx != null){
+            this.identity = identityMatrix(xTx.length);
+        }
+        else{
+            this.identity = null;
+        }
         this.parametersLR = parametersLR;
     }
 
     public boolean train(String dataTableName, String[] dataTableFieldNamesList, String classificationFieldName, DataBaseConnecter dbConnetter){
-    //public boolean train(double[][] samples, double[] classType) {
+        // public boolean train(double[][] samples, double[] classType) {
         // !!! CONTROLLO SE DATI COMPATIBILI CON MODELLO
-        //!!!!AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
+        // !!!! AGGIORNARE FILE JSON (XtX, XtY) (ECCEZIONI: NON TROVA FIL DA SCRIVERE, FILEha )
         // !!!!!!!!!!!!! CONTROLLO SE this != null
 
         double[][] samples = dbConnetter.getTrainingData(dataTableName, dataTableFieldNamesList, classificationFieldName);
+        // !!!!!!!!!!!!!!!!!!!! Controllo se samples != null altrimenti samples.length dara errore
         if(samples.length > 0){
             if(samples[0].length != this.transposeOfXTimesX.length){
                 System.err.println("Data size is incompatible with model");
                 return false;
             }
-            else {
-                int sampleDataLength = samples[0].length - 1;
-                for (int i = 0; i < samples.length; ++i) {
-                    double[] sampleData = new double[sampleDataLength];
-                    System.arraycopy(samples[i], 0, sampleData, 0, sampleDataLength);
-                    this.addSample(sampleData, samples[i][sampleDataLength]);
-                }
+            else{
+              int sampleDataLength = samples[0].length - 1;
+              for (double[] sample : samples) {
+                double[] sampleData = new double[sampleDataLength];
+                System.arraycopy(sample, 0, sampleData, 0, sampleDataLength);
+                this.addSample(sampleData, sample[sampleDataLength]);
+              }
             }
         }
         else {
@@ -118,14 +124,12 @@ public class LRTrainer extends MLTrainer {
     private JsonObject getDescriptionFileData(String predictorName) {
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + predictorName + ".json";
         File descriptionFile = new File(descriptionFilePath);
-
         JsonObject jsonObject = null;
 
-        try {
-            FileReader reader = new FileReader(descriptionFilePath);
+        try(FileReader reader = new FileReader(descriptionFilePath)) {
             JsonElement jsonElement = JsonParser.parseReader(reader);
-
-            if (jsonElement.isJsonObject()) {
+            //if (jsonElement.isJsonObject()) { //!!!!!!!!!!!! SOSTITUITO DURANTE TESTING 20.05.25
+            if (jsonElement != null && jsonElement.isJsonObject()) {
                 return jsonElement.getAsJsonObject();
             }
             else{
@@ -145,6 +149,10 @@ public class LRTrainer extends MLTrainer {
             System.err.println("Syntax of description file is incorrect");
             return null;
         } //???? SERVE ????
+        catch (IOException e) {
+          e.printStackTrace();
+          return null;
+        }
     }
     private JsonArray convertToJsonArrayMatrices(double[][] array) {
         JsonArray jsonArray = new JsonArray();
@@ -196,9 +204,9 @@ public class LRTrainer extends MLTrainer {
         double[][] matrix =xTxMatrix;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
+                //System.out.print(matrix[i][j] + " ");
             }
-            System.out.println();
+            //System.out.println();
         }
 
         return  xTxMatrix;
@@ -224,9 +232,9 @@ public class LRTrainer extends MLTrainer {
         double[][] matrix =xTyMatrix;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
+                //System.out.print(matrix[i][j] + " ");
             }
-            System.out.println();
+            //System.out.println();
         }
 
         return  xTyMatrix;
@@ -243,6 +251,12 @@ public class LRTrainer extends MLTrainer {
         this.addObservation(dataVector, valueVector);
     }
 
+    private void addObservation(double[] x, double[] y){
+        this.addRowAndColumn(this.transposeOfXTimesX, x, x);
+        this.addRowAndColumn(this.transposeOfXTimesY, x, y);
+        this.parametersLR = this.calculateCoefficients(); // !!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
+
     private double[] calculateCoefficients() {
         double[][] xTx = this.transposeOfXTimesX;
         double[][] xTy = this.transposeOfXTimesY;
@@ -256,7 +270,7 @@ public class LRTrainer extends MLTrainer {
     }
 
     private double[][] multiply(double[][] lhs, double[][] rhs) { //!!!!! lsh = inv (X_t*X^-1) dim(FxF); rhs = xTy (X_t*y) dim(Fx1)
-        //!!!!!! controllare compatibilità dimensioni paramtri
+        //!!!!!! controllare compatibilità dimensioni parametri
         double[][] streamingProduct = this.rectMatrix(lhs.length, rhs[0].length);
         for(int x = 0; x < rhs.length; ++x) {
             double[] lhsColumn = new double[lhs.length];
@@ -339,13 +353,6 @@ public class LRTrainer extends MLTrainer {
             lead++;
         }
         return A;
-
-    }
-
-    private void addObservation(double[] x, double[] y){
-        this.addRowAndColumn(this.transposeOfXTimesX, x, x);
-        this.addRowAndColumn(this.transposeOfXTimesY, x, y);
-        this.parametersLR = this.calculateCoefficients(); // !!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
     private void addRowAndColumn(double[][] product, double[] lhsColumn, double[] rhsRow){
@@ -354,6 +361,14 @@ public class LRTrainer extends MLTrainer {
                 product[r][c] += lhsColumn[r] * rhsRow[c];
             }
         }
+    }
+
+    private double[][] identityMatrix(int size){
+        double[][] matrix = this.rectMatrix(size, size);
+        for(int i = 0; i < size; ++i) {
+            matrix[i][i] = 1;
+        }
+        return matrix;
     }
 
     private double[][] rectMatrix(int numRows, int numColumns){
@@ -367,14 +382,6 @@ public class LRTrainer extends MLTrainer {
                 row[c] = 0;
             }
             */
-        }
-        return matrix;
-    }
-
-    private double[][] identityMatrix(int size){
-        double[][] matrix = this.rectMatrix(size, size);
-        for(int i = 0; i < size; ++i) {
-            matrix[i][i] = 1;
         }
         return matrix;
     }
