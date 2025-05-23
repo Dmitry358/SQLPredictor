@@ -112,7 +112,6 @@ public class LRTrainer extends MLTrainer {
             }
         }
         catch (IOException e) {
-            // Per errore creazione description file
             e.getMessage();
             return false;
         }

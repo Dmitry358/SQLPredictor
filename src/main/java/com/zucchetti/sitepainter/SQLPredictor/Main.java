@@ -17,12 +17,14 @@ import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Main {
     public static void main(String[] args) {
-        // !!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
+        /*/ !!!!!!!!!!!!!!!!!!!!! SITUAZIONE QUANDO CREO OGETTO DI TRAINER MA NON FACCIO ALLENAMENTO, COSA FARE CON FILE JSON???
         String dataBaseURL = "jdbc:postgresql://localhost:5432/sqlpredictor_db";
         String username = "postgres";
         String password = "a";
@@ -36,6 +38,7 @@ public class Main {
         for (double[] row : result) {
             System.out.println(Arrays.toString(row));
         }
+        */
 
         /*///////////////////////////   ABC   ///////////////////////////////
         Map<String, String> trainerData = new HashMap<>();
@@ -59,6 +62,29 @@ public class Main {
         //*///////////////////////////   ABC END  ///////////////////////////////
 
         /*///////////////////////////   LR   ///////////////////////////////
+
+        // NUOVA VERSIONE (BEGIN)  ///////////////////////////////////////////////////////////////*/
+        String dataBaseURL = "jdbc:postgresql://localhost:5432/sqlpredictor_db";
+        String username = "postgres";
+        String password = "a";
+        DataBaseConnecter dbConnecter = new DataBaseConnecter(dataBaseURL, username, password);
+        String dataTableName = "persons_test";
+        String[] dataTableFieldNamesList = {"weight", "height"};
+        String classificationField = "age";
+
+        Map<String, String> trainerData = new HashMap<>();
+        String predictorName = "LR_persons_test";
+        trainerData.put("predictorName", predictorName);
+        trainerData.put("machineLearningModelType", "linear_regression");
+        trainerData.put("trainingExpiration", "13");
+
+        // ---- LR BUILD + TRAIN ----
+        MLTrainerBuilder trainerBuilder = new MLTrainerBuilder();
+        MLTrainer LRTrainerTest = trainerBuilder.build(trainerData, dataTableName, dataTableFieldNamesList, classificationField);
+        LRTrainerTest.train(dataTableName, dataTableFieldNamesList, classificationField, dbConnecter);
+        // NUOVA VERSIONE (END)  //////////////////////////////////////////////////////
+
+        /*
         Map<String, String> trainerData = new HashMap<>();
         String predictorName = "LR_a_insurance";
         trainerData.put("predictorName", predictorName);

@@ -31,7 +31,6 @@ public abstract class MLTrainer {
     protected void setLastTrain(String trainingDateTime){
         this.lastTrain = trainingDateTime;
     }
-
     protected String getPredictorName(){
         return this.predictorName;
     }
@@ -41,7 +40,6 @@ public abstract class MLTrainer {
     protected String getLastTrain(){
         return this.lastTrain;
     }
-
     protected int getTrainingExpiration(){
         return this.trainingExpiration;
     }

@@ -109,6 +109,7 @@ public class MLTrainerBuilder {
 
         String descriptionFilePath = "src/main/java/com/zucchetti/sitepainter/SQLPredictor/predictors/" + trainerData.get("predictorName") + ".json";
         File descriptionFile = new File(descriptionFilePath);
+        // FILE DI DESCRIZIONE ESISTE
         if (descriptionFile.exists() && trainerData.get("machineLearningModelType").equals("linear_regression")) {
             try {
                 FileReader reader = new FileReader(descriptionFilePath);
@@ -190,7 +191,7 @@ public class MLTrainerBuilder {
                     }
                 }
                 else {
-                    System.err.println("Description file has wrong structure");
+                    System.err.println("Description file has wrong structure"); // description file structure is not JsonObject
                     return false;
                 }
             }
@@ -207,7 +208,7 @@ public class MLTrainerBuilder {
                 return false;
             }
         }
-        else {
+        else { // NON ESISTE FILE DI DESCRIZIONE
             if(!trainerData.containsKey("machineLearningModelType")) {
                 System.err.println("Unable to create trainer, the request does not contain predictor model type");
                 return false;

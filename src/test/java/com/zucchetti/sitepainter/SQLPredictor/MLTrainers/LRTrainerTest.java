@@ -1,5 +1,7 @@
 package com.zucchetti.sitepainter.SQLPredictor.MLTrainers;
 
+import com.zucchetti.sitepainter.SQLPredictor.DataBaseConnecter;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -31,16 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
-
 import static org.mockito.Mockito.when;
-/*
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-*/
+
 
 
 public class LRTrainerTest {
-
   @Test
   public void testLRTrainerConstructorWithCorrectInput() {
     String predictorName = "LR_predictor_test";
@@ -82,6 +79,69 @@ public class LRTrainerTest {
     field.setAccessible(true);
     return field.get(obj);
   }
+
+  /// ///////////////////////////////////////////////////////////////////////////////////
+  @Test
+  public void testTrainSuccess(){
+    //public LRTrainer(String predictorName, int version, String lastTrain, int trainingExpiration, double[][] xTx, double[][] xTy, double[] parametersLR, String trainingDataTableName, String[] trainingFieldNamesList, String classificationField) {
+    double[][] xTx = {{0,0,0},{0,0,0},{0,0,0}};
+    double[][] xTy = null;
+    double[] parametersLR = null;
+    //!!!!!!!!!!!!!!! FUNZIONE PER TROVARE NOME DEL PREDICTOR E SUO FILE DI DESCRIZIONE CHE NON PRESENTE NELLA CARTELLA CON PREDITTORI
+    String predictorName = "";
+    LRTrainer lrTrainer = new LRTrainer(predictorName, 1, "2024-07-15", 12, xTx, xTy, parametersLR,
+      "trainingDataTableName_test", new String[]{"f1","f2"}, "classificationField_test"
+    );
+
+    DataBaseConnecter dbMock = mock(DataBaseConnecter.class);
+
+    /*
+    // CREAZIONE ISTANZA DEL MODELLO
+    YourModelClass predictor = new YourModelClass();
+
+    // SETUP MODELLO: XtX ha 2 colonne -> servono 3 valori per riga: 2 feature + 1 target
+    predictor.setTransposeOfXTimesX(new double[][] {
+      {1.0, 0.0},
+      {0.0, 1.0}
+    });
+
+    predictor.setParametersLR(new double[]{0.5, 1.5});
+    predictor.setTransposeOfXTimesY(new double[][] {
+      {1.0}, {2.0}
+    });
+
+    predictor.setPredictorName("test_model");
+    predictor.setVersion(1);
+    predictor.setTrainingExpiration("2026-01-01");
+    predictor.setTrainingDataTableName("my_table");
+    predictor.setClassificationField("target");
+    predictor.setTrainingFieldNamesList(new String[]{"feature1", "feature2"});
+    */
+
+    double[][] mockData = {
+      {8.0, 50.0},
+      {3.5, 11.0}
+    };
+
+    when(dbMock.getTrainingData("trainingDataTableName_test", new String[]{"f1","f2"}, "classificationField_test"))
+      .thenReturn(mockData);
+
+    /*/ SOVRASCRIVIAMO IL PATH JSON NEL MODELLO USANDO REFLECTION (se non modificabile)
+    String jsonPath = tempDir.resolve("test_model.json").toString();
+    predictor.setDescriptionFilePath(jsonPath);  // Assicurati che esista questo setter o campo modificabile
+
+    // ESECUZIONE DEL TRAIN
+    boolean result = predictor.train("my_table", new String[]{"feature1", "feature2"}, "target", dbMock);
+
+    // VERIFICA
+    assertTrue(result, "Train method should return true on successful training");
+
+    // OPZIONALE: verifica se il file è stato creato
+    File jsonFile = new File(jsonPath);
+    assertTrue(jsonFile.exists(), "Description JSON file should be created");
+    */
+  }
+  /// ///////////////////////////////////////////////////////////////////////////////////
 
   @Test
   public void testGetDescriptionFileDataWithCorrectInput() {
@@ -678,44 +738,100 @@ public class LRTrainerTest {
       fail("Exception occurred during test: " + e.getMessage());
     }
   }
-  //////////////////////////////////////////////////////////////////////////////
+
+  @Test
+  public void testAddSampleWithCorrectInput(){
+    double[][] xTx = {
+      {4.5, 2.7, 0.0},
+      {2.6, 5.1, 1.0},
+      {0.0, 1.0, 3.0}
+    };
+
+    double[][] xTy = {
+      {2.0},
+      {3.0},
+      {1.0}
+    };
+
+    LRTrainer lrTrainer = new LRTrainer("testPredictor", 1, "2025-05-21 10:00:00", 30, xTx, xTy,
+      new double[]{0.0, 0.0, 0.0}, "trainingData", new String[]{"f1", "f2"}, "target"
+    );
+
+    double[] sampleX = {2.0, 3.0};
+    double sampleY = 6.0;
+
+    try {
+      Method method = LRTrainer.class.getDeclaredMethod("addSample", double[].class, double.class);
+      method.setAccessible(true);
+      method.invoke(lrTrainer, sampleX, sampleY);
+
+      Field parametersField = LRTrainer.class.getDeclaredField("parametersLR");
+      parametersField.setAccessible(true);
+      double[] resultedParams = (double[]) parametersField.get(lrTrainer);
+      double[] expectedParams = {0.3080082135523621, 0.6057494866529765, 1.1529774127310064};
+
+      Field transposeOfXTimesXField = LRTrainer.class.getDeclaredField("transposeOfXTimesX");
+      transposeOfXTimesXField.setAccessible(true);
+      double[][] resultedTransposeOfXTimesX = (double[][]) transposeOfXTimesXField.get(lrTrainer);
+      double[][] expectedTransposeOfXTimesX = {
+        {5.5, 4.7, 3.0},
+        {4.6, 9.1, 7.0},
+        {3.0, 7.0, 12.0}
+      };
+
+      Field transposeOfXTimesYField = LRTrainer.class.getDeclaredField("transposeOfXTimesY");
+      transposeOfXTimesYField.setAccessible(true);
+      double[][] resultedTransposeOfXTimesY = (double[][]) transposeOfXTimesYField.get(lrTrainer);
+      double[][] expectedTransposeOfXTimesY = {{8.0}, {15.0}, {19.0}};
+
+      assertEquals(expectedParams.length, resultedParams.length);
+      assertArrayEquals(expectedParams, resultedParams);
+      for (int i = 0; i < expectedTransposeOfXTimesX.length; i++) {
+        assertArrayEquals(expectedTransposeOfXTimesX[i], resultedTransposeOfXTimesX[i], 1e-9);
+      }
+      for (int i = 0; i < expectedTransposeOfXTimesY.length; i++) {
+        assertArrayEquals(expectedTransposeOfXTimesY[i], resultedTransposeOfXTimesY[i], 1e-9);
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail("Exception occurred in testAddSampleWithCorrectInput: " + e.getMessage());
+    }
+  }
+
   @Test
   public void testAddObservationWithCorrectInput() {
+    double[][] xTx = {
+      {4.5, 2.7, 0.0},
+      {2.6, 5.1, 1.0},
+      {0.0, 1.0, 3.0}
+    };
+
+    double[][] xTy = {
+      {2.0},
+      {3.0},
+      {1.0}
+    };
+
+    double[] sampleX = {1.0, 2.0, 3.0};
+    double[] sampleY = {6.0};
+
+    LRTrainer lrTrainer = new LRTrainer("testPredictor", 1, "2025-05-21 10:00:00", 30, xTx, xTy,
+      new double[]{0.0, 0.0, 0.0}, "trainingData", new String[]{"f1", "f2"}, "target"
+    );
+
+    double[][] expectedXtX = new double[3][3];
+    double[][] expectedXtY = new double[3][1];
+
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        expectedXtX[i][j] = xTx[i][j] + sampleX[i] * sampleX[j];
+      }
+      expectedXtY[i][0] = xTy[i][0] + sampleX[i] * sampleY[0];
+    }
     try {
-      double[][] xTx = {
-        {4.5, 2.7, 0.0},
-        {2.6, 5.1, 1.0},
-        {0.0, 1.0, 3.0}
-      };
-
-      double[][] xTy = {
-        {2.0},
-        {3.0},
-        {1.0}
-      };
-
-      double[] sampleX = {1.0, 2.0, 3.0};
-      double[] sampleY = {6.0};
-
-      LRTrainer lrTrainer = new LRTrainer("testPredictor", 1, "2025-05-21 10:00:00", 30, xTx, xTy,
-        new double[]{0.0, 0.0, 0.0}, "trainingData", new String[]{"f1", "f2"}, "target"
-      );
-
       Method method = LRTrainer.class.getDeclaredMethod("addObservation", double[].class, double[].class);
       method.setAccessible(true);
-
-
-      double[][] expectedXtX = new double[3][3];
-      double[][] expectedXtY = new double[3][1];
-
-      // Compute expected updated XtX and XtY
-      for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-          expectedXtX[i][j] = xTx[i][j] + sampleX[i] * sampleX[j];
-        }
-        expectedXtY[i][0] = xTy[i][0] + sampleX[i] * sampleY[0];
-      }
-
       method.invoke(lrTrainer, sampleX, sampleY);
 
       for (int i = 0; i < 3; i++) {
@@ -723,78 +839,20 @@ public class LRTrainerTest {
         assertArrayEquals(expectedXtY[i], xTy[i], 0.0001);
       }
 
-
       Field parametersField = LRTrainer.class.getDeclaredField("parametersLR");
       parametersField.setAccessible(true);
       double[] resultedParams = (double[]) parametersField.get(lrTrainer);
       double[] expectedParams = {0.3080082135523621, 0.6057494866529765, 1.1529774127310064};
 
-
-        assertEquals(3, resultedParams.length);
-        assertArrayEquals(expectedParams, resultedParams);
+      assertEquals(3, resultedParams.length);
+      assertArrayEquals(expectedParams, resultedParams);
     }
     catch (Exception e) {
       e.printStackTrace();
-      fail("Exception occurred in testAddObservationWithRandom3x3Matrix: " + e.getMessage());
+      fail("Exception occurred in testAddObservationWithCorrectInput: " + e.getMessage());
     }
   }
 
-  /*
-  @Test
-  public void testAddObservationWithInitialValues() {
-    try {
-      double[][] xTx = {
-        {1, 0.5, 0.2},
-        {0.5, 2, 0.3},
-        {0.2, 0.3, 3}
-      };
-
-      double[][] xTy = {
-        {1},
-        {2},
-        {3}
-      };
-
-      LRTrainer lrTrainer = new LRTrainer("testPredictor", 1, "2025-05-21 10:00:00",
-        30, xTx, xTy, new double[]{0.0, 0.0, 0.0}, "trainingData",
-        new String[]{"feature1", "feature2"}, "target"
-      );
-
-      Method method = LRTrainer.class.getDeclaredMethod("addObservation", double[].class, double[].class);
-      method.setAccessible(true);
-
-      double[] x = {1, 2, 3};
-      double[] y = {4};
-
-      method.invoke(lrTrainer, x, y);
-
-      double[][] expectedXTx = {
-        {1.0 + 1.0, 0.5 + 2.0, 0.2 + 3.0},
-        {0.5 + 2.0, 2.0 + 4.0, 0.3 + 6.0},
-        {0.2 + 3.0, 0.3 + 6.0, 3.0 + 9.0}
-      };
-
-      double[][] expectedXTy = {
-        {5},
-        {10},
-        {15}
-      };
-
-      for (int i = 0; i < expectedXTx.length; i++) {
-        assertArrayEquals(expectedXTx[i], xTx[i], 0.0001);
-      }
-
-      for (int i = 0; i < expectedXTy.length; i++) {
-        assertArrayEquals(expectedXTy[i], xTy[i], 0.0001);
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail("Exception during testAddObservationWithInitialValues: " + e.getMessage());
-    }
-  }
-  */
-  /////////////////////////////////////////////////////////////////////////////
   @Test
   public void testCalculateCoefficientsWithCorrectInput() {
     try {
@@ -1031,6 +1089,61 @@ public class LRTrainerTest {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
+  /*
+  @Test
+  public void testAddObservationWithInitialValues() {
+    try {
+      double[][] xTx = {
+        {1, 0.5, 0.2},
+        {0.5, 2, 0.3},
+        {0.2, 0.3, 3}
+      };
+
+      double[][] xTy = {
+        {1},
+        {2},
+        {3}
+      };
+
+      LRTrainer lrTrainer = new LRTrainer("testPredictor", 1, "2025-05-21 10:00:00",
+        30, xTx, xTy, new double[]{0.0, 0.0, 0.0}, "trainingData",
+        new String[]{"feature1", "feature2"}, "target"
+      );
+
+      Method method = LRTrainer.class.getDeclaredMethod("addObservation", double[].class, double[].class);
+      method.setAccessible(true);
+
+      double[] x = {1, 2, 3};
+      double[] y = {4};
+
+      method.invoke(lrTrainer, x, y);
+
+      double[][] expectedXTx = {
+        {1.0 + 1.0, 0.5 + 2.0, 0.2 + 3.0},
+        {0.5 + 2.0, 2.0 + 4.0, 0.3 + 6.0},
+        {0.2 + 3.0, 0.3 + 6.0, 3.0 + 9.0}
+      };
+
+      double[][] expectedXTy = {
+        {5},
+        {10},
+        {15}
+      };
+
+      for (int i = 0; i < expectedXTx.length; i++) {
+        assertArrayEquals(expectedXTx[i], xTx[i], 0.0001);
+      }
+
+      for (int i = 0; i < expectedXTy.length; i++) {
+        assertArrayEquals(expectedXTy[i], xTy[i], 0.0001);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail("Exception during testAddObservationWithInitialValues: " + e.getMessage());
+    }
+  }
+  */
   /* FUNZIONA ESCLUSO WINDOWS, DA GESTIRE DENTRO TEST throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException
     @Test
   void testUnreadableFile_WindowsCompatible() throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
@@ -1291,5 +1404,4 @@ public class LRTrainerTest {
     }
   }
   */
-
 }
